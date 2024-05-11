@@ -1,6 +1,7 @@
 {
   "name": "image-of-images",
   "version": "0.1.0",
+  "homepage": "https://bsav0016.github.io/collagecreations/",
   "private": true,
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.0",
