@@ -1,0 +1,202 @@
+/* Container styles */
+.App {
+  padding: 20px;
+  background-color: #282c34;
+  min-height: 100vh;
+  color: white;
+  text-align: center;
+  display: grid;
+  grid-gap: 20px;
+  align-content: flex-start;
+}
+
+/* Styles for the header */
+.App-header {
+  font-size: calc(10px + 2vmin);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.header-left {
+  display: inline-block; /* Change to inline-block */
+  width: 20%;
+}
+
+.header-center {
+  position: absolute; /* Position the header text absolutely */
+  left: 50%; /* Align the text to the center horizontally */
+  transform: translate(-50%); /* Center the text */
+}
+
+/* Custom file input styles */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.custom-file-upload:hover {
+  background-color: #0056b3;
+}
+
+.custom-file-upload:disabled {
+  background-color: #cccccc; /* Gray background color */
+  color: #666666; /* Dark gray text color */
+  cursor: not-allowed; /* Change cursor to not-allowed */
+}
+
+/* Hide the default file input */
+#image-upload {
+  display: none;
+}
+
+.cropper-container {
+  display: grid;
+  justify-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000; /* Set a higher z-index to ensure it's displayed above other elements */
+}
+
+/* Control styles */
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.controls input[type="range"] {
+  width: 100%;
+  margin-bottom: 10px;
+  z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.controls button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 1000; /* Adjust the z-index as needed */
+}
+
+.controls button:hover {
+  background-color: #0056b3;
+}
+
+.add-image-container {
+  margin-bottom: 20px;
+}
+
+/* Image container styles */
+.image-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* Four equal columns */
+  grid-gap: 20px;
+  justify-items: center;
+}
+
+/* Clear button styles */
+.clear-button {
+  width: 100%;
+}
+
+.main-image {
+  width: 30%;
+}
+
+#main-image-upload {
+  display: none;
+}
+
+/* Styles for individual small image items */
+.image-item {
+  position: relative; /* Ensure buttons are positioned relative to image */
+  width: 100%;
+}
+
+.image-item img {
+  max-width: 100%; /* Limit the maximum width of the image to 100% of its container */
+  max-height: 200px; /* Set a maximum height for the images */
+}
+
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the items horizontally */
+}
+
+.drop-down {
+  display: inline-block;
+  padding: 10px 3px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 10px; /* Add margin between each form field */
+}
+
+.required-asterisk {
+  color: red; /* Red color for the asterisk */
+}
+
+.medium-logo {
+  width: 80%;
+  cursor: pointer;
+}
+
+.image-zoom-container {
+  width: 70%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.collage-image {
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s ease-in-out;
+}
+
+.collage-image:hover {
+  transform: scale(6);
+}
+
+ul {
+  background-color: #333;
+  list-style-type: none;
+  padding: 10px 0px;
+  margin: 0;
+  display: flex;
+}
+
+li {
+  flex: 1; /* Each item occupies equal space */
+  text-align: center; /* Center content horizontally */
+}
+
+a {
+  display: block; /* Make anchor tags behave like blocks */
+  color: white;
+  text-decoration: none;
+}
