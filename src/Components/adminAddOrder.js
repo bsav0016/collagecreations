@@ -31,15 +31,15 @@ function AdminAddOrder() {
             alert('State must be 2 characters (AL, CT, HI, etc)')
             return
         }
-        if (firstName.length == 0 || lastName.length == 0 || email.length == 0) {
+        if (firstName.length === 0 || lastName.length === 0 || email.length === 0) {
             alert('First name, last name, and email are required fields')
             return
         }
-        if (selectedImage.length == 0) {
+        if (selectedImage.length === 0) {
             alert('You must select an image')
             return
         }
-        if (orderType && (address1.length == 0 || address2.length == 0 || city.length == 0 || state.length == 0 || zipCode.length ==0)) {
+        if (orderType && (address1.length === 0 || address2.length === 0 || city.length === 0 || state.length === 0 || zipCode.length === 0)) {
             alert('Address 1, City, State, and ZIP are required for a full order')
             return
         }

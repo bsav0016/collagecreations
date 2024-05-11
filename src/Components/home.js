@@ -7,22 +7,6 @@ import NavBar from './navBar';
 function Home() {
   const navigate = useNavigate();
 
-  const navigateToCreator = () => {
-    navigate('/collage-creation/');
-  };
-
-  const navigateToTextCreator = () => {
-    navigate('/collage-text-creation/');
-  };
-
-  const navigateToSupport = () => {
-    navigate('/support/');
-  };
-
-  const navigateToCustomOrder = () => {
-    navigate('/custom-order/');
-  };
-
   return (
     <div>
       <NavBar/>

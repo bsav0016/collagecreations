@@ -28,7 +28,7 @@ function CollageTextCreation() {
     const loadDataFromSession = async () => {
       const sessionData = sessionStorage.getItem('textCollageSessionData');
       if (sessionData) {
-        const { selectedImage: storedSelectedImage, text: storedText, croppedImages: storedCroppedImages, size: storedSize, color: storedColor, largerImages: storedLargerImages } = JSON.parse(sessionData);
+        const { text: storedText, croppedImages: storedCroppedImages, size: storedSize, color: storedColor, largerImages: storedLargerImages } = JSON.parse(sessionData);
         if (storedText) {
           setText(storedText);
         }
@@ -57,9 +57,9 @@ function CollageTextCreation() {
   }, [sessionStorage]);
 
   useEffect(() => {
-    const sessionData = JSON.stringify({ selectedImage, text, croppedImages, size, color, largerImages });
+    const sessionData = JSON.stringify({ text, croppedImages, size, color, largerImages });
     sessionStorage.setItem('textCollageSessionData', sessionData);
-  }, [selectedImage, text, croppedImages, size, color, largerImages]);
+  }, [text, croppedImages, size, color, largerImages]);
 
   useEffect(() => {
     if (cropperVisible) {
@@ -366,7 +366,7 @@ function CollageTextCreation() {
           {croppedImages.map((croppedImage, index) => (
             <div className="image-item" key={index}>
               <div className="image-wrapper">
-                <img src={croppedImage} alt="Cropped Image" />
+                <img src={croppedImage} alt="Cropped" />
                 <button style={{ marginTop: 5}} onClick={() => handleDelete(index)}>Delete</button>
               </div>
             </div>

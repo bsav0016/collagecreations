@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../App.css'; // Import your CSS file for styling
+import '../App.css';
 import { backendURL } from './Constants';
 import mediumLogo from './medium-logo.png';
 import NavBar from './navBar';
