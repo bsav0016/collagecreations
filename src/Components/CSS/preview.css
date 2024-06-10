@@ -1,0 +1,15 @@
+.image-zoom-container {
+    width: 70%;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  .collage-image {
+    width: 100%;
+    height: auto;
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .collage-image:hover {
+    transform: scale(6);
+  }
