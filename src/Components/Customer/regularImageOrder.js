@@ -17,7 +17,7 @@ function RegularImageOrder() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [cropperVisible, setCropperVisible] = useState(false);
   const [size, setSize] = useState('');
-  const [aspect, setAspect] = useState(1); // Default aspect ratio
+  const [aspect, setAspect] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [imgBase64, setImgBase64] = useState('');
@@ -40,20 +40,20 @@ function RegularImageOrder() {
 
   useEffect(() => {
     if (cropperVisible) {
-      document.body.style.overflow = 'hidden'; // Disable scrolling
+      document.body.style.overflow = 'hidden'; 
     } else {
-      document.body.style.overflow = ''; // Re-enable scrolling
+      document.body.style.overflow = '';
     }
   
     return () => {
-      document.body.style.overflow = ''; // Re-enable scrolling when component unmounts
+      document.body.style.overflow = '';
     };
   }, [cropperVisible]);
 
   useEffect(() => {
     if (size) {
       const [width, height] = size.split('x').map(Number);
-      setAspect(width / height); // Calculate and set the aspect ratio
+      setAspect(width / height);
       if (size ==='24x24') {
         setCost(amount24x24regular)
       }
@@ -68,7 +68,7 @@ function RegularImageOrder() {
       alert('You must choose a size before selecting the main image.');
     } else {
       const file = event.target.files[0];
-      event.target.value = null; // Clear the value of the file input
+      event.target.value = null;
       if (chooseCrop) {
         const imageUrl = URL.createObjectURL(file);
         setSelectedImage(imageUrl);
@@ -86,10 +86,43 @@ function RegularImageOrder() {
           createImgString(resizedImg);
         } catch (error) {
           console.error('Error resizing image:', error);
+          try {
+            const resizedImg = resizeFromBackend(file, targetWidth, targetHeight)
+            const resizedImgUrl = URL.createObjectURL(resizedImg);
+            setMainImage(resizedImgUrl);
+            createImgString(resizedImg);
+          } catch {
+            console.error("Could not resize the image")
+          }
         } finally {
           setLoading(false);
         }
       }
+    }
+  };
+
+  const resizeFromBackend = async (file, targetWidth, targetHeight) => {
+    const formData = new FormData();
+    formData.append('input_image', file);
+    formData.append('width', targetWidth);
+    formData.append('height', targetHeight);
+  
+    try {
+      const response = await fetch(`${backendURL}api/resize-image/`, {
+        method: 'POST',
+        body: formData
+      });
+      console.log(response)
+  
+      if (!response.ok) {
+        throw new Error('Failed to resize image');
+      }
+  
+      const blob = await response.blob();
+      return blob;
+    } catch (error) {
+      console.error('Error resizing image:', error);
+      throw error;
     }
   };
 
@@ -115,6 +148,13 @@ function RegularImageOrder() {
         setCropperVisible(false);
       } catch (error) {
         console.error('Error cropping image:', error);
+        if (error === "Error: Failed to create blob"){
+          alert("Error using image. Please ensure your browser has permissions for this file. You can also try to zoom in the smallest available increment.")
+        }
+        else{
+          alert("Error resizing.")
+          // Add in a call to the backend to try to resize the image instead
+        }
       } finally {
         setLoading(false);
       }
@@ -172,7 +212,12 @@ function RegularImageOrder() {
   }
 
   const handleQuantityChange = (newQuantity) => {
-    setQuantity(newQuantity);
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+    else {
+      alert("Quantity must be between 1 and 10")
+    }
   }
 
   return (
@@ -184,12 +229,12 @@ function RegularImageOrder() {
             <img src={mediumLogo} alt="Medium Logo" className="medium-logo" onClick={() => navigate('/')} />
           </div>
           <div className="header-center">
-            <h1>Large Format Print</h1>
+            <h1>Large Format</h1>
           </div>
         </header>
 
         <div>
-          <header style={{ fontSize: 18, ...(!isDesktop && {marginTop: 20}) }}>
+          <header style={{ fontSize: 18, paddingTop: 20, ...(isDesktop && {marginTop: -20}) }}>
             Step 1. Choose an output size in inches - width x height.
           </header>
         </div>
@@ -240,13 +285,13 @@ function RegularImageOrder() {
 
         <div className="add-image-container">
           <label htmlFor="main-image-upload" className="general-button" disabled={loading}>
-            {loading ? 'Loading...' : 'Choose main image'}
+            {loading ? 'Loading...' : 'Choose Image'}
           </label>
           <input type="file" id="main-image-upload" onChange={handleMainImageChange} accept="image/*" />
         </div>
 
         {mainImage && (
-          <div>
+          <div style={{ marginBottom: 10}}>
             <img src={mainImage} alt="Error. Please return to homepage" className="main-image" />
           </div>
         )}
@@ -264,6 +309,13 @@ function RegularImageOrder() {
               onZoomChange={setZoom}
               zoomWithScroll={false}
             />
+            { loading? 
+            <div className="controls">
+              <button>
+                {'Cropping and resizing. Please wait...'}
+              </button>
+            </div>
+            :
             <div className="controls">
               <input
                 type="range"
@@ -276,17 +328,18 @@ function RegularImageOrder() {
               <button
                 style={{ marginRight: 10 }}
                 onClick={handleCrop}
-                disabled={loading} // Disable the button while loading
+                disabled={loading}
               >
-                {loading ? 'Cropping...' : 'Crop Image'}
+                Crop Image
               </button>
               <button
                 onClick={handleCancelCrop}
-                disabled={loading} // Disable the button while loading
+                disabled={loading}
               >
-                {loading ? 'Cropping...' : 'Cancel'}
+                Cancel
               </button>
             </div>
+            }
           </div>
         )}
 
@@ -296,14 +349,14 @@ function RegularImageOrder() {
           </header>
         </div>
 
-        <div className="quantity-control">
+        <div className="quantity-control" style={{ marginTop: -20 }}>
           <p>Quantity: </p>
           <button onClick={() => handleQuantityChange(quantity - 1)} disabled={quantity <= 1}>-</button>
           <input 
             type="text" 
             value={quantity} 
             onChange={(e) => {
-              const newQuantity = parseInt(e.target.value, 10);
+              const newQuantity = parseInt(e.target.value, 1);
               handleQuantityChange(newQuantity);
             }} 
             style={{ width: '40px', textAlign: 'center' }}

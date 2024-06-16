@@ -1,7 +1,7 @@
 {
   "name": "image-of-images",
   "version": "0.1.0",
-  "homepage": "https://collagecreation.org/",
+  "homepage": "https://collagecreations.org/",
   "private": true,
   "dependencies": {
     "@stripe/react-stripe-js": "^2.7.0",

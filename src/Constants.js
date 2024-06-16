@@ -1,4 +1,5 @@
-export const backendURL = "http://127.0.0.1:8000/"
+//export const backendURL = "http://127.0.0.1:8000/"
+export const backendURL = "https://collage-creations-a2decf2a69e5.herokuapp.com/"
 export const amount24x24 = 4199;
 export const amount24x36 = 5199;
 export const amount24x24regular = 3399;

@@ -138,6 +138,7 @@ function CollageTextCreation() {
         setCropperVisible(false);
       } catch (error) {
         console.error('Error cropping image:', error);
+        alert("Error using image. Please ensure your browser has permissions for this file. You can also try to zoom in the smallest available increment.")
       }
     }
   };
@@ -314,7 +315,7 @@ function CollageTextCreation() {
         </div>
 
         <div className="add-image-container">
-          <input style={{fontSize: 20, width: '25%' }} value={text} type="text" placeholder="Enter Text" onChange={(e) => setText(e.target.value)} disabled={isCreatingImage} maxLength={20} />
+          <input style={{fontSize: 20, width: '25%', minWidth: 200 }} value={text} type="text" placeholder="Enter Text" onChange={(e) => setText(e.target.value)} disabled={isCreatingImage} maxLength={20} />
         </div>
 
         <div>

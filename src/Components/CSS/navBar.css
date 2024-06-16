@@ -1,15 +1,14 @@
-/* General Styles */
 ul {
-    background-color: #333;
+    background-color: #282c34;
     list-style-type: none;
     padding: 3px 0px;
     margin: 0;
     display: flex;
-    justify-content: space-around; /* Ensure items are evenly spaced */
+    justify-content: space-around;
 }
 
 li {
-    position: relative; /* Ensure dropdown is positioned relative to parent */
+    position: relative;
     text-align: center;
 }
 
@@ -31,17 +30,17 @@ a, .dropdown > span {
 
 .caret {
     margin-left: 10px;
-    font-size: 12px; /* Adjust size as needed */
+    font-size: 12px;
 }
 
 /* Dropdown Styles */
 .dropdown-content {
     display: none;
     position: absolute;
-    top: 100%; /* Below the parent */
-    left: 50%; /* Align the center of the dropdown with the center of the box */
-    transform: translateX(-50%); /* Move the dropdown back by half of its width */
-    background-color: #333;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #282c34;
     min-width: 200px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -56,20 +55,19 @@ a, .dropdown > span {
 }
 
 .dropdown-content li a:hover {
-    background-color: #575757;
+    background-color: #282c34;
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
 }
 
-/* Media Queries */
-@media (max-width: 600px) {
+@media (max-width: 728px) {
     .menu-icon {
         display: block;
         background-color: #282c34;
         margin-left: 15px;
-        padding-top: 5px;
+        padding-top: 8px;
     }
 
     ul {

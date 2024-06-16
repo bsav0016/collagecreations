@@ -163,6 +163,7 @@ function CollageCreation() {
         setCropperVisible(false);
       } catch (error) {
         console.error('Error cropping image:', error);
+        alert("Error using image. Please ensure your browser has permissions for this file. You can also try to zoom in the smallest available increment.")
       }
     }
   };
@@ -376,9 +377,10 @@ function CollageCreation() {
                 type="range"
                 min="1"
                 max="3"
-                step="0.1"
+                step="0.05"
                 value={zoom}
                 onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className='slider'
               />
               <button style={{ marginRight: 10 }} onClick={handleCrop}>Crop Image</button>
               <button onClick={handleCancelCrop}>Cancel</button>

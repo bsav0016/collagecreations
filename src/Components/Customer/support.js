@@ -135,7 +135,7 @@ function Support() {
               <div className="required-asterisk">*</div>
               <label htmlFor="message">Message:</label>
             </div>
-            <textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={6} required style={{ width: '70%' }} />
+            <textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={6} required style={{ width: '70%', borderWidth: 2, borderColor: '#ccc', borderRadius: 4 }} />
           </div>
 
           <button className='general-button' style={{ alignSelf: 'center' }} type="submit" disabled={isSubmitting}>

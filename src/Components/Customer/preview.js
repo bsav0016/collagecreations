@@ -75,7 +75,12 @@ function Preview() {
   };
 
   const handleQuantityChange = (newQuantity) => {
-    setQuantity(newQuantity);
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+    else {
+      alert("Quantity must be between 1 and 10")
+    }
   }
 
   return (
@@ -106,7 +111,7 @@ function Preview() {
             type="text" 
             value={quantity} 
             onChange={(e) => {
-              const newQuantity = parseInt(e.target.value, 10);
+              const newQuantity = parseInt(e.target.value, 1);
               handleQuantityChange(newQuantity);
             }} 
             style={{ width: '40px', textAlign: 'center' }}

@@ -1,0 +1,42 @@
+.tips-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .tips-dropdown {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tips-dropdown span {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .tips-dropdown .caret {
+    font-size: 1.2em;
+  }
+  
+  .tips-dropdown-content {
+    margin-top: 5px;
+  }
+  
+  @media (min-width: 768px) {
+    .tips-dropdown span {
+      font-size: 24px;
+    }
+  
+    .tips-dropdown-content p {
+      font-size: 18px;
+      margin-top: -10px;
+      text-align: left;
+    }
+  }
+  
