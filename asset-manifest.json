@@ -1,19 +1,30 @@
 {
   "files": {
-    "main.css": "/static/css/main.e88e233b.css",
-    "main.js": "/static/js/main.857ef8d8.js",
+    "main.css": "/static/css/main.b94f4a61.css",
+    "main.js": "/static/js/main.22dfc140.js",
     "static/js/453.6711574a.chunk.js": "/static/js/453.6711574a.chunk.js",
-    "static/media/collage2.png": "/static/media/collage2.ff232cc6dd90a11dd979.png",
-    "static/media/collage1.png": "/static/media/collage1.7c83fc4cbe366903c9bd.png",
-    "static/media/bothCollages.png": "/static/media/bothCollages.4dd10dd0e682aa13fbbf.png",
+    "static/media/exampleTextCollage.png": "/static/media/exampleTextCollage.30d54e74258ee2e5bdc6.png",
+    "static/media/exampleSymbolCollage.png": "/static/media/exampleSymbolCollage.536d52152f4d1137e54e.png",
+    "static/media/exampleImageCollage.png": "/static/media/exampleImageCollage.c594bbc4968daf64e090.png",
+    "static/media/Paw.jpg": "/static/media/Paw.612f91ac143d5efbfc7f.jpg",
+    "static/media/comparison24x24.png": "/static/media/comparison24x24.2b959feab4108e0c4e5b.png",
+    "static/media/quarterMediumImages.png": "/static/media/quarterMediumImages.1bb1ec27b589b2dde895.png",
+    "static/media/quarterLargeImages.png": "/static/media/quarterLargeImages.9b943e41d8dcb26ececf.png",
+    "static/media/comparison12x12.png": "/static/media/comparison12x12.7cdd48f36c5c1573571e.png",
+    "static/media/quarterSmallImages.png": "/static/media/quarterSmallImages.36335f145a333ab82b7c.png",
+    "static/media/Heart.jpg": "/static/media/Heart.5333d426e23dd88d1079.jpg",
+    "static/media/comparison18x12.png": "/static/media/comparison18x12.8f24bd3b0337cf9b5a5d.png",
+    "static/media/comparison36x24.png": "/static/media/comparison36x24.e84f18bcdfde433e21a4.png",
+    "static/media/comparison12x18.png": "/static/media/comparison12x18.0c2aaebc628be0b99d25.png",
+    "static/media/comparison24x36.png": "/static/media/comparison24x36.937e620af5e511adb055.png",
     "static/media/big-logo.png": "/static/media/big-logo.6d269d91e8318f7d6c67.png",
     "index.html": "/index.html",
-    "main.e88e233b.css.map": "/static/css/main.e88e233b.css.map",
-    "main.857ef8d8.js.map": "/static/js/main.857ef8d8.js.map",
+    "main.b94f4a61.css.map": "/static/css/main.b94f4a61.css.map",
+    "main.22dfc140.js.map": "/static/js/main.22dfc140.js.map",
     "453.6711574a.chunk.js.map": "/static/js/453.6711574a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e88e233b.css",
-    "static/js/main.857ef8d8.js"
+    "static/css/main.b94f4a61.css",
+    "static/js/main.22dfc140.js"
   ]
 }
