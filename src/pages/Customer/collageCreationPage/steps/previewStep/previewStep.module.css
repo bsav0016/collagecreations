@@ -1,0 +1,13 @@
+.gridContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.rowContainer {
+    display: flex;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+}
