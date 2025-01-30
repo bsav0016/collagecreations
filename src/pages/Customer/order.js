@@ -10,10 +10,11 @@ import Form from '../../components/form/form';
 import PaymentService from '../../services/PaymentService';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useOrderContext } from '../../context/orderContext';
+import appStyles from '../../App.module.css';
 
 function Order() {
   const navigate = useNavigate();
-  const { temporaryImageId, quantity, setBaseCost, setShippingCost } = useOrderContext();
+  const { temporaryImageId, quantity, setBaseCost, setShippingCost, setTax } = useOrderContext();
 
   const [gettingShippingCost, setGettingShippingCost] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,6 +52,7 @@ function Order() {
 
       setBaseCost(response.baseCost);
       setShippingCost(response.shippingCost);
+      setTax(response.tax);
 
       navigate('/billing-page/', {
         state: {
@@ -112,7 +114,7 @@ function Order() {
   return (
     <div>
       <NavBar/>
-      <div className="App">
+      <div className={appStyles.App}>
         <MediumLogoHeader title={"Shipping Info"}/>
         <RequiredFieldDesignator />
 

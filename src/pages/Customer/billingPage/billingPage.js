@@ -15,6 +15,7 @@ import applyDiscountService from '../../../services/ApplyDiscountService';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import TextInput from '../../../components/textInput/textInput';
 import { useOrderContext } from '../../../context/orderContext';
+import appStyles from '../../../App.module.css';
 
 
 function BillingPage() {
@@ -54,9 +55,9 @@ function BillingPage() {
     <div>
       <NavBar />
       {(!(formData && baseCost && shippingCost && tax && quantity && temporaryImageId) || gettingDiscount) ?
-      <LoadingScreen />
+      <LoadingScreen message={"Processing your request..."}/>
       :
-      <div className="App">
+      <div className={appStyles.App}>
         { loading && 
           <div className={styles.loadingScreenView}>
             <LoadingScreen message={"Processing payment. This may take a minute..."} />

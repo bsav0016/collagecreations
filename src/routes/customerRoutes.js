@@ -8,7 +8,7 @@ import BillingPage from '../pages/Customer/billingPage/billingPage';
 import Download from '../pages/Customer/download/download';
 import Confirmation from '../pages/Customer/confirmation';
 import MessageConfirmation from '../pages/Customer/messageConfirmation';
-import RegularImageOrder from '../pages/Customer/regularImageOrder';
+import RegularImageOrder from '../pages/Customer/regularImageOrder/regularImageOrder';
 import Tips from '../pages/Customer/tips/tips';
 import NotFound from '../pages/NotFound/notFound';
 import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';

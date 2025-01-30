@@ -8,13 +8,13 @@
     align-content: flex-start;
 }
 
-.row-display {
+.rowDisplay {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
 }
 
-.large-image {
+.largeImage {
     width: 70%;
     margin: 0 auto;
     overflow: hidden;
