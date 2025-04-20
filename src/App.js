@@ -13,12 +13,14 @@ function App() {
     <ConstantsProvider>
       <ToastProvider>
         <LocalDatabaseProvider>
-          <Router>
-            <Routes>
-              <Route path="admin/*" element={<AuthProvider><AdminRoutes /></AuthProvider>} />
-              <Route path="/*" element={<OrderProvider><CustomerRoutes /></OrderProvider>} />
-            </Routes>
-          </Router>
+          <OrderProvider>
+            <Router>
+              <Routes>
+                <Route path="admin/*" element={<AuthProvider><AdminRoutes /></AuthProvider>} />
+                <Route path="/*" element={<CustomerRoutes />} />
+              </Routes>
+            </Router>
+          </OrderProvider>
         </LocalDatabaseProvider>
       </ToastProvider>
     </ConstantsProvider>

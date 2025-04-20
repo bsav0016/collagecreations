@@ -8,6 +8,7 @@ import addWhiteService from '../../services/AddWhiteService';
 import LoadingScreen from '../../components/loadingScreen/loadingScreen';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 
 function AdminAddWhite() {
@@ -59,7 +60,7 @@ function AdminAddWhite() {
       { updating ?
       <LoadingScreen/>
       :
-      <div className="App">
+      <div className={appStyles.App}>
         <HeaderSection
           title='Add White'
           fontWeight='bold'

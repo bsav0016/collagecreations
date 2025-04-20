@@ -7,6 +7,7 @@ import styles from './createCollage.module.css';
 import { createCollage } from "../../../../../services/createCollage";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../../../../../context/orderContext";
+import { useAuth } from "../../../../../context/authContext";
 
 interface CreateCollageStepProps {
     type: CollageCreationType;
@@ -18,6 +19,7 @@ interface CreateCollageStepProps {
     color: boolean;
     setShowLoading: (isLoading: boolean) => void
     setLoadingMessage: (loadingMessage: string | null) => void;
+    isAdmin: boolean;
 }
 
 export function CreateCollageStep({
@@ -29,16 +31,20 @@ export function CreateCollageStep({
     smallImages,
     color,
     setShowLoading,
-    setLoadingMessage
+    setLoadingMessage,
+    isAdmin
 }: CreateCollageStepProps) {
     const navigate = useNavigate();
     const { setTemporaryImageId, setWatermarkCollage, setBaseCost } = useOrderContext();
+    const { userToken } = useAuth();
+
 
     const clickedCreateCollage = async () => {
         try {
             setShowLoading(true);
             setLoadingMessage("Creating your collage. This may take a minute...");
             const collageData = await createCollage(
+                userToken,
                 false,
                 type,
                 outputSize,
@@ -53,7 +59,8 @@ export function CreateCollageStep({
             setWatermarkCollage(collageData.watermarkCollage);
             setBaseCost(collageData.baseCost);
 
-            navigate('/preview/');
+            const navigationUrlExt = isAdmin ? '/admin/admin-preview/' : '/preview/'
+            navigate(navigationUrlExt, {state: { isAdmin: isAdmin }});
         } catch (error) {
             alert("Error");
             console.error(error);

@@ -2,6 +2,7 @@ import { CollageCreationType } from "../../pages/Customer/collageCreationPage/en
 import { OutputSize } from "../../pages/Customer/collageCreationPage/enums/OutputSize";
 import { SmallImageSize } from "../../pages/Customer/collageCreationPage/enums/SmallImageSize";
 import { SymbolOption } from "../../pages/Customer/collageCreationPage/interfaces/SymbolOption";
+import { convertImageToBlob, createFileFromBlobUrl, processImageString } from "../../utils/modifyImage";
 
 export class CreatePreviewDTO {
     type: string;
@@ -10,6 +11,7 @@ export class CreatePreviewDTO {
     smallImageSize: number;
     text?: string;
     symbol?: string;
+    mainImageUrl?: string | null
 
     constructor(
         type: string,
@@ -17,14 +19,16 @@ export class CreatePreviewDTO {
         height: number,
         smallImageSize: number,
         text?: string,
-        symbol?: string
+        symbol?: string,
+        mainImageUrl?: string | null
     ) {
-        this.type = type
-        this.width = width
-        this.height = height
-        this.smallImageSize = smallImageSize
-        this.text = text
-        this.symbol = symbol
+        this.type = type;
+        this.width = width;
+        this.height = height;
+        this.smallImageSize = smallImageSize;
+        this.text = text;
+        this.symbol = symbol;
+        this.mainImageUrl = mainImageUrl;
     }
 
     static fromVariables(
@@ -32,7 +36,8 @@ export class CreatePreviewDTO {
         size: OutputSize,
         smallImageSize: SmallImageSize,
         text?: string,
-        symbol?: SymbolOption
+        symbol?: SymbolOption,
+        mainImageUrl?: string | null
     ) {
         const typeString = type === CollageCreationType.Symbol
             ? "symbol"
@@ -54,7 +59,30 @@ export class CreatePreviewDTO {
             height,
             smallSize,
             text,
-            symbol?.text
+            symbol?.text,
+            mainImageUrl
         )
+    }
+
+    async createBody() {
+        const formData = new FormData();
+        formData.append('type', this.type);
+        formData.append('width', this.width.toString());
+        formData.append('height', this.height.toString());
+        if (this.smallImageSize) {
+            formData.append('small_image_size', this.smallImageSize.toString());
+        }
+        if (this.text) {
+            formData.append('text', this.text);
+        }
+        if (this.symbol) {
+            formData.append('symbol', this.symbol);
+        }
+        if (this.mainImageUrl) {
+            const symbolImage = await createFileFromBlobUrl(this.mainImageUrl);
+            console.log(symbolImage);
+            formData.append('symbol_image', symbolImage);
+        }
+        return formData;
     }
 }

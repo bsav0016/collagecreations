@@ -12,6 +12,7 @@ import Form from '../../components/form/form';
 import LoadingScreen from '../../components/loadingScreen/loadingScreen';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 function AdminTicket({ customOrder }) {
   const [ticketId, setTicketId] = useState(null);
@@ -107,7 +108,7 @@ function AdminTicket({ customOrder }) {
       { loading ? 
       <LoadingScreen />
       :
-      <div className="App">
+      <div className={appStyles.App}>
         <HeaderSection
           title={`Ticket Number: ${ticketId}`}
           fontWeight='bold'

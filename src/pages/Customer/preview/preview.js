@@ -12,9 +12,10 @@ import { processImageString } from '../../../utils/modifyImage';
 import { toastRef } from '../../../context/toastContext/toastContext'; 
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
 import { useOrderContext } from '../../../context/orderContext';
+import AdminNavBar from '../../../layout/navBars/adminNavBar';
 
 
-function Preview() {
+function Preview({isAdmin=false}) {
   const [collageImage, setCollageImage] = useState(null);
   const [zoomScale, setZoomScale] = useState('1');
   const [chosenZoom, setChosenZoom] = useState('1');
@@ -87,27 +88,35 @@ function Preview() {
     <LoadingScreen/>
     :
     <div>
-      <NavBar/>
+      {isAdmin ?
+        <AdminNavBar />
+      :
+        <NavBar />
+      }
       <div className={appStyles.App}>
         <MediumLogoHeader title={"Collage Preview"} />
 
-        <div>
-          <p style={{ marginTop: MARGINS.LARGE, marginBottom: MARGINS.VERY_SMALL}}>Quantity: </p>
-          <QuantitySelection quantity={quantity} handleQuantityChange={handleQuantityChange} />
-        </div>
+        {!isAdmin &&
+        <>
+          <div>
+            <p style={{ marginTop: MARGINS.LARGE, marginBottom: MARGINS.VERY_SMALL}}>Quantity: </p>
+            <QuantitySelection quantity={quantity} handleQuantityChange={handleQuantityChange} />
+          </div>
 
-        <GeneralButton
-          onClick={navigateToDownload}
-          text={<>Download ${parseFloat(constants.AMOUNT_DOWNLOAD / 100)}</>} 
-        />
+          <GeneralButton
+            onClick={navigateToDownload}
+            text={<>Download ${parseFloat(constants.AMOUNT_DOWNLOAD / 100)}</>} 
+          />
 
-        { constants.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE' ?
-        <GeneralButton
-          onClick={navigateToOrder}
-          text={<>Place Order ${(parseFloat(baseCost / 100) * quantity).toFixed(2)}</>} 
-        />
-        :
-        <p>{constants.PRINT_AVAILABLE_MESSAGE}</p>
+          { constants.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE' ?
+          <GeneralButton
+            onClick={navigateToOrder}
+            text={<>Place Order ${(parseFloat(baseCost / 100) * quantity).toFixed(2)}</>} 
+          />
+          :
+          <p>{constants.PRINT_AVAILABLE_MESSAGE}</p>
+          }
+        </>
         }
 
         <div>

@@ -17,13 +17,11 @@ import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCr
 const CustomerRoutes = () => (
   <Routes>
     <Route path="/" element={<Home />} />
-    {/*<Route path="collage-image-creation" element={<CollageCreation type="image" />} />
-    <Route path="collage-text-creation" element={<CollageCreation type="text" />} />*/}
-    <Route path="collage" element={<CollageCreation />} />
-    <Route path="collage/:step" element={<CollageCreation />} />
+    <Route path="collage" element={<CollageCreation isAdmin={false}/>} />
+    <Route path="collage/:step" element={<CollageCreation isAdmin={false}/>} />
     <Route path="support" element={<Support isCustomOrder={false} />} />
     <Route path="custom-order" element={<Support isCustomOrder={true} />} />
-    <Route path="preview" element={<Preview />} />
+    <Route path="preview" element={<Preview isAdmin={false}/>} />
     <Route path="order" element={<Order />} />
     <Route path="billing-page" element={<BillingPage />} />
     <Route path="confirmation" element={<Confirmation />} />

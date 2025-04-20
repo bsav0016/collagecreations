@@ -3,6 +3,7 @@ import { CollageCreationType } from "../../enums/collageCreationType";
 import ImageUpload from "../../../../../components/imageUpload/imageUpload";
 import heart from '../../../../../assets/symbols/Heart.jpg';
 import paw from '../../../../../assets/symbols/Paw.jpg';
+import rings from '../../../../../assets/symbols/Rings.jpg';
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
 import styles from './selectOutputStep.module.css';
@@ -109,9 +110,15 @@ export function SelectOutputStep({
     const [displayConfirmImage, setDisplayConfirmImage] = useState<boolean>(false);
     const [displayConfirmSymbol, setDisplayConfirmSymbol] = useState<boolean>(false);
 
+    const chooseYourOwn: SymbolOption = {
+        text: "Choose your own", image: null
+    }
+
     const availableSymbols: SymbolOption[] = [
         { text: 'Heart', image: heart },
-        { text: 'Paw', image: paw }
+        { text: 'Paw', image: paw },
+        { text: 'Rings', image: rings},
+        chooseYourOwn
     ]
 
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +149,11 @@ export function SelectOutputStep({
             return;
         }
         setMainImage(tempImage);
-        setCurrentStep(CollageCreationStep.SelectImagesStep);
+        if (type === CollageCreationType.Image) {
+            setCurrentStep(CollageCreationStep.SelectImagesStep);
+        } else {
+            setCurrentStep(CollageCreationStep.SelectSmallSizeStep);
+        }
     }
 
     const cancelImageSelection = () => {
@@ -160,7 +171,9 @@ export function SelectOutputStep({
         const symbol = availableSymbols.find(s => s.text === symbolText);
         if (symbol) {
             setSelectedSymbol(symbol);
-            setDisplayConfirmSymbol(true);
+            if (symbol !== chooseYourOwn) {
+                setDisplayConfirmSymbol(true);
+            }
         }
     };
 
@@ -184,82 +197,7 @@ export function SelectOutputStep({
 
     return (
         <div className={styles.outputContainer}>
-            {type === CollageCreationType.Image ?
-                <div>
-                    {loading ?
-                        <div>
-                            <div className={styles.loadingScreenView} >
-                                <LoadingScreen message={loadingMessage} />
-                            </div>
-                            {cropperVisible && 
-                                <CustomCropper
-                                    selectedImage={selectedImage}
-                                    crop={crop}
-                                    setCrop={setCrop}
-                                    zoom={zoom}
-                                    setZoom={setZoom}
-                                    setCropArea={setCropArea}
-                                    aspect={mapAspectRatio(outputSize)}
-                                >
-                                    <div className={styles.wrapRowContainer}>
-                                        <CropperButton
-                                            onClick={cropMainImage}
-                                            text="Crop"
-                                        />
-                                        <CropperButton
-                                            onClick={rotate}
-                                            text="Rotate Image"
-                                        />
-                                        <CropperButton
-                                            onClick={confirmCancelCrop}
-                                            text="Cancel"
-                                        />
-                                    </div>
-                                </CustomCropper>
-                            }
-                        </div>
-                    :
-                    <>
-                        <div className={styles.chooseCropView}>
-                            <Checkbox
-                                id="Crop image"
-                                checked={cropImage}
-                                onChange={handleChangeCropImage}
-                                disabled={false}
-                                checkboxSize={20}
-                            />
-                            <p className={styles.cropImageText}>Crop Image</p>
-                        </div>
-                        <ImageUpload
-                            id="main-image-upload"
-                            title="Choose Main Image"
-                            onChange={handleMainImageChange}
-                        />
-                        {displayConfirmImage &&
-                            <div className={styles.confirmContainer}>
-                                <div>
-                                    Confirm image?
-                                </div>
-                                <div className={styles.buttonContainer}>
-                                    <GeneralButton text="Yes" onClick={confirmImageSelection} />
-                                    <GeneralButton text="No" onClick={cancelImageSelection} />
-                                </div>
-                            </div>
-                        }
-                        {tempImage &&
-                            <div className={styles.mainImageContainer}>
-                                <img src={tempImage} 
-                                    alt="Main Image" 
-                                    className={styles.mainImage} 
-                                    style={{ aspectRatio: mapAspectRatio(outputSize) }}
-                                />
-                            </div>
-                        }
-                    </>
-                    }
-                </div>
-
-            : type === CollageCreationType.Text ?
+            {type === CollageCreationType.Text ?
                 <div className={styles.textInputView}>
                     <TextInput
                         maxWidth="50%"
@@ -270,7 +208,7 @@ export function SelectOutputStep({
                     <GeneralButton text={"Next Step"} onClick={completedText} />
                 </div>    
 
-            :
+            : type === CollageCreationType.Symbol ?
             <div>
                 <div className={styles.dropdownContainer}>
                     <select id="symbolSelect" onChange={handleSymbolChange}>
@@ -293,12 +231,98 @@ export function SelectOutputStep({
                         </div>
                     </div>
                 }
-                {selectedSymbol && (
+                {(selectedSymbol && selectedSymbol.text !== chooseYourOwn.text) && (
                     <div className={styles.symbolContainer}>
                         <img src={selectedSymbol.image} className={styles.symbolImage} alt={selectedSymbol.text} />
                     </div>
                 )}
             </div>
+            :
+            <></>
+            }
+
+            { (type === CollageCreationType.Image || 
+                (type === CollageCreationType.Symbol && 
+                    selectedSymbol && selectedSymbol.text === chooseYourOwn.text)) &&
+            <div>
+                {loading ?
+                    <div>
+                        <div className={styles.loadingScreenView} >
+                            <LoadingScreen message={loadingMessage} />
+                        </div>
+                        {cropperVisible && 
+                            <CustomCropper
+                                selectedImage={selectedImage}
+                                crop={crop}
+                                setCrop={setCrop}
+                                zoom={zoom}
+                                setZoom={setZoom}
+                                setCropArea={setCropArea}
+                                aspect={mapAspectRatio(outputSize)}
+                            >
+                                <div className={styles.wrapRowContainer}>
+                                    <CropperButton
+                                        onClick={cropMainImage}
+                                        text="Crop"
+                                    />
+                                    <CropperButton
+                                        onClick={rotate}
+                                        text="Rotate Image"
+                                    />
+                                    <CropperButton
+                                        onClick={confirmCancelCrop}
+                                        text="Cancel"
+                                    />
+                                </div>
+                            </CustomCropper>
+                        }
+                    </div>
+                :
+                <>
+                    <div className={styles.cropView}>
+                        <div className={styles.chooseCropView}>
+                            <Checkbox
+                                id="Crop image"
+                                checked={cropImage}
+                                onChange={handleChangeCropImage}
+                                disabled={false}
+                                checkboxSize={20}
+                            />
+                            <p className={styles.cropImageText}>Crop Image</p>
+                        </div>
+                        <p className={styles.cropImageText}>
+                            (If unselected, the image will instead be resized to the correct aspect ratio)
+                        </p>
+                    </div>
+                    <ImageUpload
+                        id="main-image-upload"
+                        title="Choose Main Image"
+                        onChange={handleMainImageChange}
+                    />
+                    {displayConfirmImage &&
+                        <div className={styles.confirmContainer}>
+                            <div>
+                                Confirm image?
+                            </div>
+                            <div className={styles.buttonContainer}>
+                                <GeneralButton text="Yes" onClick={confirmImageSelection} />
+                                <GeneralButton text="No" onClick={cancelImageSelection} />
+                            </div>
+                        </div>
+                    }
+                    {tempImage &&
+                        <div className={styles.mainImageContainer}>
+                            <img src={tempImage} 
+                                alt="Main Image" 
+                                className={styles.mainImage} 
+                                style={{ aspectRatio: mapAspectRatio(outputSize) }}
+                            />
+                        </div>
+                    }
+                </>
+                }
+            </div>
+
             }
         </div>
     )

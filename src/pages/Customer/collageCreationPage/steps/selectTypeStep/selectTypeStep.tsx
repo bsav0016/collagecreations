@@ -28,18 +28,6 @@ export function SelectTypeStep({
     defaultType
 }: SelectTypeStepProps) {
     const collageOptions: CollageTypeOption[] = [
-        { 
-            title: 'Image', 
-            type: CollageCreationType.Image, 
-            considerations: [
-                'Only black and white',
-                'You cannot select the small image size (0.3" x 0.3")',
-                'Output image must be 24" x 24" or larger',
-                'Most unique'
-
-            ],
-            image: imageCollage 
-        },
         {
             title: 'Text',
             type: CollageCreationType.Text,
@@ -59,6 +47,18 @@ export function SelectTypeStep({
                 'You may request custom symbol if you do not like the options'
             ],
             image: symbolCollage
+        },
+        { 
+            title: 'Image', 
+            type: CollageCreationType.Image, 
+            considerations: [
+                'Only black and white',
+                'You cannot select the small image size (0.3" x 0.3")',
+                'Output image must be 24" x 24" or larger',
+                'Most unique'
+
+            ],
+            image: imageCollage 
         }
     ]
 

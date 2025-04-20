@@ -8,6 +8,10 @@
     flex: 1;
     justify-items: center;
     flex-direction: column;
+    border: 1px solid #ccc; 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
 .sizeText {
@@ -21,4 +25,11 @@
     width: auto;
     height: 150px;
     margin-top: 10px;
+}
+
+@media (max-width: 728px) {
+    .pageContainer {
+        flex-direction: column;
+        gap: 25px;
+    }
 }

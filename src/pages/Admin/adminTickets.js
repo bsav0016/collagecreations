@@ -10,6 +10,7 @@ import styles from './search.module.css';
 import HeaderSection from '../../components/headerSection';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 function AdminTickets({ customOrder }) {
   const [ticketId, setTicketId] = useState('');
@@ -78,7 +79,7 @@ function AdminTickets({ customOrder }) {
       { loading ?
       <LoadingScreen />
       :
-      <div className="App">
+      <div className={appStyles.App}>
         <HeaderSection
           title={customOrder ? 'Custom Order' : 'Support Ticket'}
           fontWeight='bold'

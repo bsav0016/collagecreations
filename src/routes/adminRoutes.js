@@ -10,6 +10,8 @@ import AdminTicket from '../pages/Admin/adminTicket';
 import AdminTickets from '../pages/Admin/adminTickets';
 import Resolved from '../pages/Admin/resolved';
 import NotFound from '../pages/NotFound/notFound';
+import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';
+import Preview from '../pages/Customer/preview/preview';
 
 
 const AdminRoutes = () => (
@@ -42,11 +44,14 @@ const AdminRoutes = () => (
     <Route path="admin-custom-orders" element={<AdminTickets customOrder={true} />} />
     <Route path="admin-custom-order" element={<AdminTicket customOrder={true} />} />
     <Route path="resolved-custom-orders" element={<Resolved
-      title="Resolved Custom Orders" 
-      entryDisplay="Enter custom order id" 
+      title="Resolved Custom Orders"
+      entryDisplay="Enter custom order id"
       navigationExtension="admin-custom-order"
       type="customOrder"
     />} />
+    <Route path="admin-collage" element={<CollageCreation isAdmin={true}/>} />
+    <Route path="admin-collage/:step" element={<CollageCreation isAdmin={true}/>} />
+    <Route path="admin-preview" element={<Preview isAdmin={true}/>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

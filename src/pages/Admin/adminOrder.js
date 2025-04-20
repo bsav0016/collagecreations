@@ -8,10 +8,10 @@ import OrderService from '../../services/OrderService';
 import HeaderSection from '../../components/headerSection';
 import Form from '../../components/form/form';
 import FormField from '../../components/form/formField';
-import OrderDetailDTO from '../../dtos/OrderDTO/OrderDetailDTO';
 import { toastRef } from '../../context/toastContext/toastContext';
 import LoadingScreen from '../../components/loadingScreen/loadingScreen';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 //TODO: Need to be consistent if DTO is here or in the service
 
@@ -51,15 +51,13 @@ function AdminOrder() {
   const getOrder = async (orderId) => {
     setLoading(true);
     try {
-      const data = await OrderService.fetchOrder(userToken, orderId);
-      const orderDTO = OrderDetailDTO.fromResponse(data);
+      const orderDTO = await OrderService.fetchOrder(userToken, orderId);
       setOrderDetails(orderDTO);
 
       if (orderDTO.shippingNumber === undefined || orderDTO.shippingNumber === '') {
         setShippingNumberStartedBlank(true);
       }
       try {
-        console.log(orderDTO)
         let img = await processImageString(orderDTO.image);
         setImageUrl(URL.createObjectURL(img));
       } catch {
@@ -166,7 +164,7 @@ function AdminOrder() {
       {loading ?
       <LoadingScreen />
       :
-      <div className="App">
+      <div className={appStyles.App}>
         <HeaderSection
           title={`Order Number: ${id}`}
           fontWeight='bold'

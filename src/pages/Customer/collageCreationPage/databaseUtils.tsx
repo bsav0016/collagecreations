@@ -135,6 +135,7 @@ export const databaseUtils = (
         const blob = await convertImageToBlob(mainImage);
         await setVariable(mainImageString, blob);
     },
+    
     async loadMainImage() {
         try {
             const result = await loadVariable(mainImageString);

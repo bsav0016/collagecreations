@@ -28,3 +28,9 @@
     height: auto;
     justify-self: center;
 }
+
+@media (max-width: 728px) {
+    .previewImage {
+        width: 75%;
+    }
+}

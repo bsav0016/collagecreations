@@ -8,6 +8,7 @@ import Form from '../../components/form/form';
 import FormField from '../../components/form/formField';
 import styles from '../Customer/home/home.module.css';
 import LoginDTO from '../../dtos/loginDTO/loginDTO';
+import appStyles from '../../App.module.css';
 
 //FUTURE: Only allow certain number of attemps for login
 function Login() {
@@ -51,7 +52,7 @@ function Login() {
   };
 
   return (
-    <div className='App'>
+    <div className={appStyles.App}>
       <button onClick={updateClicked} className={styles.bigLogo}>
         <img src={bigLogo} alt="Big Logo" />
       </button>

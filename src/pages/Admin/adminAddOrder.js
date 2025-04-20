@@ -13,6 +13,7 @@ import RequiredFieldDesignator from '../../components/requiredFieldDesignator/re
 import OrderService from '../../services/OrderService';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 function AdminAddOrder() {
     const [orderAdd, setOrderAdd] = useState(new OrderAddDTO());
@@ -141,7 +142,7 @@ function AdminAddOrder() {
     return (
         <div>
             <AdminNavBar />
-            <div className="App">
+            <div className={appStyles.App}>
                 <HeaderSection
                     title='Add Order'
                     fontWeight='bold'

@@ -19,9 +19,13 @@ import styles from './collageCreationPage.module.css';
 import appStyles from '../../../App.module.css';
 import MediumLogoHeader from "../../../layout/mediumLogoHeader/mediumLogoHeader";
 import { databaseUtils } from "./databaseUtils";
+import AdminNavBar from "../../../layout/navBars/adminNavBar";
 
+interface CollageCreationPageProps {
+    isAdmin: boolean
+}
 
-export function CollageCreation() {
+export function CollageCreation({isAdmin=false}: CollageCreationPageProps) {
     const navigate = useNavigate();
     const { step } = useParams<{ step?: string }>();
     const { setVariable, loadVariable } = useLocalDatabase();
@@ -31,7 +35,8 @@ export function CollageCreation() {
         ? (step as unknown as CollageCreationStep)
         : CollageCreationStep.SelectTypeStep;
         
-    const goToNextStep = (nextStep: CollageCreationStep) => navigate(`/collage/${nextStep}`);
+    const baseCollageUrlExt = isAdmin ? '/admin/admin-collage/' : '/collage/';
+    const goToNextStep = (nextStep: CollageCreationStep) => navigate(`${baseCollageUrlExt}${nextStep}`);
 
 
     const defaultType: CollageCreationType = CollageCreationType.Image;
@@ -66,7 +71,6 @@ export function CollageCreation() {
         : null
 
     const subtitle: string | null = currentStep === CollageCreationStep.SelectOutputSizeStep ? "This is the size, in inches, that your collage will print to (width x height)"
-        : currentStep === CollageCreationStep.SelectOutputStep && type === CollageCreationType.Image ? 'If "Crop Image" is selected, you can crop to the aspect ratio from the output size selected in the previous step. Otherwise, your main image will automatically be resized to the appropriate aspect ratio.'
         : currentStep === CollageCreationStep.SelectSmallSizeStep ? "This is the size of the images that make up your collage (as compared to a US quarter)"
         : currentStep === CollageCreationStep.PreviewStep ? "This is an outline of how your collage will look. Click on any box you would like to be light instead of dark or vice versa"
         : currentStep === CollageCreationStep.SelectImagesStep ? "Please select at least 5 images. The more images you include, the more diversity your collage will have"
@@ -197,7 +201,11 @@ export function CollageCreation() {
                 <LoadingScreen message={loadingMessage} />
             ) : (
                 <div>
+                    {isAdmin ?
+                    <AdminNavBar />
+                    :
                     <NavBar />
+                    }
                     <div className={appStyles.App}>
                         {title &&
                             <div className={styles.collageCreationTitleContainer}>
@@ -207,8 +215,7 @@ export function CollageCreation() {
                                         <p className={styles.collageCreationSubtitle}>{subtitle}</p>
                                     </div>
                                 }
-                            </div> 
-                            
+                            </div>  
                         }
 
                         {currentStep === CollageCreationStep.SelectTypeStep ? (
@@ -247,6 +254,7 @@ export function CollageCreation() {
                                 setLoadingMessage={setLoadingMessage}
                                 dbUtils={dbUtils}
                                 defaultSmallImageSize={defaultSmallImageSize}
+                                mainImage={mainImage}
                             />
                         ) : currentStep === CollageCreationStep.PreviewStep ? (
                             <PreviewStep
@@ -271,6 +279,7 @@ export function CollageCreation() {
                                 color={color}
                                 setShowLoading={setShowLoading}
                                 setLoadingMessage={setLoadingMessage}
+                                isAdmin={isAdmin}
                             />
                         )}
                     </div>

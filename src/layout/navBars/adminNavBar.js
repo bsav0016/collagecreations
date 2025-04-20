@@ -39,6 +39,7 @@ function AdminNavBar() {
         ☰ Menu
       </div>
       <ul className={isOpen ? 'open' : ''}>
+        <li><Link to="/admin/admin-collage">Create Collage</Link></li>
         <li><Link to="/admin/admin-orders">Orders</Link></li>
         <li><Link to="/admin/admin-support-tickets">Support Tickets</Link></li>
         <li><Link to="/admin/admin-custom-orders">Custom Orders</Link></li>

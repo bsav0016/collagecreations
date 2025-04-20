@@ -6,4 +6,14 @@ export class OrderSummaryDTO {
         this.shipped = shipped;
         this.delivered = delivered;
     }
+
+    static fromData(data) {
+        return new OrderSummaryDTO(
+            data.id,
+            data.order_type,
+            data.printed,
+            data.shipped,
+            data.delivered
+        );
+    }
 }

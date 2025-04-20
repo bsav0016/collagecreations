@@ -10,6 +10,8 @@ import styles from './search.module.css'
 import HeaderSection from '../../components/headerSection';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
+
 
 //TODO: May want to look at restructuring this one... We should really just have an option to search by id, last name, or email, then have a button that will allow the rest of the page to load
 function AdminOrders() {
@@ -39,11 +41,11 @@ function AdminOrders() {
         const retreivedIds = retreivedOrders.map(order => order.id);
         setOrderIds(retreivedIds);
 
-        setUnactionedOrders(retreivedOrders.filter(order => !order.printed && !order.shipped && !order.delivered && order.order_type === 'order'));
-        setPrintedOrders(retreivedOrders.filter(order => order.printed && !order.shipped && !order.delivered && order.order_type === 'order'));
-        setShippedOrders(retreivedOrders.filter(order => order.printed && order.shipped && !order.delivered && order.order_type === 'order'));
-        setDeliveredOrders(retreivedOrders.filter(order => order.printed && order.shipped && order.delivered && order.order_type === 'order'));
-        setDownloadOrders(retreivedOrders.filter(order => order.order_type === 'download'));
+        setUnactionedOrders(retreivedOrders.filter(order => !order.printed && !order.shipped && !order.delivered && order.orderType === 'order'));
+        setPrintedOrders(retreivedOrders.filter(order => order.printed && !order.shipped && !order.delivered && order.orderType === 'order'));
+        setShippedOrders(retreivedOrders.filter(order => order.printed && order.shipped && !order.delivered && order.orderType === 'order'));
+        setDeliveredOrders(retreivedOrders.filter(order => order.printed && order.shipped && order.delivered && order.orderType === 'order'));
+        setDownloadOrders(retreivedOrders.filter(order => order.orderType === 'download'));
       } catch {
         toastRef.current('Network request error');
         navigate('/admin/login')
@@ -68,7 +70,6 @@ function AdminOrders() {
   }, [orders, unactionedOrders, printedOrders, shippedOrders, deliveredOrders, downloadOrders])
 
   const handleOrderClick = (id) => {
-    console.log("Here")
     navigate('/admin/admin-order/', {
       state: { id: id }
     });
@@ -101,7 +102,7 @@ function AdminOrders() {
       {loadingOrders ?
       <LoadingScreen />
       :
-      <div className="App">
+      <div className={appStyles.App}>
         <HeaderSection
           title='Orders'
           fontWeight='bold'

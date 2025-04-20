@@ -1,3 +1,5 @@
+import { OrderSummaryDTO } from '../dtos/OrderDTO/OrderSummaryDTO';
+import OrderDetailDTO from '../dtos/OrderDTO/OrderDetailDTO';
 import NetworkRequest from '../lib/networkClient';
 import { GET, PUT, POST, APPLICATION_JSON_HEADER, AUTHORIZATION_HEADER } from '../lib/networkRequestConstants';
 
@@ -16,7 +18,9 @@ const OrderService = {
                 headers: headers
             });
 
-            return response;
+            const order = OrderDetailDTO.fromResponse(response);
+
+            return order;
         } catch (error) {
             console.error('Error fetching order:', error);
             throw error;
@@ -79,9 +83,12 @@ const OrderService = {
             headers: headers
         });
 
-        //TODO: Should use OrderSummaryDTO here instead of having the entire orders
-    
-        return data.orders
+        const orders = []
+        for (let orderData of data.orders) {
+            orders.push(OrderSummaryDTO.fromData(orderData));
+        }
+
+        return orders
         } catch (error) {
             console.error('Error fetching orders:', error);
             throw(error);

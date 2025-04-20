@@ -8,6 +8,7 @@ import TextInput from '../../components/textInput/textInput';
 import styles from './search.module.css';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import appStyles from '../../App.module.css';
 
 function Resolved({ title, entryDisplay, navigationExtension, type }) {
     const navigate = useNavigate();
@@ -53,7 +54,7 @@ function Resolved({ title, entryDisplay, navigationExtension, type }) {
     return(
         <div>
             <AdminNavBar />
-            <div className="App">
+            <div className={appStyles.App}>
                 <HeaderSection
                     title={title}
                     fontWeight='bold'

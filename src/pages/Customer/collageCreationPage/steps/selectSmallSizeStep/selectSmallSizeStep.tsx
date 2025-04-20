@@ -24,6 +24,7 @@ interface SelectSmallSizeStepProps {
     setLoadingMessage: (loadingMessage: string | null) => void;
     dbUtils: any;
     defaultSmallImageSize: SmallImageSize;
+    mainImage: string | null;
 }
 
 export function SelectSmallSizeStep({
@@ -37,7 +38,8 @@ export function SelectSmallSizeStep({
     setShowLoading,
     setLoadingMessage,
     dbUtils,
-    defaultSmallImageSize
+    defaultSmallImageSize,
+    mainImage
 }: SelectSmallSizeStepProps) {
     const availableSmallSizes: SizeOption[] = [
         {
@@ -70,7 +72,8 @@ export function SelectSmallSizeStep({
                 outputSize,
                 newSize,
                 outputText,
-                outputSymbol ?? undefined
+                outputSymbol ?? undefined,
+                mainImage ?? undefined
             )
             setLightDarkArray(newArray);
             setCurrentStep(CollageCreationStep.PreviewStep);

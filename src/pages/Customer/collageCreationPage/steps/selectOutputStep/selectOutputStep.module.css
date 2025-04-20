@@ -1,6 +1,11 @@
 .outputContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+}
+
+.cropView {
+    margin: 20px;
 }
 
 .chooseCropView {
@@ -13,6 +18,8 @@
 
 .cropImageText {
     font-size: 22;
+    padding: 0px;
+    margin: 0px;
 }
 
 .mainImageContainer {
@@ -64,4 +71,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@media (max-width: 728px) {
+    .symbolImage {
+        width: 75%;
+    }
 }

@@ -22,9 +22,9 @@ function Home() {
   }
 
   const imagesToDisplay = [
-    imageCollage,
+    symbolCollage,
     textCollage,
-    symbolCollage
+    imageCollage
   ]
 
   return (
@@ -44,7 +44,8 @@ function Home() {
           <p style={{ margin: 0 }}>Please stop by the "Helpful Tips" page before building your collage.</p>
         </HeaderSection>
 
-        <div style={{ justifySelf: 'center', width: '100%', display: 'flex', ...(IS_DESKTOP && { flexDirection: 'row' })}}>
+        <div 
+          className={styles.collageImages}>
           {imagesToDisplay.map((image, index) => (
             <div style={{ flex: 1, margin: 30 }} key={index}>
               <img
@@ -52,8 +53,7 @@ function Home() {
                 style={{ width: '100%' }}
               />
             </div>
-          ))
-          }
+          ))}
 
         </div>
       </div>

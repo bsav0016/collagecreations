@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import loginService from '../services/loginService';
 
-const AuthContext = createContext();
+const AuthContext = createContext({ userToken: null });
 
 export const AuthProvider = ({ children }) => {
   const [userToken, setUserToken] = useState(null);

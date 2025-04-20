@@ -218,7 +218,6 @@ function Download() {
                 tempImageId={temporaryImageId} 
                 setLoading={setLoading}
               />
-              {/*TODO: Tie processing in here*/}
             </Elements>
           </HeaderSection>
         </div>
