@@ -111,7 +111,6 @@ export function SelectImagesStep({
                 file.type === 'image/heif' ||
                 (file.type === '' && file.name.toLowerCase().endsWith('.heic'));
         
-            console.log(file.type)
             if (file.type === 'image/jpeg') {
                 const options = {
                     maxSizeMB: 1,
@@ -132,7 +131,7 @@ export function SelectImagesStep({
                 imageUrl = URL.createObjectURL(convertedBlob[0]);
             } else {
                 imageUrl = null;
-                toastRef.current('One of your files is not png, jpg, or heic. It will not be included');
+                toastRef.current('One of your files is not png, jpg, webp, or heic. It will not be included');
                 continue;
             }
         

@@ -4,6 +4,7 @@ import ImageUpload from "../../../../../components/imageUpload/imageUpload";
 import heart from '../../../../../assets/symbols/Heart.jpg';
 import paw from '../../../../../assets/symbols/Paw.jpg';
 import rings from '../../../../../assets/symbols/Rings.jpg';
+import flower from '../../../../../assets/symbols/Flower.jpg';
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
 import styles from './selectOutputStep.module.css';
@@ -118,6 +119,7 @@ export function SelectOutputStep({
         { text: 'Heart', image: heart },
         { text: 'Paw', image: paw },
         { text: 'Rings', image: rings},
+        { text: 'Flower', image: flower},
         chooseYourOwn
     ]
 
@@ -148,6 +150,7 @@ export function SelectOutputStep({
             console.error("Image not provided");
             return;
         }
+        setOutputSymbol(chooseYourOwn);
         setMainImage(tempImage);
         if (type === CollageCreationType.Image) {
             setCurrentStep(CollageCreationStep.SelectImagesStep);
@@ -171,8 +174,10 @@ export function SelectOutputStep({
         const symbol = availableSymbols.find(s => s.text === symbolText);
         if (symbol) {
             setSelectedSymbol(symbol);
-            if (symbol !== chooseYourOwn) {
+            if (symbol.text !== chooseYourOwn.text) {
                 setDisplayConfirmSymbol(true);
+            } else {
+                setDisplayConfirmSymbol(false);
             }
         }
     };

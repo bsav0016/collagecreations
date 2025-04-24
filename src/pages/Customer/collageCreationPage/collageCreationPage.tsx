@@ -186,7 +186,6 @@ export function CollageCreation({isAdmin=false}: CollageCreationPageProps) {
         const storeVariables = async () => {
             for (const databaseFunction of databaseFunctions) {
                 if (!databaseFunction.ignoreStorage) {
-                    console.log("Store variable: ", databaseFunction.variableString)
                     await databaseFunction.storeVariable(databaseFunction.variable);
                 }
             }

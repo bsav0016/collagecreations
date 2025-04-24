@@ -135,14 +135,14 @@ export const createImgString = async (blob) => {
     })
 };
 
-export const processImageString = async (imageString) => {
+export const processImageString = async (imageString, type='image/jpeg') => {
     try {
         const decodedData = atob(imageString);
         const bytes = new Uint8Array(decodedData.length);
         for (let i = 0; i < decodedData.length; i++) {
             bytes[i] = decodedData.charCodeAt(i);
         }
-        return new Blob([bytes], { type: 'image/jpeg' });
+        return new Blob([bytes], { type: type });
     } catch (error) {
         throw new Error(`Error processing string: ${error}`)
     }

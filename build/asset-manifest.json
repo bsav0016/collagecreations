@@ -1,11 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.3960bbc2.css",
-    "main.js": "/static/js/main.815bc53e.js",
+    "main.css": "/static/css/main.3eb54a5a.css",
+    "main.js": "/static/js/main.b01fb600.js",
     "static/js/453.6711574a.chunk.js": "/static/js/453.6711574a.chunk.js",
     "static/media/exampleTextCollage.png": "/static/media/exampleTextCollage.30d54e74258ee2e5bdc6.png",
     "static/media/exampleSymbolCollage.png": "/static/media/exampleSymbolCollage.536d52152f4d1137e54e.png",
+    "static/media/big-logo.png": "/static/media/big-logo.41202d0a8e06a40f93ab.png",
     "static/media/exampleImageCollage.png": "/static/media/exampleImageCollage.c594bbc4968daf64e090.png",
+    "static/media/medium-logo.png": "/static/media/medium-logo.87fa7eb2903f85b70544.png",
+    "static/media/Rings.jpg": "/static/media/Rings.f37420edc2d018204935.jpg",
     "static/media/Paw.jpg": "/static/media/Paw.612f91ac143d5efbfc7f.jpg",
     "static/media/comparison24x24.png": "/static/media/comparison24x24.2b959feab4108e0c4e5b.png",
     "static/media/quarterMediumImages.png": "/static/media/quarterMediumImages.1bb1ec27b589b2dde895.png",
@@ -17,14 +20,13 @@
     "static/media/comparison36x24.png": "/static/media/comparison36x24.e84f18bcdfde433e21a4.png",
     "static/media/comparison12x18.png": "/static/media/comparison12x18.0c2aaebc628be0b99d25.png",
     "static/media/comparison24x36.png": "/static/media/comparison24x36.937e620af5e511adb055.png",
-    "static/media/big-logo.png": "/static/media/big-logo.6d269d91e8318f7d6c67.png",
     "index.html": "/index.html",
-    "main.3960bbc2.css.map": "/static/css/main.3960bbc2.css.map",
-    "main.815bc53e.js.map": "/static/js/main.815bc53e.js.map",
+    "main.3eb54a5a.css.map": "/static/css/main.3eb54a5a.css.map",
+    "main.b01fb600.js.map": "/static/js/main.b01fb600.js.map",
     "453.6711574a.chunk.js.map": "/static/js/453.6711574a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3960bbc2.css",
-    "static/js/main.815bc53e.js"
+    "static/css/main.3eb54a5a.css",
+    "static/js/main.b01fb600.js"
   ]
 }

@@ -54,8 +54,6 @@ const OrderService = {
                 ...AUTHORIZATION_HEADER(token),
                 ...APPLICATION_JSON_HEADER
             };
-
-            console.log("send shipped email");
             
             await NetworkRequest({
                 urlExtension: 'api/send-shipment-email/',

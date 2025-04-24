@@ -2,7 +2,7 @@ import { CollageCreationType } from "../../pages/Customer/collageCreationPage/en
 import { OutputSize } from "../../pages/Customer/collageCreationPage/enums/OutputSize";
 import { SmallImageSize } from "../../pages/Customer/collageCreationPage/enums/SmallImageSize";
 import { SymbolOption } from "../../pages/Customer/collageCreationPage/interfaces/SymbolOption";
-import { convertImageToBlob, createFileFromBlobUrl, processImageString } from "../../utils/modifyImage";
+import { createFileFromBlobUrl } from "../../utils/modifyImage";
 
 export class CreatePreviewDTO {
     type: string;
@@ -80,7 +80,6 @@ export class CreatePreviewDTO {
         }
         if (this.mainImageUrl) {
             const symbolImage = await createFileFromBlobUrl(this.mainImageUrl);
-            console.log(symbolImage);
             formData.append('symbol_image', symbolImage);
         }
         return formData;

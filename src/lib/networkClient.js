@@ -13,10 +13,9 @@ async function NetworkRequest({ urlExtension, method, headers = {}, body }) {
         });
 
         if (!acceptableResponseCodes.includes(response.status)) {
-            console.log(response)
             let errorResponse = await response.json();
             let error = errorResponse.error;
-            console.log(error)
+            console.error(error)
             if (error) {
                 throw(error);
             } else {

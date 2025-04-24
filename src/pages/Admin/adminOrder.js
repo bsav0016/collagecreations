@@ -99,7 +99,6 @@ function AdminOrder() {
 
       if (response) {
         if (shippingNumberStartedBlank && orderDetails.shippingNumber !== '') {
-          console.log("send shipped email")
           await OrderService.sendShipmentEmail(userToken, id, orderDetails.shippingNumber, orderDetails.email);
         }
         navigate('/admin/admin-orders');
