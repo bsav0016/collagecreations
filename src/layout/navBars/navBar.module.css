@@ -1,5 +1,5 @@
 nav {
-    background-color: #282c34;
+    background-color: #ffffff;
 }
 
 ul {
@@ -15,7 +15,8 @@ li {
     text-align: center;
 }
 
-a, .dropdown > span {
+a,
+.dropdown > span {
     display: block;
     color: white;
     text-decoration: none;

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 interface HeaderSectionProps {
   title: string;
@@ -15,12 +15,10 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   fontSize = 18,
   marginTop = 0,
   marginBottom = 0,
-  fontWeight = 'normal',
+  fontWeight = "normal",
 }) => (
-  <div style={{ marginTop, marginBottom }}>
-    <header style={{ fontSize, fontWeight }}>
-      {title}
-    </header>
+  <div style={{ marginTop, marginBottom, color: "black" }}>
+    <header style={{ fontSize, fontWeight, color: "black" }}>{title}</header>
     {children}
   </div>
 );
