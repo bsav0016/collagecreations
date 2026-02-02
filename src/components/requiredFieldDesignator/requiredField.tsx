@@ -1,8 +1,7 @@
 import React from "react";
-import styles from "./requiredFieldDesignator.module.css";
 
-const RequiredFieldDesignator = () => {
-  return <p className={styles.requiredFieldDesignator}>*Required field</p>;
+const RequiredFieldDesignator: React.FC = () => {
+    return <p className="text-lg text-red-500 m-[5px]">*Required field</p>;
 };
 
 export default RequiredFieldDesignator;

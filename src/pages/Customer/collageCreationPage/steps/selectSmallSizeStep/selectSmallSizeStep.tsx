@@ -1,4 +1,3 @@
-import React from "react";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
 import { SmallImageSize } from "../../enums/SmallImageSize";
@@ -10,7 +9,6 @@ import { SymbolOption } from "../../interfaces/SymbolOption";
 import largeImages from '../../../../../assets/quarterLargeImages.png';
 import mediumImages from '../../../../../assets/quarterMediumImages.png';
 import smallImages from '../../../../../assets/quarterSmallImages.png';
-import styles from './selectSmallSizeStep.module.css'
 
 interface SelectSmallSizeStepProps {
     setCurrentStep: (newStep: CollageCreationStep) => void;
@@ -87,12 +85,15 @@ export function SelectSmallSizeStep({
     }
 
     return (
-        <div className={styles.pageContainer}>
+        <div className="flex flex-row gap-12 max-md:flex-col max-md:gap-6">
             {availableSmallSizes.map((availableSize, index) => (
-                <div className={styles.sizeContainer} key={index}>
-                    <p className={styles.sizeText}>{availableSize.text}</p>
+                <div 
+                    className="flex-1 justify-items-center flex-col border border-gray-300 rounded-lg shadow-md transition-all duration-200" 
+                    key={index}
+                >
+                    <p className="p-0 m-2.5 text-2xl font-medium">{availableSize.text}</p>
                     <GeneralButton text={"Select"} onClick={() => selectSmallSize(availableSize.text)} />
-                    <img src={availableSize.image} className={styles.image}/>
+                    <img src={availableSize.image} className="w-auto h-[150px] mt-2.5" alt={availableSize.text} />
                 </div>
             ))}
         </div>

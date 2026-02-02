@@ -17,11 +17,9 @@ import CropperButton from '../../../components/cropperButton/cropperButton';
 import QuantitySelection from '../../../components/quantitySelection';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
 import { toastRef } from '../../../context/toastContext/toastContext';
-import appStyles from '../../../App.module.css';
 import { CropCoordinate } from '../collageCreationPage/interfaces/CropCoordinate';
 import { CropArea } from '../collageCreationPage/interfaces/CropArea';
 import { OutputSize } from '../collageCreationPage/enums/OutputSize';
-import styles from './regularImageOrder.module.css';
 import { useOrderContext } from '../../../context/orderContext';
 
 
@@ -41,7 +39,7 @@ const RegularImageOrder: React.FC = () => {
   const [tempQuantity, setTempQuantity] = useState<number>(1);
 
   const { constants } = useConstants();
-  const { setTemporaryImageId, setBaseCost, setQuantity } = useOrderContext();
+  const { setTemporaryImageId, setQuantity } = useOrderContext();
   const navigate = useNavigate();
   usePreventScroll(cropperVisible);
 
@@ -150,14 +148,14 @@ const RegularImageOrder: React.FC = () => {
       {loading ? (
         <LoadingScreen message="Processing image..." />
       ) : constants?.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE' ? (
-        <div className={appStyles.App}>
+        <div className="text-center py-5">
           <MediumLogoHeader title="Large Format" />
 
           <HeaderSection title="Step 1. Choose an output size in inches - width x height.">
             <select 
                 value={size} 
                 onChange={updateSize} 
-                className={styles.dropDown} 
+                className="inline-block py-2.5 px-[3px] cursor-pointer bg-blue-500 text-white border-none rounded-[5px] text-base w-auto min-w-[50px]" 
                 disabled={loading}
             >
               {
@@ -178,7 +176,7 @@ const RegularImageOrder: React.FC = () => {
           </HeaderSection>
 
           <HeaderSection title="Step 3. Select which image you'd like to print." marginTop={MARGINS.LARGE}>
-            <ImageUpload id="main-image-upload" title={loading ? <>Loading<LoadingDots /></> : 'Choose Image'} onChange={doHandleMainImageChange} disabled={loading} />
+            <ImageUpload id="main-image-upload" title={loading ? 'Loading...' : 'Choose Image'} onChange={doHandleMainImageChange} disabled={loading} />
           </HeaderSection>
 
           {mainImage &&

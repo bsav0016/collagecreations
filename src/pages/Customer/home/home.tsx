@@ -2,8 +2,6 @@ import imageCollage from "../../../assets/exampleImageCollage.png";
 import textCollage from "../../../assets/exampleTextCollage.png";
 import symbolCollage from "../../../assets/exampleSymbolCollage.png";
 import NavBar from "../../../layout/navBars/navBar";
-import styles from "./home.module.css";
-import appStyles from "../../../App.module.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
@@ -13,7 +11,6 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter,
   CardDescription,
 } from "../../../components/ui/card";
 import { Helmet } from "react-helmet-async";
@@ -28,8 +25,6 @@ function Home() {
     }
     setLogoClicked((prev) => prev + 1);
   };
-
-  const imagesToDisplay: string[] = [symbolCollage, textCollage, imageCollage];
 
   return (
     <>
@@ -74,12 +69,12 @@ function Home() {
       <div>
         <NavBar />
         <main className="flex-col items-center justify-center">
-          <section className={appStyles.App}>
-            <button onClick={updateClicked} className={styles.bigLogo}>
+          <section className="text-center py-5">
+            <button onClick={updateClicked} className="border-0 bg-white w-full">
               <img
                 src={MosaicMaker}
                 alt="Mosaic Maker Logo"
-                style={{ width: "15%" }}
+                className="w-[15%] justify-self-center max-md:w-[60%]"
               />
             </button>
             <h1 className="text-center font-bold text-3xl">Mosaic Maker</h1>
@@ -100,7 +95,7 @@ function Home() {
                 Get Started
               </Button>
             </div>
-            <section className="flex gap-6 justify-center mt-8">
+            <section className="flex flex-col md:flex-row gap-6 justify-center items-center mt-8 px-4">
               <article>
                 <Card className="w-85">
                   <CardHeader>

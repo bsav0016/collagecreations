@@ -1,7 +1,5 @@
-import React, { useState } from "react";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
-import styles from "./previewStep.module.css";
 
 interface PreviewStepProps {
     setCurrentStep: (newStep: CollageCreationStep) => void;
@@ -37,12 +35,12 @@ export function PreviewStep({
 
     return (
         <div>
-            <div style={{display: 'flex', width: 'auto', justifyContent: 'center'}}>
+            <div className="flex w-auto justify-center">
                 <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} />
             </div>
-            <div className={styles.gridContainer}>
+            <div className="flex flex-col items-center gap-0">
                 {lightDarkArray.map((lightDarkRow, i) => (
-                    <div className={styles.rowContainer} key={i}>
+                    <div className="flex gap-0 m-0 p-0" key={i}>
                         {lightDarkRow.map((lightDarkCell, j) => (
                             <button
                                 key={j}

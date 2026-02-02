@@ -7,9 +7,8 @@ import rings from '../../../../../assets/symbols/Rings.jpg';
 import flower from '../../../../../assets/symbols/Flower.jpg';
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
-import styles from './selectOutputStep.module.css';
 import { SymbolOption } from "../../interfaces/SymbolOption";
-import TextInput from "../../../../../components/textInput/newTextInput";
+import TextInput from "../../../../../components/textInput/textInput";
 import Checkbox from "../../../../../components/checkbox/checkbox";
 import { CropCoordinate } from "../../interfaces/CropCoordinate";
 import { CropArea } from "../../interfaces/CropArea";
@@ -65,7 +64,7 @@ export function SelectOutputStep({
 
     const cropMainImage = async () => {
         if (!constants || !constants.PPI) {
-            toastRef.current('Could not get constants');
+            toastRef.current?.('Could not get constants');
             return;
         }
         setCropperVisible(false);
@@ -79,7 +78,7 @@ export function SelectOutputStep({
     }
     
     const confirmCancelCrop = () => {
-        toastRef.current("Are you sure you want to cancel cropping this image?", 
+        toastRef.current?.("Are you sure you want to cancel cropping this image?", 
             "info", 
             async () => {
             handleCancelCrop();
@@ -201,9 +200,9 @@ export function SelectOutputStep({
     };
 
     return (
-        <div className={styles.outputContainer}>
-            {type === CollageCreationType.Text ?
-                <div className={styles.textInputView}>
+        <div className="flex flex-col justify-center">
+            {type === CollageCreationType.Text ? (
+                <div className="w-auto">
                     <TextInput
                         maxWidth="50%"
                         value={text}
@@ -211,124 +210,122 @@ export function SelectOutputStep({
                         onChange={handleTextChange}
                     />
                     <GeneralButton text={"Next Step"} onClick={completedText} />
-                </div>    
-
-            : type === CollageCreationType.Symbol ?
-            <div>
-                <div className={styles.dropdownContainer}>
-                    <select id="symbolSelect" onChange={handleSymbolChange}>
-                        <option value="">--Select a symbol--</option>
-                        {availableSymbols.map((symbol) => (
-                            <option key={symbol.text} value={symbol.text}>
-                                {symbol.text}
-                            </option>
-                        ))}
-                    </select>
                 </div>
-                {displayConfirmSymbol &&
-                    <div className={styles.confirmContainer}>
-                        <div>
-                            Confirm symbol?
-                        </div>
-                        <div className={styles.buttonContainer}>
-                            <GeneralButton text="Yes" onClick={confirmSymbolSelection} />
-                            <GeneralButton text="No" onClick={cancelSymbolSelection} />
-                        </div>
+            ) : type === CollageCreationType.Symbol ? (
+                <div>
+                    <div className="justify-items-center justify-self-center w-auto content-center">
+                        <select id="symbolSelect" onChange={handleSymbolChange}>
+                            <option value="">--Select a symbol--</option>
+                            {availableSymbols.map((symbol) => (
+                                <option key={symbol.text} value={symbol.text}>
+                                    {symbol.text}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                }
-                {(selectedSymbol && selectedSymbol.text !== chooseYourOwn.text) && (
-                    <div className={styles.symbolContainer}>
-                        <img src={selectedSymbol.image} className={styles.symbolImage} alt={selectedSymbol.text} />
-                    </div>
-                )}
-            </div>
-            :
-            <></>
-            }
+                    {displayConfirmSymbol && (
+                        <div className="justify-items-center">
+                            <div>
+                                Confirm symbol?
+                            </div>
+                            <div className="flex flex-row">
+                                <GeneralButton text="Yes" onClick={confirmSymbolSelection} />
+                                <GeneralButton text="No" onClick={cancelSymbolSelection} />
+                            </div>
+                        </div>
+                    )}
+                    {(selectedSymbol && selectedSymbol.text !== chooseYourOwn.text) && (
+                        <div className="flex justify-center items-center">
+                            <img src={selectedSymbol.image} className="w-[40%] max-md:w-[75%]" alt={selectedSymbol.text} />
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <></>
+            )}
 
-            { (type === CollageCreationType.Image || 
+            {(type === CollageCreationType.Image || 
                 (type === CollageCreationType.Symbol && 
-                    selectedSymbol && selectedSymbol.text === chooseYourOwn.text)) &&
-            <div>
-                {loading ?
-                    <div>
-                        <div className={styles.loadingScreenView} >
-                            <LoadingScreen message={loadingMessage} />
+                    selectedSymbol && selectedSymbol.text === chooseYourOwn.text)) && (
+                <div>
+                    {loading ? (
+                        <div>
+                            <div className="fixed top-0 left-0 w-full h-full z-[1000] flex justify-center items-center">
+                                <LoadingScreen message={loadingMessage} />
+                            </div>
+                            {cropperVisible && selectedImage &&
+                                <CustomCropper
+                                    selectedImage={selectedImage}
+                                    crop={crop}
+                                    setCrop={setCrop}
+                                    zoom={zoom}
+                                    setZoom={setZoom}
+                                    setCropArea={setCropArea}
+                                    aspect={mapAspectRatio(outputSize)}
+                                >
+                                    <div className="flex flex-wrap justify-center">
+                                        <CropperButton
+                                            onClick={cropMainImage}
+                                            text="Crop"
+                                        />
+                                        <CropperButton
+                                            onClick={rotate}
+                                            text="Rotate Image"
+                                        />
+                                        <CropperButton
+                                            onClick={confirmCancelCrop}
+                                            text="Cancel"
+                                        />
+                                    </div>
+                                </CustomCropper>
+                            }
                         </div>
-                        {cropperVisible && 
-                            <CustomCropper
-                                selectedImage={selectedImage}
-                                crop={crop}
-                                setCrop={setCrop}
-                                zoom={zoom}
-                                setZoom={setZoom}
-                                setCropArea={setCropArea}
-                                aspect={mapAspectRatio(outputSize)}
-                            >
-                                <div className={styles.wrapRowContainer}>
-                                    <CropperButton
-                                        onClick={cropMainImage}
-                                        text="Crop"
+                    ) : (
+                        <>
+                            <div className="m-5">
+                                <div className="flex flex-row justify-center items-center gap-1.5">
+                                    <Checkbox
+                                        id="Crop image"
+                                        checked={cropImage}
+                                        onChange={handleChangeCropImage}
+                                        disabled={false}
+                                        checkboxSize={20}
                                     />
-                                    <CropperButton
-                                        onClick={rotate}
-                                        text="Rotate Image"
-                                    />
-                                    <CropperButton
-                                        onClick={confirmCancelCrop}
-                                        text="Cancel"
+                                    <p className="text-[22px] p-0 m-0">Crop Image</p>
+                                </div>
+                                <p className="text-[22px] p-0 m-0">
+                                    (If unselected, the image will instead be resized to the correct aspect ratio)
+                                </p>
+                            </div>
+                            <ImageUpload
+                                id="main-image-upload"
+                                title="Choose Main Image"
+                                onChange={handleMainImageChange}
+                            />
+                            {displayConfirmImage && (
+                                <div className="justify-items-center">
+                                    <div>
+                                        Confirm image?
+                                    </div>
+                                    <div className="flex flex-row">
+                                        <GeneralButton text="Yes" onClick={confirmImageSelection} />
+                                        <GeneralButton text="No" onClick={cancelImageSelection} />
+                                    </div>
+                                </div>
+                            )}
+                            {tempImage && (
+                                <div className="w-[40%] justify-self-center">
+                                    <img src={tempImage} 
+                                        alt="Main Image" 
+                                        className="w-full" 
+                                        style={{ aspectRatio: mapAspectRatio(outputSize) }}
                                     />
                                 </div>
-                            </CustomCropper>
-                        }
-                    </div>
-                :
-                <>
-                    <div className={styles.cropView}>
-                        <div className={styles.chooseCropView}>
-                            <Checkbox
-                                id="Crop image"
-                                checked={cropImage}
-                                onChange={handleChangeCropImage}
-                                disabled={false}
-                                checkboxSize={20}
-                            />
-                            <p className={styles.cropImageText}>Crop Image</p>
-                        </div>
-                        <p className={styles.cropImageText}>
-                            (If unselected, the image will instead be resized to the correct aspect ratio)
-                        </p>
-                    </div>
-                    <ImageUpload
-                        id="main-image-upload"
-                        title="Choose Main Image"
-                        onChange={handleMainImageChange}
-                    />
-                    {displayConfirmImage &&
-                        <div className={styles.confirmContainer}>
-                            <div>
-                                Confirm image?
-                            </div>
-                            <div className={styles.buttonContainer}>
-                                <GeneralButton text="Yes" onClick={confirmImageSelection} />
-                                <GeneralButton text="No" onClick={cancelImageSelection} />
-                            </div>
-                        </div>
-                    }
-                    {tempImage &&
-                        <div className={styles.mainImageContainer}>
-                            <img src={tempImage} 
-                                alt="Main Image" 
-                                className={styles.mainImage} 
-                                style={{ aspectRatio: mapAspectRatio(outputSize) }}
-                            />
-                        </div>
-                    }
-                </>
-                }
-            </div>
-
-            }
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
         </div>
     )
 }

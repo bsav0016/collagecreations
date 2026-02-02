@@ -12,7 +12,6 @@ import BasicButton from "../../../../../components/basicButton/basicButton";
 import CustomCropper from "../../../../../components/customCropper/customCropper";
 import CropperButton from "../../../../../components/cropperButton/cropperButton";
 import { useConstants } from "../../../../../context/constantsContext";
-import styles from "./selectImagesStep.module.css";
 import LoadingScreen from "../../../../../components/loadingScreen/loadingScreen";
 import { CropCoordinate } from "../../interfaces/CropCoordinate";
 import { CropArea } from "../../interfaces/CropArea";
@@ -68,7 +67,7 @@ export function SelectImagesStep({
     };
     
     const confirmCancelCrop = () => {
-        toastRef.current("Are you sure you want to cancel cropping all images? You can also skip this image or remove an individual image later", 
+        toastRef.current?.("Are you sure you want to cancel cropping all images? You can also skip this image or remove an individual image later", 
             "info", 
             async () => {
             handleCancelCrop();
@@ -92,7 +91,7 @@ export function SelectImagesStep({
     };
     
     const confirmClearImages = () => {
-        toastRef.current("Are you sure you want to clear all images?", "info", () => {
+        toastRef.current?.("Are you sure you want to clear all images?", "info", () => {
             setSmallImages([]);
             deleteVariable('smallImages')
         });
@@ -121,7 +120,7 @@ export function SelectImagesStep({
                     const compressedFile = await imageCompression(file, options);
                     imageUrl = URL.createObjectURL(compressedFile);
                 } catch (error: any) {
-                    toastRef.current(`${error.message}`);
+                    toastRef.current?.(`${error.message}`);
                     imageUrl = null;
                 }
             } else if (file.type === 'image/png' || file.type === 'image/webp') {
@@ -131,7 +130,7 @@ export function SelectImagesStep({
                 imageUrl = URL.createObjectURL(convertedBlob[0]);
             } else {
                 imageUrl = null;
-                toastRef.current('One of your files is not png, jpg, webp, or heic. It will not be included');
+                toastRef.current?.('One of your files is not png, jpg, webp, or heic. It will not be included');
                 continue;
             }
         
@@ -146,7 +145,7 @@ export function SelectImagesStep({
                 } else if (error.message === skippedError.message) {
                     continue;
                 } else {
-                    toastRef.current('Could not complete crop');
+                    toastRef.current?.('Could not complete crop');
                 }
             }
         }
@@ -159,7 +158,7 @@ export function SelectImagesStep({
     const cropIndividualImage = async () => {
         const resolveCrop = cropperRef.current.resolve
         if (!constants || !constants.PPI) {
-            toastRef.current('Could not get constants');
+            toastRef.current?.('Could not get constants');
             return;
         }
         if (resolveCrop) {
@@ -179,75 +178,76 @@ export function SelectImagesStep({
 
     return (
         <div>
-            {localLoading ?
-            <div>
-                <div className={styles.loadingScreenView} >
-                    <LoadingScreen message="Saving image and preparing next image..."/>
+            {localLoading ? (
+                <div>
+                    <div className="fixed top-0 left-0 w-full h-full z-[1000] flex justify-center items-center">
+                        <LoadingScreen message="Saving image and preparing next image..."/>
+                    </div>
+                    {cropperVisible && selectedImage &&
+                        <CustomCropper
+                            selectedImage={selectedImage}
+                            crop={crop}
+                            setCrop={setCrop}
+                            zoom={zoom}
+                            setZoom={setZoom}
+                            setCropArea={setCropArea}
+                        >
+                            <div className="flex flex-wrap justify-center">
+                                <CropperButton
+                                    onClick={cropIndividualImage}
+                                    text="Crop"
+                                />
+                                <CropperButton
+                                    onClick={rotate}
+                                    text="Rotate Image"
+                                />
+                                <CropperButton
+                                    onClick={skipImage}
+                                    text="Skip Image"
+                                />
+                                <CropperButton
+                                    onClick={confirmCancelCrop}
+                                    text="Cancel All"
+                                />
+                            </div>
+                        </CustomCropper>
+                    }
                 </div>
-                {cropperVisible && 
-                    <CustomCropper
-                        selectedImage={selectedImage}
-                        crop={crop}
-                        setCrop={setCrop}
-                        zoom={zoom}
-                        setZoom={setZoom}
-                        setCropArea={setCropArea}
-                    >
-                        <div className={styles.wrapRowContainer}>
-                            <CropperButton
-                                onClick={cropIndividualImage}
-                                text="Crop"
-                            />
-                            <CropperButton
-                                onClick={rotate}
-                                text="Rotate Image"
-                            />
-                            <CropperButton
-                                onClick={skipImage}
-                                text="Skip Image"
-                            />
-                            <CropperButton
-                                onClick={confirmCancelCrop}
-                                text="Cancel All"
-                            />
-                        </div>
-                    </CustomCropper>
-                }
-            </div>
-            :
-            <div className={styles.buttonContainer}>
-                <GeneralButton 
-                    text={smallImages.length < 5 ? "Minimum 5 Images" : "Next Step"} 
-                    onClick={() => goToCreate()} 
-                    disabled={smallImages.length < 5} 
-                />
-                <ImageUpload
-                    id="image-upload"
-                    title="Add Images"
-                    onChange={uploadSmallImages}
-                    multiple={true}
-                />
-                {(smallImages.length > 0) && (
-                    <BasicButton
-                    onClick={confirmClearImages}
-                    text="Clear All Images"
+            ) : (
+                <div className="flex flex-col items-center">
+                    <GeneralButton 
+                        text={smallImages.length < 5 ? "Minimum 5 Images" : "Next Step"} 
+                        onClick={() => goToCreate()} 
+                        disabled={smallImages.length < 5} 
                     />
-                )}
-                <div className={styles.wrapRowContainer}>
-                    {smallImages.slice().reverse().map((croppedImage, index) => {
-                    const originalIndex = smallImages.length - 1 - index
-                    return (
-                        <div key={index} className={styles.imageItem}>
-                            <img src={croppedImage} alt="Cropped" />
-                            <BasicButton
-                                onClick={() => handleDelete(originalIndex)}
-                                text="Delete"
-                            />
-                        </div>
-                    )})}
+                    <ImageUpload
+                        id="image-upload"
+                        title="Add Images"
+                        onChange={uploadSmallImages}
+                        multiple={true}
+                    />
+                    {(smallImages.length > 0) && (
+                        <BasicButton
+                            onClick={confirmClearImages}
+                            text="Clear All Images"
+                        />
+                    )}
+                    <div className="flex flex-wrap justify-center">
+                        {smallImages.slice().reverse().map((croppedImage, index) => {
+                            const originalIndex = smallImages.length - 1 - index;
+                            return (
+                                <div key={index} className="flex flex-col items-center my-6 mx-12 max-md:my-2.5 max-md:mx-5">
+                                    <img src={croppedImage} alt="Cropped" className="max-w-full max-h-[120px] max-md:max-h-[90px]" />
+                                    <BasicButton
+                                        onClick={() => handleDelete(originalIndex)}
+                                        text="Delete"
+                                    />
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
-            }
+            )}
         </div>
     )
 }

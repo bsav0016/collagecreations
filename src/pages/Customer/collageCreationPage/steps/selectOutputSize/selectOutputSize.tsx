@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CollageCreationType } from "../../enums/collageCreationType";
 import { OutputSize } from "../../enums/OutputSize";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
@@ -9,8 +9,6 @@ import img18x12 from "../../../../../assets/comparison18x12.png";
 import img24x24 from "../../../../../assets/comparison24x24.png";
 import img24x36 from "../../../../../assets/comparison24x36.png";
 import img36x24 from "../../../../../assets/comparison36x24.png";
-import styles from './selectOutputSize.module.css';
-
 
 interface SelectOutputSizeStepProps {
     setCurrentStep: (newStep: CollageCreationStep) => void;
@@ -98,31 +96,31 @@ export function SelectOutputSizeStep({
 
     return (
         <div>
-            <div className={styles.buttonContainer}>
+            <div className="flex flex-row gap-2.5 justify-center items-center flex-wrap">
                 {availableSizes.map((availableSize) => (
                     <GeneralButton text={availableSize} onClick={() => selectSize(availableSize)} key={availableSize} />
                 ))}
             </div>
-            {displayConfirm &&
-                <div className={styles.confirmContainer}>
+            {displayConfirm && (
+                <div className="justify-items-center mt-5">
                     <div>
                         Confirm size?
                     </div>
-                    <div className={styles.buttonContainer}>
+                    <div className="flex flex-row gap-2.5">
                         <GeneralButton text="Yes" onClick={confirmSelection} />
                         <GeneralButton text="No" onClick={cancelSelection} />
                     </div>
                 </div>
-            }
-            {selectedSize &&
-                <div className={styles.previewContainer}>
+            )}
+            {selectedSize && (
+                <div className="flex justify-center">
                     <img 
                         src={outputSizeImages[selectedSize]}
                         alt={selectedSize} 
-                        className={styles.previewImage}
+                        className="w-[40%] h-auto justify-self-center max-md:w-[75%]"
                     />
                 </div>
-            }
+            )}
         </div>
     )
 }

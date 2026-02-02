@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "homepage": "https://collagecreations.org/",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@radix-ui/react-menubar": "^1.1.16",
     "@radix-ui/react-slot": "^1.2.4",
@@ -24,24 +25,17 @@
     "react-image-crop": "^11.0.5",
     "react-image-file-resizer": "^0.4.8",
     "react-router-dom": "^6.22.3",
-    "react-scripts": "5.0.1",
     "tailwind-merge": "^3.4.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "predeploy": "npm run build",
     "add-domain": "echo collagecreations.org > build/CNAME",
-    "deploy": "npm run add-domain && gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "deploy": "npm run add-domain && gh-pages -d build"
   },
   "browserslist": {
     "production": [
@@ -56,11 +50,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.26.0",
-    "@tailwindcss/forms": "^0.5.11",
+    "@types/node": "^25.2.0",
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.4.24",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.9.3",
+    "vite": "^6.3.5"
   }
 }
