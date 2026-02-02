@@ -1,6 +1,6 @@
 .bigLogo {
     border-width: 0px;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
 }
 
 .bigLogo img {
@@ -14,13 +14,13 @@
     display: flex;
     flex-direction: row;
 }
-  
+
 @media (max-width: 728px) {
     .bigLogo img {
         width: 60%;
         justify-self: center;
     }
-      
+
     .collageImages {
         flex-direction: column;
     }
