@@ -20,7 +20,7 @@ function BasicButton({
             onClick={onClick}
             disabled={disabled}
             type={type}
-            className="px-4 py-2 cursor-pointer bg-blue-600 text-white border-none rounded-md text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className="px-4 py-2 cursor-pointer bg-primary text-primary-foreground border-none rounded-md text-base hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
         >
             {text}
         </button>

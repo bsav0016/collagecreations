@@ -15,14 +15,14 @@ const applyDiscountService = async (
     const applyDiscountDTO = new ApplyDiscountDTO(discountCode, tempImageId, orderType);
 
     try {
-        const data = await NetworkRequest<ApplyDiscountResponseDTO>({
+        const response = await NetworkRequest<ApplyDiscountResponseDTO>({
             urlExtension: 'api/apply-discount/',
             method: POST,
             headers: headers,
             body: applyDiscountDTO.jsonify()
         });
 
-        const applyDiscountResponseDTO = ApplyDiscountResponseDTO.fromResponse(data);
+        const applyDiscountResponseDTO = ApplyDiscountResponseDTO.fromResponse(response.data);
         const discount = applyDiscountResponseDTO.discount;
         return discount;
     } catch (error) {

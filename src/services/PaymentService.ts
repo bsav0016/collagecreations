@@ -27,13 +27,13 @@ const PaymentService = {
                 ...APPLICATION_JSON_HEADER,
             };
 
-            const data = await NetworkRequest<GetTaxResponse>({
+            const response = await NetworkRequest<GetTaxResponse>({
                 urlExtension: 'api/get-tax/',
                 method: POST,
                 headers: headers,
                 body: getTaxDTO.jsonify(),
             });
-            const taxData = GetTaxResponseDTO.fromResponse(data);
+            const taxData = GetTaxResponseDTO.fromResponse(response.data);
             return taxData;
         } catch {
             throw new Error('Could not get tax');
@@ -52,14 +52,14 @@ const PaymentService = {
                 ...APPLICATION_JSON_HEADER,
             };
 
-            const data = await NetworkRequest<GetShippingResponse>({
+            const response = await NetworkRequest<GetShippingResponse>({
                 urlExtension: 'api/get-shipping-cost/',
                 method: POST,
                 headers: headers,
                 body: dto.jsonify()
             });
 
-            const responseDTO = GetShippingResponseDTO.fromResponse(data);
+            const responseDTO = GetShippingResponseDTO.fromResponse(response.data);
             return responseDTO;
         } catch {
             throw new Error('Could not get shipping cost');
@@ -91,14 +91,14 @@ const PaymentService = {
         };
 
         try {
-            const data = await NetworkRequest<PaymentResponse>({
+            const response = await NetworkRequest<PaymentResponse>({
                 urlExtension: 'api/payment/',
                 method: POST,
                 headers: headers,
                 body: dto.jsonify(),
             });
 
-            const responseData = PaymentResponseDTO.fromResponse(data);
+            const responseData = PaymentResponseDTO.fromResponse(response.data);
             return responseData;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An error occurred';

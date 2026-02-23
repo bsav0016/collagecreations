@@ -110,7 +110,7 @@ function AdminOrders(): React.ReactElement {
           <HeaderSection
             title='Orders'
             fontWeight='bold'
-            fontSize={32}
+            fontSize="3xl"
             marginBottom={20}
           />
 

@@ -20,12 +20,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <label
             style={{
                 margin: MARGINS.SMALL,
-                backgroundColor: disabled ? "#cccccc" : "",
-                color: disabled ? "#666666" : "",
-                cursor: disabled ? "not-allowed" : "pointer",
             }}
             htmlFor={id}
-            className="inline-block py-[10px] px-5 bg-blue-600 text-white border-none rounded-[5px] text-base hover:bg-blue-700"
+            className={`inline-block py-[10px] px-5 border-none rounded-md text-base ${
+                disabled 
+                    ? "bg-muted text-muted-foreground cursor-not-allowed" 
+                    : "bg-primary text-primary-foreground cursor-pointer hover:bg-primary/90"
+            }`}
         >
             {title}
         </label>

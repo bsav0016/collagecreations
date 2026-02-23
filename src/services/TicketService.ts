@@ -26,13 +26,13 @@ const TicketService = {
             ...APPLICATION_JSON_HEADER
         };
 
-        const data = await NetworkRequest({
+        const response = await NetworkRequest({
             urlExtension: `api/ticket/${ticketId}/`,
             method: GET,
             headers: headers
         });
 
-        return data as TicketResponse;
+        return response.data as TicketResponse;
     },
 
     async updateTicket(
@@ -53,7 +53,7 @@ const TicketService = {
                 body: ticketDTO.jsonified(),
             });
 
-            return response;
+            return response.data;
         } catch (error) {
             throw error;
         }
@@ -65,13 +65,13 @@ const TicketService = {
                 ...(token && AUTHORIZATION_HEADER(token)),
             };
 
-            const data = await NetworkRequest<TicketsListResponse>({
+            const response = await NetworkRequest<TicketsListResponse>({
                 urlExtension: 'api/get-all-tickets/',
                 method: GET,
                 headers: headers
             });
 
-            return data.tickets.map((ticket) => new GetTicketsResponseDTO(ticket));
+            return response.data.tickets.map((ticket) => new GetTicketsResponseDTO(ticket));
         } catch (error) {
             console.error('Error fetching tickets:', error);
             throw error;

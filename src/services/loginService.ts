@@ -24,14 +24,14 @@ const loginService = async (credentials: LoginCredentials): Promise<LoginRespons
 
         const loginDTO = new LoginDTO(credentials.username, credentials.password);
 
-        const data = await NetworkRequest({
+        const response = await NetworkRequest({
             urlExtension: 'auth/',
             method: POST,
             headers: headers,
             body: loginDTO.jsonify(),
         });
 
-        return data as LoginResponse;
+        return response.data as LoginResponse;
     } catch (error) {
         const loginError = error as LoginError;
         if (loginError.non_field_errors?.[0] === 'Unable to log in with provided credentials.') {

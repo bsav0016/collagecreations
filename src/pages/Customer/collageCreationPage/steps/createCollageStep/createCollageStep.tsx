@@ -70,7 +70,7 @@ export function CreateCollageStep({
 
     return (
         <div className="flex self-center justify-self-center">
-            <GeneralButton text={'Create Collage'} onClick={clickedCreateCollage}/>
+            <GeneralButton text={'Create Collage'} onClick={clickedCreateCollage} variant="primary"/>
         </div>
     )
 }

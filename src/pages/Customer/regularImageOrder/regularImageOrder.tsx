@@ -155,7 +155,7 @@ const RegularImageOrder: React.FC = () => {
             <select 
                 value={size} 
                 onChange={updateSize} 
-                className="inline-block py-2.5 px-[3px] cursor-pointer bg-blue-500 text-white border-none rounded-[5px] text-base w-auto min-w-[50px]" 
+                className="inline-block py-2.5 px-3 cursor-pointer bg-primary text-primary-foreground border border-input rounded-md text-base w-auto min-w-[50px]" 
                 disabled={loading}
             >
               {
@@ -166,12 +166,12 @@ const RegularImageOrder: React.FC = () => {
             </select>
           </HeaderSection>
 
-          <HeaderSection title={`Cost: ${cost / 100} (not including shipping and tax)`} fontSize={14}/>
+          <HeaderSection title={`Cost: ${cost / 100} (not including shipping and tax)`} fontSize="sm"/>
 
           <HeaderSection title="Step 2. Select if you'd like to crop the image, otherwise it will be automatically adjusted to fit the aspect ratio" marginTop={MARGINS.LARGE}>
-            <div style={{ display: 'flex', justifySelf: 'center', alignItems: 'center', gap: 5 }}>
+            <div className="flex justify-center items-center gap-2">
               <Checkbox id="chooseCrop" checked={chooseCrop} onChange={changeChooseCrop} disabled={loading} />
-              <p>Crop Image</p>
+              <p className="text-foreground">Crop Image</p>
             </div>
           </HeaderSection>
 
@@ -180,16 +180,20 @@ const RegularImageOrder: React.FC = () => {
           </HeaderSection>
 
           {mainImage &&
-            <div style={{ justifySelf: 'center', width: '100%' }}>
-              <img src={mainImage} alt="Image" style={{ width: aspect > 1 ?'50%' : '25%', aspectRatio: aspect }} />
+            <div className="flex justify-center w-full">
+              <img src={mainImage} alt="Image" className={aspect > 1 ? 'w-1/2' : 'w-1/4'} style={{ aspectRatio: aspect }} />
             </div>
           }
 
           {selectedImage && cropperVisible && (
             <CustomCropper selectedImage={selectedImage} crop={crop} setCrop={setCrop} zoom={zoom} setZoom={setZoom} setCropArea={setCroppedAreaPixels} aspect={aspect}>
-              <CropperButton onClick={doHandleCrop} disabled={loading} text="Crop Image" />
-              <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate Image" />
-              <CropperButton onClick={handleCancelCrop} disabled={loading} text="Cancel" />
+              <div className="flex flex-wrap justify-between w-full">
+                <CropperButton onClick={handleCancelCrop} disabled={loading} text="Cancel" />
+                <div className="flex flex-wrap">
+                  <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate Image" />
+                  <CropperButton onClick={doHandleCrop} disabled={loading} text="Finish" variant="primary" />
+                </div>
+              </div>
             </CustomCropper>
           )}
 

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Menubar,
   MenubarContent,
@@ -6,37 +6,66 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "../../components/ui/menubar";
+import { cn } from "../../lib/utils";
+import MosaicMakerLogo from "../../assets/MosaicMakerNoText.png";
 
 function NavBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/" || location.pathname === "/collage";
 
   const handleNavigation = (path: string) => {
     navigate(path);
   };
 
+  const isActive = (path: string | string[]) => {
+    const paths = Array.isArray(path) ? path : [path];
+    return paths.some((p) => {
+      if (p === "/") {
+        return location.pathname === "/" || location.pathname === "/collage";
+      }
+      return location.pathname.startsWith(p);
+    });
+  };
+
+  const activeClass = "bg-primary text-primary-foreground font-semibold";
+
   return (
-    <nav className="w-full flex justify-center p-4">
-      <Menubar>
+    <nav className="w-full flex items-center p-4">
+      {!isHomePage && (
+        <img
+          src={MosaicMakerLogo}
+          alt="Mosaic Maker Logo"
+          className="h-12 cursor-pointer ml-4"
+          onClick={() => handleNavigation("/")}
+        />
+      )}
+      <div className={cn("flex justify-center", isHomePage ? "w-full" : "flex-1")}>
+        <Menubar>
         <MenubarMenu>
-          <MenubarTrigger onClick={() => handleNavigation("/")}>
+          <MenubarTrigger
+            onClick={() => handleNavigation("/")}
+            className={cn(isActive("/") && activeClass)}
+          >
             Home
           </MenubarTrigger>
         </MenubarMenu>
 
         <MenubarMenu>
-          <MenubarTrigger onClick={() => handleNavigation("/collage")}>
-            Create Collage
-          </MenubarTrigger>
-        </MenubarMenu>
-
-        <MenubarMenu>
-          <MenubarTrigger onClick={() => handleNavigation("/tips")}>
+          <MenubarTrigger
+            onClick={() => handleNavigation("/tips")}
+            className={cn(isActive("/tips") && activeClass)}
+          >
             Helpful Tips
           </MenubarTrigger>
         </MenubarMenu>
 
         <MenubarMenu>
-          <MenubarTrigger>Other Order</MenubarTrigger>
+          <MenubarTrigger
+            className={cn(isActive(["/regular-image-order", "/custom-order"]) && activeClass)}
+          >
+            Other Order
+          </MenubarTrigger>
           <MenubarContent>
             <MenubarItem
               onClick={() => handleNavigation("/regular-image-order")}
@@ -50,11 +79,24 @@ function NavBar() {
         </MenubarMenu>
 
         <MenubarMenu>
-          <MenubarTrigger onClick={() => handleNavigation("/support")}>
+          <MenubarTrigger
+            onClick={() => handleNavigation("/support")}
+            className={cn(isActive("/support") && activeClass)}
+          >
             Support
           </MenubarTrigger>
         </MenubarMenu>
-      </Menubar>
+
+        <MenubarMenu>
+          <MenubarTrigger
+            onClick={() => handleNavigation("/settings")}
+            className={cn(isActive("/settings") && activeClass)}
+          >
+            Settings
+          </MenubarTrigger>
+        </MenubarMenu>
+        </Menubar>
+      </div>
     </nav>
   );
 }

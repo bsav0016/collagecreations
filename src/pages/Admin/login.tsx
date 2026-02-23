@@ -63,7 +63,7 @@ function Login(): React.ReactElement {
 
       <HeaderSection
         title="Admin Login"
-        fontSize={32}
+        fontSize="3xl"
         fontWeight='bold'
         marginBottom={20}
       />

@@ -9,11 +9,11 @@ const ImageCollageTips: React.FC = () => {
     ];
 
     return (
-        <ul className="text-left space-y-2">
+        <ol className="text-left space-y-2 list-decimal list-inside">
             {tips.map((tip, index) => (
-                <li key={index} className="text-base">{tip}</li>
+                <li key={index} className="text-lg">{tip}</li>
             ))}
-        </ul>
+        </ol>
     );
 };
 

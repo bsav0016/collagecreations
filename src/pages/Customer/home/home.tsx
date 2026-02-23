@@ -5,19 +5,58 @@ import NavBar from "../../../layout/navBars/navBar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
-import { Button } from "../../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../../../components/ui/card";
 import { Helmet } from "react-helmet-async";
+import { CollageCreationType } from "../collageCreationPage/enums/collageCreationType";
+import { CollageTypeCard } from "../../../components/collageTypeCard/collageTypeCard";
+
+interface CollageOption {
+  title: string;
+  description: string;
+  type: CollageCreationType;
+  image: string;
+  considerations: string[];
+}
 
 function Home() {
   const [logoClicked, setLogoClicked] = useState<number>(0);
   const navigate = useNavigate();
+
+  const collageOptions: CollageOption[] = [
+    {
+      title: "Symbol Based Mosaic",
+      description: "Create with symbols",
+      type: CollageCreationType.Symbol,
+      image: symbolCollage,
+      considerations: [
+        "Similar considerations as text collage",
+        "There are a limited number of symbols to choose from",
+        "You may request custom symbol if you do not like the options",
+      ],
+    },
+    {
+      title: "Custom Image Mosaic",
+      description: "Create with photos",
+      type: CollageCreationType.Image,
+      image: imageCollage,
+      considerations: [
+        "Only black and white",
+        'You cannot select the small image size (0.3" x 0.3")',
+        'Output image must be 24" x 24" or larger',
+        "Most unique",
+      ],
+    },
+    {
+      title: "Text Based Mosaic",
+      description: "Create with words",
+      type: CollageCreationType.Text,
+      image: textCollage,
+      considerations: [
+        "Can output in black and white or color",
+        "Can use small, medium, or large image sizes in step 2",
+        'Output image must be 12" x 12" or greater',
+      ],
+    },
+  ];
 
   const updateClicked = () => {
     if (logoClicked >= 4) {
@@ -70,7 +109,7 @@ function Home() {
         <NavBar />
         <main className="flex-col items-center justify-center">
           <section className="text-center py-5">
-            <button onClick={updateClicked} className="border-0 bg-white w-full">
+            <button onClick={updateClicked} className="border-0 bg-background w-full">
               <img
                 src={MosaicMaker}
                 alt="Mosaic Maker Logo"
@@ -85,67 +124,28 @@ function Home() {
               Turn images, words, or symbols into high-resolution mosaics and
               zoom in to see every photo.
             </p>
-            <div className="flex justify-center mt-4">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-blue-500 text-white w-fit bg-gradient-to-r from-blue-700 via-purple-700 to-red-700 rounded-full"
-                onClick={() => navigate("/collage")}
-              >
-                Get Started
-              </Button>
-            </div>
-            <section className="flex flex-col md:flex-row gap-6 justify-center items-center mt-8 px-4">
-              <article>
-                <Card className="w-85">
-                  <CardHeader>
-                    <CardTitle>Custom Image Mosaic</CardTitle>
-                    <CardDescription>Create with photos</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <img
-                      src={imageCollage}
-                      alt="Example of custom image mosaic made from hundreds of photos"
-                      className="w-full rounded-md mb-4"
-                    />
-                    <p>Build stunning mosaics from your photo collection</p>
-                  </CardContent>
-                </Card>
-              </article>
-
-              <article>
-                <Card className="w-85">
-                  <CardHeader>
-                    <CardTitle>Text Based Mosaic</CardTitle>
-                    <CardDescription>Create with words</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <img
-                      src={textCollage}
-                      alt="Example of text-based mosaic using words and typography"
-                      className="w-full rounded-md mb-4"
-                    />
-                    <p>Design mosaics using text and typography</p>
-                  </CardContent>
-                </Card>
-              </article>
-
-              <article>
-                <Card className="w-85">
-                  <CardHeader>
-                    <CardTitle>Symbol Based Mosaic</CardTitle>
-                    <CardDescription>Create with symbols</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <img
-                      src={symbolCollage}
-                      alt="Example of symbol-based mosaic using shapes and symbols"
-                      className="w-full rounded-md mb-4"
-                    />
-                    <p>Craft mosaics using shapes and symbols</p>
-                  </CardContent>
-                </Card>
-              </article>
+            <section className="flex flex-col md:flex-row gap-6 justify-center items-start mt-8 px-4">
+              {collageOptions.map((option) => (
+                <CollageTypeCard
+                  key={option.type}
+                  title={option.title}
+                  description={option.description}
+                  type={option.type}
+                  image={option.image}
+                  imageAlt={`Example of ${option.title.toLowerCase()}`}
+                >
+                  {option.considerations.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-2">Considerations:</p>
+                      {option.considerations.map((consideration, index) => (
+                        <p className="text-base mb-1" key={index}>
+                          • {consideration}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </CollageTypeCard>
+              ))}
             </section>
           </section>
         </main>

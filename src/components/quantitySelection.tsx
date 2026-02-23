@@ -40,7 +40,7 @@ const QuantitySelection: React.FC<QuantitySelectionProps> = ({
                     setTempQuantity(value === "" ? "" : parseInt(value, 10) || "");
                 }}
                 onBlur={handleBlur}
-                className="w-10 text-center"
+                className="w-10 text-center bg-background text-foreground border border-input rounded-md"
             />
             <BasicButton
                 onClick={() => changeQuantity(quantity + 1)}

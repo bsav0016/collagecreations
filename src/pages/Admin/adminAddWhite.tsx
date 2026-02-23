@@ -63,7 +63,7 @@ function AdminAddWhite(): React.ReactElement {
           <HeaderSection
             title='Add White'
             fontWeight='bold'
-            fontSize={32}
+            fontSize="3xl"
             marginBottom={20}
           />
 

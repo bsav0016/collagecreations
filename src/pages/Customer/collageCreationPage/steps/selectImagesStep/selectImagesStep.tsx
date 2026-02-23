@@ -33,6 +33,8 @@ export function SelectImagesStep({
     const [zoom, setZoom] = useState<number>(1);
     const [cropperVisible, setCropperVisible] = useState<boolean>(false);
     const [localLoading, setLocalLoading] = useState<boolean>(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+    const [totalImages, setTotalImages] = useState<number>(0);
 
     const { deleteVariable } = useLocalDatabase();
     const { constants } = useConstants();
@@ -100,10 +102,13 @@ export function SelectImagesStep({
     const uploadSmallImages = async (event: any) => {
         const files = event.target.files;
         setLocalLoading(true);
+        setTotalImages(files.length);
       
         const newCroppedImages: string[] = [];
+        let imageIndex = 0;
       
         for (const file of files) {
+            setCurrentImageIndex(imageIndex++);
             let imageUrl: string | null;
             const fileIsHeic = 
                 file.type === 'image/heic' ||
@@ -192,23 +197,26 @@ export function SelectImagesStep({
                             setZoom={setZoom}
                             setCropArea={setCropArea}
                         >
-                            <div className="flex flex-wrap justify-center">
-                                <CropperButton
-                                    onClick={cropIndividualImage}
-                                    text="Crop"
-                                />
-                                <CropperButton
-                                    onClick={rotate}
-                                    text="Rotate Image"
-                                />
-                                <CropperButton
-                                    onClick={skipImage}
-                                    text="Skip Image"
-                                />
+                            <div className="flex flex-wrap justify-between w-full">
                                 <CropperButton
                                     onClick={confirmCancelCrop}
                                     text="Cancel All"
                                 />
+                                <div className="flex flex-wrap">
+                                    <CropperButton
+                                        onClick={rotate}
+                                        text="Rotate Image"
+                                    />
+                                    <CropperButton
+                                        onClick={skipImage}
+                                        text="Skip Image"
+                                    />
+                                    <CropperButton
+                                        onClick={cropIndividualImage}
+                                        text={currentImageIndex === totalImages - 1 ? "Finish" : "Next Image"}
+                                        variant="primary"
+                                    />
+                                </div>
                             </div>
                         </CustomCropper>
                     }
@@ -218,25 +226,28 @@ export function SelectImagesStep({
                     <GeneralButton 
                         text={smallImages.length < 5 ? "Minimum 5 Images" : "Next Step"} 
                         onClick={() => goToCreate()} 
-                        disabled={smallImages.length < 5} 
+                        disabled={smallImages.length < 5}
+                        variant="primary"
                     />
-                    <ImageUpload
-                        id="image-upload"
-                        title="Add Images"
-                        onChange={uploadSmallImages}
-                        multiple={true}
-                    />
-                    {(smallImages.length > 0) && (
-                        <BasicButton
-                            onClick={confirmClearImages}
-                            text="Clear All Images"
+                    <div className="flex flex-row items-center gap-2">
+                        {(smallImages.length > 0) && (
+                            <BasicButton
+                                onClick={confirmClearImages}
+                                text="Clear All Images"
+                            />
+                        )}
+                        <ImageUpload
+                            id="image-upload"
+                            title="Add Images"
+                            onChange={uploadSmallImages}
+                            multiple={true}
                         />
-                    )}
+                    </div>
                     <div className="flex flex-wrap justify-center">
                         {smallImages.slice().reverse().map((croppedImage, index) => {
                             const originalIndex = smallImages.length - 1 - index;
                             return (
-                                <div key={index} className="flex flex-col items-center my-6 mx-12 max-md:my-2.5 max-md:mx-5">
+                                <div key={index} className="flex flex-col items-center my-6 mx-12 max-md:my-2.5 max-md:mx-5 gap-3">
                                     <img src={croppedImage} alt="Cropped" className="max-w-full max-h-[120px] max-md:max-h-[90px]" />
                                     <BasicButton
                                         onClick={() => handleDelete(originalIndex)}

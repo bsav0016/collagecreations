@@ -10,7 +10,7 @@ const addWhiteService = async (selectedFile: File, token: string): Promise<strin
     
     const addWhiteDTO = new AddWhiteDTO(selectedFile);
 
-    const data = await NetworkRequest<AddWhiteResponseDTO>({
+    const response = await NetworkRequest<AddWhiteResponseDTO>({
         urlExtension: 'api/add-white/',
         method: POST,
         headers: headers,
@@ -18,7 +18,7 @@ const addWhiteService = async (selectedFile: File, token: string): Promise<strin
     });
 
     try {
-        const addWhiteResponseDTO = new AddWhiteResponseDTO(data);
+        const addWhiteResponseDTO = new AddWhiteResponseDTO(response.data);
         const img = await addWhiteResponseDTO.processImage();
         return URL.createObjectURL(img);
     } catch {

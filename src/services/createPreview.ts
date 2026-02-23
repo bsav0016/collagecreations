@@ -19,12 +19,12 @@ export async function createPreview(
     const createPreviewDTO = CreatePreviewDTO.fromVariables(type, size, smallImageSize, text, symbol, mainImage);
     const body = await createPreviewDTO.createBody();
 
-    const data = await NetworkRequest({
+    const response = await NetworkRequest({
         urlExtension: 'api/preview/',
         method: POST,
         body: body
     });
 
-    const previewData = CreatePreviewResponseDTO.fromResponse(data);
+    const previewData = CreatePreviewResponseDTO.fromResponse(response.data);
     return previewData.lightDarkArray;
 }

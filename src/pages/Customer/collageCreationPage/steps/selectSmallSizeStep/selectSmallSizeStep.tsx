@@ -92,7 +92,7 @@ export function SelectSmallSizeStep({
                     key={index}
                 >
                     <p className="p-0 m-2.5 text-2xl font-medium">{availableSize.text}</p>
-                    <GeneralButton text={"Select"} onClick={() => selectSmallSize(availableSize.text)} />
+                    <GeneralButton text={"Next Step"} onClick={() => selectSmallSize(availableSize.text)} variant="primary" />
                     <img src={availableSize.image} className="w-auto h-[150px] mt-2.5" alt={availableSize.text} />
                 </div>
             ))}

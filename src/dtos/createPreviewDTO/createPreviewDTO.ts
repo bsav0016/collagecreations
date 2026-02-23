@@ -79,7 +79,7 @@ export class CreatePreviewDTO {
             formData.append('symbol', this.symbol);
         }
         if (this.mainImageUrl) {
-            const symbolImage = await createFileFromBlobUrl(this.mainImageUrl);
+            const symbolImage = await createFileFromBlobUrl(this.mainImageUrl, 'symbol_image.png');
             formData.append('symbol_image', symbolImage);
         }
         return formData;

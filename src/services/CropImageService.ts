@@ -10,12 +10,12 @@ interface CropImageResponse {
 const CropImageService = {
     async cropImage(cropImageDTO: CropImageDTO): Promise<CropImageResponse> {
         try {
-            const data = await NetworkRequest({
+            const response = await NetworkRequest({
                 urlExtension: 'api/resize-image/',
                 method: POST,
                 body: cropImageDTO.createBody()
             });
-            return data as CropImageResponse;
+            return response.data as CropImageResponse;
         } catch (error) {
             console.error('Error during fetch operation:', error);
             throw error;

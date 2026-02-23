@@ -6,6 +6,7 @@ interface CropperButtonProps {
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
     fullWidth?: boolean;
+    variant?: "primary" | "secondary";
 }
 
 function CropperButton({ 
@@ -13,11 +14,17 @@ function CropperButton({
     text, 
     disabled = false, 
     type = "button", 
-    fullWidth = false 
+    fullWidth = false,
+    variant = "secondary"
 }: CropperButtonProps) {
+    const baseClasses = "inline-block py-2 px-4 cursor-pointer border-none rounded-md text-sm mx-[3px] disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed";
+    const variantClasses = variant === "primary"
+        ? "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+        : "bg-muted text-muted-foreground hover:bg-muted/80";
+
     const buttonElement = (
         <button
-            className="inline-block py-2 px-4 cursor-pointer bg-blue-600 text-white border-none rounded-[5px] text-sm mx-[3px] hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+            className={`${baseClasses} ${variantClasses}`}
             onClick={onClick}
             disabled={disabled}
             type={type}

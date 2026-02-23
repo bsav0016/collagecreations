@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { ThemeProvider } from "next-themes";
 import { ConstantsProvider } from "./context/constantsContext";
 import { ToastProvider } from "./context/toastContext/toastContext";
 import { AuthProvider } from "./context/authContext";
@@ -8,11 +9,14 @@ import { LocalDatabaseProvider } from "./context/databaseContext";
 import AdminRoutes from "./routes/adminRoutes";
 import CustomerRoutes from "./routes/customerRoutes";
 import { OrderProvider } from "./context/orderContext";
+import { TextSizeProvider } from "./context/textSizeContext";
 
 function App(): React.ReactElement {
   return (
-    <HelmetProvider>
-      <ConstantsProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <TextSizeProvider>
+        <HelmetProvider>
+        <ConstantsProvider>
         <ToastProvider>
           <LocalDatabaseProvider>
             <OrderProvider>
@@ -34,6 +38,8 @@ function App(): React.ReactElement {
         </ToastProvider>
       </ConstantsProvider>
     </HelmetProvider>
+    </TextSizeProvider>
+    </ThemeProvider>
   );
 }
 

@@ -175,7 +175,7 @@ function Download(): React.ReactElement {
           <HeaderSection 
             title="Pricing Info"
             fontWeight='bold'
-            fontSize={24}
+            fontSize="2xl"
             marginTop={MARGINS.LARGE}
           >
             <BillingSection>
@@ -220,7 +220,7 @@ function Download(): React.ReactElement {
 
           <HeaderSection
             title="Billing Info"
-            fontSize={24}
+            fontSize="2xl"
             fontWeight='bold'
             marginTop={MARGINS.LARGE}
           >

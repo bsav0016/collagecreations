@@ -214,7 +214,11 @@ export function SelectOutputStep({
             ) : type === CollageCreationType.Symbol ? (
                 <div>
                     <div className="justify-items-center justify-self-center w-auto content-center">
-                        <select id="symbolSelect" onChange={handleSymbolChange}>
+                        <select 
+                            id="symbolSelect" 
+                            onChange={handleSymbolChange}
+                            className="px-4 py-3 text-lg border-2 border-border rounded-lg bg-background text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary min-w-[250px]"
+                        >
                             <option value="">--Select a symbol--</option>
                             {availableSymbols.map((symbol) => (
                                 <option key={symbol.text} value={symbol.text}>
@@ -229,7 +233,7 @@ export function SelectOutputStep({
                                 Confirm symbol?
                             </div>
                             <div className="flex flex-row">
-                                <GeneralButton text="Yes" onClick={confirmSymbolSelection} />
+                                <GeneralButton text="Yes" onClick={confirmSymbolSelection} variant="confirm" />
                                 <GeneralButton text="No" onClick={cancelSymbolSelection} />
                             </div>
                         </div>
@@ -263,19 +267,22 @@ export function SelectOutputStep({
                                     setCropArea={setCropArea}
                                     aspect={mapAspectRatio(outputSize)}
                                 >
-                                    <div className="flex flex-wrap justify-center">
-                                        <CropperButton
-                                            onClick={cropMainImage}
-                                            text="Crop"
-                                        />
-                                        <CropperButton
-                                            onClick={rotate}
-                                            text="Rotate Image"
-                                        />
+                                    <div className="flex flex-wrap justify-between w-full">
                                         <CropperButton
                                             onClick={confirmCancelCrop}
                                             text="Cancel"
                                         />
+                                        <div className="flex flex-wrap">
+                                            <CropperButton
+                                                onClick={rotate}
+                                                text="Rotate Image"
+                                            />
+                                            <CropperButton
+                                                onClick={cropMainImage}
+                                                text="Finish"
+                                                variant="primary"
+                                            />
+                                        </div>
                                     </div>
                                 </CustomCropper>
                             }
@@ -308,7 +315,7 @@ export function SelectOutputStep({
                                         Confirm image?
                                     </div>
                                     <div className="flex flex-row">
-                                        <GeneralButton text="Yes" onClick={confirmImageSelection} />
+                                        <GeneralButton text="Yes" onClick={confirmImageSelection} variant="confirm" />
                                         <GeneralButton text="No" onClick={cancelImageSelection} />
                                     </div>
                                 </div>

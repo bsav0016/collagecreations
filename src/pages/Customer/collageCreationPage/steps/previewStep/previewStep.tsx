@@ -26,6 +26,13 @@ export function PreviewStep({
         setCurrentStep(CollageCreationStep.SelectImagesStep);
     }
 
+    const invertAll = () => {
+        const invertedArray = lightDarkArray.map((row) =>
+            row.map((cell) => !cell)
+        );
+        setLightDarkArray(invertedArray);
+    }
+
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     const maxSize = Math.min(screenWidth, screenHeight) * 0.9
@@ -35,8 +42,9 @@ export function PreviewStep({
 
     return (
         <div>
-            <div className="flex w-auto justify-center">
-                <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} />
+            <div className="flex w-auto justify-center gap-4">
+                <GeneralButton text={"Invert"} onClick={invertAll} />
+                <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} variant="primary" />
             </div>
             <div className="flex flex-col items-center gap-0">
                 {lightDarkArray.map((lightDarkRow, i) => (
@@ -50,6 +58,7 @@ export function PreviewStep({
                                     margin: 0,
                                     width: `${boxSize}px`,
                                     height: `${boxSize}px`,
+                                    border: '1px solid rgba(156, 163, 175, 0.3)',
                                 }}
                                 onClick={() => updateLightDarkArray(i, j)}
                             />

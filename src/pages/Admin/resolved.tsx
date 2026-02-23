@@ -67,7 +67,7 @@ function Resolved({ title, entryDisplay, navigationExtension, type }: ResolvedPr
         <HeaderSection
           title={title}
           fontWeight='bold'
-          fontSize={32}
+          fontSize="3xl"
           marginBottom={20}
         />
 

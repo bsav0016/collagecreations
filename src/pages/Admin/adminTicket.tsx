@@ -127,7 +127,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
           <HeaderSection
             title={`Ticket Number: ${ticketId}`}
             fontWeight='bold'
-            fontSize={32}
+            fontSize="3xl"
             marginBottom={20}
           />
 

@@ -92,7 +92,7 @@ function AdminTickets({ customOrder }: AdminTicketsProps): React.ReactElement {
           <HeaderSection
             title={customOrder ? 'Custom Order' : 'Support Ticket'}
             fontWeight='bold'
-            fontSize={32}
+            fontSize="3xl"
             marginBottom={20}
           />
 

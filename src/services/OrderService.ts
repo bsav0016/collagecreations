@@ -26,7 +26,7 @@ const OrderService = {
                 headers: headers
             });
 
-            const order = OrderDetailDTO.fromResponse(response);
+            const order = OrderDetailDTO.fromResponse(response.data);
             return order;
         } catch (error) {
             console.error('Error fetching order:', error);
@@ -48,7 +48,7 @@ const OrderService = {
                 body: body
             });
 
-            return response;
+            return response.data;
         } catch (error) {
             console.error('Error updating order:', error);
             throw error;
@@ -85,14 +85,14 @@ const OrderService = {
                 ...(token && AUTHORIZATION_HEADER(token)),
             };
 
-            const data = await NetworkRequest<OrdersListResponse>({
+            const response = await NetworkRequest<OrdersListResponse>({
                 urlExtension: 'api/get-all-orders/',
                 method: GET,
                 headers: headers
             });
 
             const orders: OrderSummaryDTO[] = [];
-            for (const orderData of data.orders) {
+            for (const orderData of response.data.orders) {
                 orders.push(OrderSummaryDTO.fromData(orderData));
             }
 
@@ -113,14 +113,14 @@ const OrderService = {
             const headers = {
                 ...AUTHORIZATION_HEADER(token)
             };
-            const data = await NetworkRequest({
+            const response = await NetworkRequest({
                 urlExtension: 'api/orders/',
                 method: POST,
                 headers: headers,
                 body: body
             });
 
-            return data as NewOrderResponse;
+            return response.data as NewOrderResponse;
         } catch (error) {
             console.error('Error adding order:', error);
             throw error;

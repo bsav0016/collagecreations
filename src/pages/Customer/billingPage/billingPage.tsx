@@ -75,7 +75,7 @@ function BillingPage(): React.ReactElement {
           
           <HeaderSection 
             title="Shipping Info"
-            fontSize={22}
+            fontSize="xl"
             fontWeight='bold'
           >
             <div className="[&_p]:mt-0.5 [&_p]:mb-0.5">
@@ -88,7 +88,7 @@ function BillingPage(): React.ReactElement {
 
           <HeaderSection
             title="Pricing Info"
-            fontSize={22}
+            fontSize="xl"
             fontWeight='bold'
             marginTop={MARGINS.LARGE}
           >
@@ -144,7 +144,7 @@ function BillingPage(): React.ReactElement {
           
           <HeaderSection
             title="Billing Info"
-            fontSize={22}
+            fontSize="xl"
             fontWeight='bold'
             marginTop={MARGINS.LARGE}
           >

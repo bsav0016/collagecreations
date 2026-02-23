@@ -10,13 +10,14 @@ import Confirmation from '../pages/Customer/confirmation';
 import MessageConfirmation from '../pages/Customer/messageConfirmation';
 import RegularImageOrder from '../pages/Customer/regularImageOrder/regularImageOrder';
 import Tips from '../pages/Customer/tips/tips';
+import Settings from '../pages/Customer/settings/settings';
 import NotFound from '../pages/NotFound/notFound';
 import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';
 
 const CustomerRoutes: React.FC = () => (
   <Routes>
     <Route path="/" element={<Home />} />
-    <Route path="collage" element={<CollageCreation isAdmin={false} />} />
+    <Route path="collage" element={<Home />} />
     <Route path="collage/:step" element={<CollageCreation isAdmin={false} />} />
     <Route path="support" element={<Support isCustomOrder={false} />} />
     <Route path="custom-order" element={<Support isCustomOrder={true} />} />
@@ -28,6 +29,7 @@ const CustomerRoutes: React.FC = () => (
     <Route path="download" element={<Download />} />
     <Route path="regular-image-order" element={<RegularImageOrder />} />
     <Route path="tips" element={<Tips />} />
+    <Route path="settings" element={<Settings />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

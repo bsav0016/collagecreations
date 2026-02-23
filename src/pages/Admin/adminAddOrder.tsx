@@ -155,7 +155,7 @@ function AdminAddOrder(): React.ReactElement {
                 <HeaderSection
                     title='Add Order'
                     fontWeight='bold'
-                    fontSize={32}
+                    fontSize="3xl"
                     marginBottom={20}
                 />
 

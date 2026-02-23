@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "../utils/constants/constants";
 
-const acceptableResponseCodes = [200, 201];
+const acceptableResponseCodes = [200, 201, 202];
 
 interface NetworkRequestParams {
     urlExtension: string;
@@ -9,12 +9,17 @@ interface NetworkRequestParams {
     body?: BodyInit | null;
 }
 
+export interface NetworkResponse<T> {
+    status: number;
+    data: T;
+}
+
 async function NetworkRequest<T>({
     urlExtension,
     method,
     headers = {},
     body,
-}: NetworkRequestParams): Promise<T> {
+}: NetworkRequestParams): Promise<NetworkResponse<T>> {
     try {
         const response = await fetch(`${BACKEND_URL}${urlExtension}`, {
             method: method,
@@ -34,7 +39,7 @@ async function NetworkRequest<T>({
         }
 
         const data: T = await response.json();
-        return data;
+        return { status: response.status, data };
     } catch (error) {
         throw error;
     }

@@ -17,7 +17,6 @@ import { SymbolOption } from "./interfaces/SymbolOption";
 import { useLocalDatabase } from "../../../context/databaseContext";
 import { databaseUtils } from "./databaseUtils";
 import AdminNavBar from "../../../layout/navBars/adminNavBar";
-import MosaicMakerLogo from "../../../assets/MosaicMakerNoText.png";
 
 interface CollageCreationPageProps {
   isAdmin: boolean;
@@ -236,14 +235,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
           <div className="text-center py-5">
             {title && (
               <div className="justify-center p-0">
-                <div className="text-center mb-5">
-                  <img
-                    src={MosaicMakerLogo}
-                    alt="Mosaic Maker Logo"
-                    className="w-[15%] mx-auto"
-                  />
-                </div>
-                <h1 className="text-[32px] font-bold m-0 p-0">{title}</h1>
+                <h1 className="text-4xl font-bold m-0 p-0">{title}</h1>
                 {subtitle && (
                   <div className="w-3/4 justify-self-center mb-0 pb-0">
                     <p className="text-xl font-normal m-0 pt-1.5 pb-5">{subtitle}</p>
