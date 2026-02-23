@@ -148,25 +148,55 @@ const RegularImageOrder: React.FC = () => {
       {loading ? (
         <LoadingScreen message="Processing image..." />
       ) : constants?.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE' ? (
-        <div className="text-center py-5">
+        <div className="text-center py-5 gap-10 flex flex-col items-center">
           <MediumLogoHeader title="Large Format" />
 
           <HeaderSection title="Step 1. Choose an output size in inches - width x height.">
-            <select 
-                value={size} 
-                onChange={updateSize} 
-                className="inline-block py-2.5 px-3 cursor-pointer bg-primary text-primary-foreground border border-input rounded-md text-base w-auto min-w-[50px]" 
-                disabled={loading}
-            >
-              {
-                Object.values(OutputSize).map((size) => (
-                  <option value={size}>{size}</option>
-                ))
-              }
-            </select>
+            <div className="flex flex-col items-center gap-2">
+              {/* Make the parent relative for the arrow */}
+              <div className="relative inline-block min-w-[50px] w-auto">
+                <select
+                  value={size}
+                  onChange={updateSize}
+                  disabled={loading}
+                  className={`
+                    appearance-none
+                    bg-transparent
+                    text-primary
+                    border
+                    border-current
+                    rounded-md
+                    py-2.5
+                    pl-3
+                    pr-8
+                    text-base
+                    cursor-pointer
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-primary/40
+                    transition-colors
+                    duration-200
+                    w-full
+                  `}
+                >
+                  {Object.values(OutputSize).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Arrow */}
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary">
+                  ▼
+                </span>
+              </div>
+
+              <span className="text-base">{`Cost: ${cost / 100} (not including shipping and tax)`}</span>
+            </div>
           </HeaderSection>
 
-          <HeaderSection title={`Cost: ${cost / 100} (not including shipping and tax)`} fontSize="sm"/>
+
 
           <HeaderSection title="Step 2. Select if you'd like to crop the image, otherwise it will be automatically adjusted to fit the aspect ratio" marginTop={MARGINS.LARGE}>
             <div className="flex justify-center items-center gap-2">

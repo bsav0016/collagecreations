@@ -234,7 +234,7 @@ export function SelectOutputStep({
                             </div>
                             <div className="flex flex-row">
                                 <GeneralButton text="Yes" onClick={confirmSymbolSelection} variant="confirm" />
-                                <GeneralButton text="No" onClick={cancelSymbolSelection} />
+                                <GeneralButton text="No" onClick={cancelSymbolSelection} variant="ghost" />
                             </div>
                         </div>
                     )}

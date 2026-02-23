@@ -59,9 +59,7 @@ export function CollageTypeCard({
             alt={imageAlt}
             className="w-full rounded-md mb-4"
           />
-          <div className="text-base">
-            {children}
-          </div>
+          {children}
         </CardContent>
       </Card>
     </article>

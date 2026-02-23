@@ -108,7 +108,7 @@ export function SelectOutputSizeStep({
                     </div>
                     <div className="flex flex-row gap-2.5">
                         <GeneralButton text="Yes" onClick={confirmSelection} variant="confirm" />
-                        <GeneralButton text="No" onClick={cancelSelection} />
+                        <GeneralButton text="No" onClick={cancelSelection} variant="ghost" />
                     </div>
                 </div>
             )}

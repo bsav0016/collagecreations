@@ -8,7 +8,6 @@ import { useLocalDatabase } from "../../../../../context/databaseContext";
 import ImageUpload from "../../../../../components/imageUpload/imageUpload";
 import imageCompression from 'browser-image-compression';
 import heic2any from 'heic2any';
-import BasicButton from "../../../../../components/basicButton/basicButton";
 import CustomCropper from "../../../../../components/customCropper/customCropper";
 import CropperButton from "../../../../../components/cropperButton/cropperButton";
 import { useConstants } from "../../../../../context/constantsContext";
@@ -231,9 +230,10 @@ export function SelectImagesStep({
                     />
                     <div className="flex flex-row items-center gap-2">
                         {(smallImages.length > 0) && (
-                            <BasicButton
+                            <GeneralButton
                                 onClick={confirmClearImages}
                                 text="Clear All Images"
+                                variant="ghost"
                             />
                         )}
                         <ImageUpload
@@ -249,9 +249,10 @@ export function SelectImagesStep({
                             return (
                                 <div key={index} className="flex flex-col items-center my-6 mx-12 max-md:my-2.5 max-md:mx-5 gap-3">
                                     <img src={croppedImage} alt="Cropped" className="max-w-full max-h-[120px] max-md:max-h-[90px]" />
-                                    <BasicButton
+                                    <GeneralButton
                                         onClick={() => handleDelete(originalIndex)}
                                         text="Delete"
+                                        variant="ghost"
                                     />
                                 </div>
                             );

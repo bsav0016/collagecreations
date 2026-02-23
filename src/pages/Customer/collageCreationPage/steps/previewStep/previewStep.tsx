@@ -43,7 +43,7 @@ export function PreviewStep({
     return (
         <div>
             <div className="flex w-auto justify-center gap-4">
-                <GeneralButton text={"Invert"} onClick={invertAll} />
+                <GeneralButton text={"Invert"} onClick={invertAll} variant="ghost" />
                 <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} variant="primary" />
             </div>
             <div className="flex flex-col items-center gap-0">

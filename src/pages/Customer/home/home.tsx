@@ -4,7 +4,8 @@ import symbolCollage from "../../../assets/exampleSymbolCollage.png";
 import NavBar from "../../../layout/navBars/navBar";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
+//import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
+import Logo from "../../..//assets/medium-logo.png"
 import { Helmet } from "react-helmet-async";
 import { CollageCreationType } from "../collageCreationPage/enums/collageCreationType";
 import { CollageTypeCard } from "../../../components/collageTypeCard/collageTypeCard";
@@ -23,7 +24,7 @@ function Home() {
 
   const collageOptions: CollageOption[] = [
     {
-      title: "Symbol Based Mosaic",
+      title: "Symbol Based Collage",
       description: "Create with symbols",
       type: CollageCreationType.Symbol,
       image: symbolCollage,
@@ -34,7 +35,7 @@ function Home() {
       ],
     },
     {
-      title: "Custom Image Mosaic",
+      title: "Custom Image Collage",
       description: "Create with photos",
       type: CollageCreationType.Image,
       image: imageCollage,
@@ -46,7 +47,7 @@ function Home() {
       ],
     },
     {
-      title: "Text Based Mosaic",
+      title: "Text Based Collage",
       description: "Create with words",
       type: CollageCreationType.Text,
       image: textCollage,
@@ -69,38 +70,38 @@ function Home() {
     <>
       <Helmet>
         <title>
-          Mosaic Maker - Create Stunning Photo Mosaics | Collage Creations
+          Collage Creations - Create Stunning Photo Collages | Collage Creations
         </title>
         <meta
           name="description"
-          content="Create stunning photo mosaics using hundreds of your own pictures. Turn images, words, or symbols into high-resolution mosaics. Order custom prints today."
+          content="Create stunning photo collages using hundreds of your own pictures. Turn images, words, or symbols into high-resolution collages. Order custom prints today."
         />
         <meta
           name="keywords"
-          content="photo mosaic, mosaic maker, photo collage, custom prints, mosaic art, photo wall art, image mosaic, text mosaic, symbol mosaic"
+          content="photo mosaic, mosaic maker, photo collage, custom prints, mosaic art, photo wall art, image collage, text collage, symbol collage"
         />
         <meta
           property="og:title"
-          content="Mosaic Maker - Create Stunning Photo Mosaics"
+          content="Collage Creations - Create Stunning Photo Collages"
         />
         <meta
           property="og:description"
-          content="Create stunning photo mosaics using hundreds of your own pictures. Turn images, words, or symbols into high-resolution mosaics."
+          content="Create stunning photo collages using hundreds of your own pictures. Turn images, words, or symbols into high-resolution mosaics."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://collagecreations.org/" />
         <meta
           property="og:image"
-          content="https://collagecreations.org/mosaic-preview.jpg"
+          content="https://collagecreations.org/collage-preview.jpg"
         />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="Mosaic Maker - Create Stunning Photo Mosaics"
+          content="Collage Creations - Create Stunning Photo Collages"
         />
         <meta
           name="twitter:description"
-          content="Create stunning photo mosaics using hundreds of your own pictures. Turn images, words, or symbols into high-resolution mosaics."
+          content="Create stunning photo collages using hundreds of your own pictures. Turn images, words, or symbols into high-resolution collages."
         />
         <link rel="canonical" href="https://collagecreations.org/" />
       </Helmet>
@@ -111,17 +112,17 @@ function Home() {
           <section className="text-center py-5">
             <button onClick={updateClicked} className="border-0 bg-background w-full">
               <img
-                src={MosaicMaker}
-                alt="Mosaic Maker Logo"
+                src={Logo}
+                alt="Collage Creations Logo"
                 className="w-[15%] justify-self-center max-md:w-[60%]"
               />
             </button>
-            <h1 className="text-center font-bold text-3xl">Mosaic Maker</h1>
+            <h1 className="text-center font-bold text-3xl">Collage Creations</h1>
             <p className="m-0 p-2.5">
-              Create stunning photo mosaics using hundreds of your own pictures.
+              Create stunning photo collages using hundreds of your own pictures.
             </p>
             <p className="m-0">
-              Turn images, words, or symbols into high-resolution mosaics and
+              Turn images, words, or symbols into high-resolution collages and
               zoom in to see every photo.
             </p>
             <section className="flex flex-col md:flex-row gap-6 justify-center items-start mt-8 px-4">
@@ -137,11 +138,14 @@ function Home() {
                   {option.considerations.length > 0 && (
                     <div>
                       <p className="font-semibold mb-2">Considerations:</p>
-                      {option.considerations.map((consideration, index) => (
-                        <p className="text-base mb-1" key={index}>
-                          • {consideration}
-                        </p>
-                      ))}
+
+                      <ul className="list-disc list-inside space-y-1 text-left">
+                        {option.considerations.map((consideration, index) => (
+                          <li key={index}>
+                            {consideration}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </CollageTypeCard>

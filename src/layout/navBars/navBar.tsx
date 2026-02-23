@@ -7,7 +7,8 @@ import {
   MenubarTrigger,
 } from "../../components/ui/menubar";
 import { cn } from "../../lib/utils";
-import MosaicMakerLogo from "../../assets/MosaicMakerNoText.png";
+//import MosaicMakerLogo from "../../assets/MosaicMakerNoText.png";
+import Logo from "../../assets/medium-logo.png"
 
 function NavBar() {
   const navigate = useNavigate();
@@ -32,14 +33,12 @@ function NavBar() {
 
   return (
     <nav className="w-full flex items-center p-4">
-      {!isHomePage && (
         <img
-          src={MosaicMakerLogo}
-          alt="Mosaic Maker Logo"
+          src={Logo}
+          alt="Collage Creations Logo"
           className="h-12 cursor-pointer ml-4"
           onClick={() => handleNavigation("/")}
         />
-      )}
       <div className={cn("flex justify-center", isHomePage ? "w-full" : "flex-1")}>
         <Menubar>
         <MenubarMenu>
