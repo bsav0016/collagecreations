@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AdminNavBar from '../../layout/navBars/adminNavBar';
 import GeneralButton from '../../components/generalButton/generalButton';
 import LoadingDots from '../../components/loadingDots';
@@ -31,7 +31,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const { id: paramId } = useParams<{ id: string }>();
   const { userToken } = useAuth();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
     const fetchTicketData = async (): Promise<void> => {
       setLoading(true);
       try {
-        const id = location.state?.id;
+        const id = paramId ? parseInt(paramId) : null;
         setTicketId(id);
         const data = await TicketService.getTicket(userToken, id);
         const ticketDTO = TicketDTO.fromResponse(data);
@@ -57,7 +57,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
     };
 
     fetchTicketData();
-  }, [userToken, navigate, location.state, customOrder]);
+  }, [userToken, navigate, paramId, customOrder]);
 
   const updateTicketData = async (): Promise<void> => {
     if (!userToken) {
@@ -69,7 +69,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
 
     setIsSubmitting(true);
     try {
-      const response = await TicketService.updateTicket(userToken, location.state.id, ticketData);
+      const response = await TicketService.updateTicket(userToken, paramId ? parseInt(paramId) : null, ticketData);
       if (response) {
         navigate(customOrder ? '/admin/admin-custom-orders/' : '/admin/admin-support-tickets/');
       } else {

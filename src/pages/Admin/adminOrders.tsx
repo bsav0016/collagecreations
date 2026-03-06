@@ -74,9 +74,7 @@ function AdminOrders(): React.ReactElement {
   }, [orders, unactionedOrders, printedOrders, shippedOrders, deliveredOrders, downloadOrders]);
 
   const handleOrderClick = (id: number): void => {
-    navigate('/admin/admin-order/', {
-      state: { id: id }
-    });
+    navigate(`/admin/admin-order/${id}`);
   };
 
   const handleGoClick = (): void => {
@@ -114,12 +112,23 @@ function AdminOrders(): React.ReactElement {
             marginBottom={20}
           />
 
+          <div className="flex flex-row justify-center gap-2 mb-4">
+            <GeneralButton
+              onClick={navigateCompleted}
+              text={"Completed Orders"}
+            />
+            <GeneralButton
+              onClick={navigateDownloaded}
+              text={"Download Orders"}
+            />
+          </div>
+
           <div className="flex flex-row justify-center">
-            <TextInput 
-              type="text" 
-              value={orderNumber} 
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setOrderNumber(e.target.value)} 
-              placeholder="Enter order number" 
+            <TextInput
+              type="text"
+              value={orderNumber}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setOrderNumber(e.target.value)}
+              placeholder="Enter order number"
               maxWidth='300px'
             />
 
@@ -129,34 +138,25 @@ function AdminOrders(): React.ReactElement {
             />
           </div>
 
-          <CategoryDisplay 
-            title='Invalid Orders' 
-            type='order' 
-            items={invalidOrders} 
+          <CategoryDisplay
+            title='Invalid Orders'
+            type='order'
+            items={invalidOrders}
           />
-          <CategoryDisplay 
-            title='Unactioned Orders' 
-            type='order' 
-            items={unactionedOrders} 
+          <CategoryDisplay
+            title='Unactioned Orders'
+            type='order'
+            items={unactionedOrders}
           />
-          <CategoryDisplay 
-            title='Printed Orders' 
-            type='order' 
-            items={printedOrders} 
+          <CategoryDisplay
+            title='Printed Orders'
+            type='order'
+            items={printedOrders}
           />
-          <CategoryDisplay 
-            title='Shipped Orders' 
-            type='order' 
-            items={shippedOrders} 
-          />
-
-          <GeneralButton
-            onClick={navigateCompleted}
-            text={"Completed Orders"}
-          />
-          <GeneralButton
-            onClick={navigateDownloaded}
-            text={"Download Orders"}
+          <CategoryDisplay
+            title='Shipped Orders'
+            type='order'
+            items={shippedOrders}
           />
         </div>
       )}

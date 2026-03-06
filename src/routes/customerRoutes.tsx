@@ -13,6 +13,7 @@ import Tips from '../pages/Customer/tips/tips';
 import Settings from '../pages/Customer/settings/settings';
 import NotFound from '../pages/NotFound/notFound';
 import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';
+import DownloadAccess from '../pages/Customer/downloadAccess/downloadAccess';
 
 const CustomerRoutes: React.FC = () => (
   <Routes>
@@ -30,6 +31,7 @@ const CustomerRoutes: React.FC = () => (
     <Route path="regular-image-order" element={<RegularImageOrder />} />
     <Route path="tips" element={<Tips />} />
     <Route path="settings" element={<Settings />} />
+    <Route path="download-access/:token" element={<DownloadAccess />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

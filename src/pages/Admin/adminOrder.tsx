@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { processImageString } from '../../utils/modifyImage';
 import AdminNavBar from '../../layout/navBars/adminNavBar';
 import LoadingDots from '../../components/loadingDots';
@@ -31,7 +31,7 @@ function AdminOrder(): React.ReactElement {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const { id: paramId } = useParams<{ id: string }>();
   const { userToken } = useAuth();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function AdminOrder(): React.ReactElement {
     }
 
     try {
-      const orderId = location.state?.id;
+      const orderId = paramId ?? '';
       setId(orderId);
       getOrder(orderId);
 
@@ -79,8 +79,7 @@ function AdminOrder(): React.ReactElement {
     }
   };
 
-  const updateDatabase = async (e: FormEvent): Promise<void> => {
-    e.preventDefault();
+  const updateDatabase = async (): Promise<void> => {
     if (!userToken) {
       navigate('/admin/login');
       return;
@@ -174,7 +173,14 @@ function AdminOrder(): React.ReactElement {
       {loading ? (
         <LoadingScreen />
       ) : (
-        <div className="text-center py-5">
+        <div className="text-center pt-2 pb-5">
+          <div className="flex justify-start px-4">
+            <GeneralButton
+              onClick={() => navigate('/admin/admin-orders')}
+              text="← Back to Orders"
+              variant="default"
+            />
+          </div>
           <HeaderSection
             title={`Order Number: ${id}`}
             fontWeight='bold'

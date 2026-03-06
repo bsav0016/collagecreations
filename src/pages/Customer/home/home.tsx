@@ -110,7 +110,7 @@ function Home() {
         <NavBar />
         <main className="flex-col items-center justify-center">
           <section className="text-center py-5">
-            <button onClick={updateClicked} className="border-0 bg-background w-full">
+            <button onClick={updateClicked} className="border-0 bg-transparent w-full cursor-default">
               <img
                 src={Logo}
                 alt="Collage Creations Logo"

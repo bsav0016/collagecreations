@@ -54,10 +54,7 @@ function Resolved({ title, entryDisplay, navigationExtension, type }: ResolvedPr
   };
 
   const handleGoNavigate = (id: number): void => {
-    const urlExtension = '/admin/' + navigationExtension;
-    navigate(urlExtension, {
-      state: { id: id }
-    });
+    navigate(`/admin/${navigationExtension}/${id}`);
   };
 
   return (

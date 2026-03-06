@@ -32,7 +32,7 @@ function NavBar() {
   const activeClass = "bg-primary text-primary-foreground font-semibold";
 
   return (
-    <nav className="w-full flex items-center p-4">
+    <nav className="w-full flex items-center p-4 bg-background border-b border-border shadow-sm">
         <img
           src={Logo}
           alt="Collage Creations Logo"

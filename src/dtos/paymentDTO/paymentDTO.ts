@@ -41,7 +41,7 @@ class PaymentDTO {
 
     jsonify(): string {
         return JSON.stringify({
-            paymentMethod: this.paymentMethod,
+            paymentMethod: this.paymentMethod.id,
             tempImageId: this.tempImageId,
             type: this.type,
             firstname: this.firstname,

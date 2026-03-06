@@ -60,10 +60,8 @@ function AdminTickets({ customOrder }: AdminTicketsProps): React.ReactElement {
   }, [customOrder, userToken, navigate]);
   
   const handleTicketClick = (id: number): void => {
-    const navigationDestination = customOrder ? '/admin/admin-custom-order/' : '/admin/admin-support-ticket/';
-    navigate(navigationDestination, {
-      state: { id: id }
-    });
+    const base = customOrder ? '/admin/admin-custom-order/' : '/admin/admin-support-ticket/';
+    navigate(`${base}${id}`);
   };
 
   const handleGoClick = (): void => {

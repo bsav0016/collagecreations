@@ -73,7 +73,7 @@ function BillingPage(): React.ReactElement {
           }
           <MediumLogoHeader title={"Checkout Page"} />
           
-          <HeaderSection 
+          <HeaderSection
             title="Shipping Info"
             fontSize="xl"
             fontWeight='bold'
@@ -84,7 +84,12 @@ function BillingPage(): React.ReactElement {
               {formData.address2 !== '' && <p>{formData.address2}</p>}
               <p>{formData.city}, {formData.state} {formData.zipCode}</p>
             </div>
-          </HeaderSection>          
+            <GeneralButton
+              text="Edit Info"
+              onClick={() => navigate('/order')}
+              variant="default"
+            />
+          </HeaderSection>
 
           <HeaderSection
             title="Pricing Info"

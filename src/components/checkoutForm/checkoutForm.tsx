@@ -31,7 +31,7 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
     const navigate = useNavigate();
     const [processing, setProcessing] = useState(false);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
         setProcessing(true);
         setLoading(true);
         event.preventDefault();
@@ -65,7 +65,7 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
 
             setLoading(false);
             navigate("/confirmation/", {
-                state: { id: response.id, email: formData.email, collage: response.collage },
+                state: { id: response.id, email: formData.email, token: response.token },
             });
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "An error occurred";
@@ -78,12 +78,12 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="mx-auto my-[5px] max-w-[400px] bg-white p-[5px] rounded-[5px]">
+            <div className="mx-auto my-[5px] max-w-[400px] bg-white p-3 rounded-md border border-gray-300">
                 <CardElement
                     options={{
                         style: {
                             base: {
-                                fontSize: "16px",
+                                fontSize: "18px",
                                 color: "#000",
                                 "::placeholder": {
                                     color: "#999",

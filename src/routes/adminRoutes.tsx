@@ -17,7 +17,7 @@ const AdminRoutes: React.FC = () => (
   <Routes>
     <Route path="login" element={<Login />} />
     <Route path="admin-orders" element={<AdminOrders />} />
-    <Route path="admin-order" element={<AdminOrder />} />
+    <Route path="admin-order/:id" element={<AdminOrder />} />
     <Route path="resolved-orders" element={<Resolved
       title="Resolved Orders" 
       entryDisplay="Enter order id" 
@@ -33,7 +33,7 @@ const AdminRoutes: React.FC = () => (
     <Route path="admin-add-order" element={<AdminAddOrder />} />
     <Route path="admin-add-white" element={<AdminAddWhite />} />
     <Route path="admin-support-tickets" element={<AdminTickets customOrder={false} />} />
-    <Route path="admin-support-ticket" element={<AdminTicket customOrder={false} />} />
+    <Route path="admin-support-ticket/:id" element={<AdminTicket customOrder={false} />} />
     <Route path="resolved-support-tickets" element={<Resolved
       title="Resolved Tickets" 
       entryDisplay="Enter support ticket id" 
@@ -41,7 +41,7 @@ const AdminRoutes: React.FC = () => (
       type="supportTicket" 
     />} />
     <Route path="admin-custom-orders" element={<AdminTickets customOrder={true} />} />
-    <Route path="admin-custom-order" element={<AdminTicket customOrder={true} />} />
+    <Route path="admin-custom-order/:id" element={<AdminTicket customOrder={true} />} />
     <Route path="resolved-custom-orders" element={<Resolved
       title="Resolved Custom Orders"
       entryDisplay="Enter custom order id"

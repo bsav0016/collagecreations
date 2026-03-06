@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import bigLogo from '../../assets/big-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
@@ -23,8 +23,7 @@ function Login(): React.ReactElement {
   const navigate = useNavigate();
   const { login, error } = useAuth();
 
-  const handleSubmit = async (event: FormEvent): Promise<void> => {
-    event.preventDefault();
+  const handleSubmit = async (): Promise<void> => {
     setProcessing(true);
 
     const success = await login(loginData);

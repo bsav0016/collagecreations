@@ -1,19 +1,19 @@
 export interface PaymentResponse {
-    collage: string;
+    token: string | null;
     id: number;
 }
 
 class PaymentResponseDTO {
-    collage: string;
+    token: string | null;
     id: number;
 
-    constructor(collage: string, id: number) {
-        this.collage = collage;
+    constructor(token: string | null, id: number) {
+        this.token = token;
         this.id = id;
     }
 
     static fromResponse(response: PaymentResponse): PaymentResponseDTO {
-        return new PaymentResponseDTO(response.collage, response.id);
+        return new PaymentResponseDTO(response.token, response.id);
     }
 }
 

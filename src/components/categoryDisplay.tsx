@@ -36,26 +36,28 @@ function CategoryDisplay({ title, type, items }: CategoryDisplayProps) {
             toastRef.current?.("Invalid navigation path");
             return;
         }
-        navigate(navigationPath, {
-            state: { id: id },
-        });
+        navigate(`${navigationPath}${id}`);
     };
 
     return (
-        <div>
-            <h2>{title}</h2>
-            {items.map((item) => (
-                <GeneralButton
-                    onClick={() => handleItemClick(item.id)}
-                    text={
-                        <>
-                            {itemTitle} {item.id}
-                        </>
-                    }
-                    key={item.id}
-                    fullWidth={true}
-                />
-            ))}
+        <div className="mb-6">
+            <h2 className="font-bold text-lg">{title}</h2>
+            {items.length === 0 ? (
+                <p className="text-muted-foreground italic">No orders at this stage</p>
+            ) : (
+                items.map((item) => (
+                    <GeneralButton
+                        onClick={() => handleItemClick(item.id)}
+                        text={
+                            <>
+                                {itemTitle} {item.id}
+                            </>
+                        }
+                        key={item.id}
+                        fullWidth={true}
+                    />
+                ))
+            )}
         </div>
     );
 }

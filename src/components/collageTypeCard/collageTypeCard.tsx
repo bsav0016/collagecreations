@@ -41,7 +41,7 @@ export function CollageTypeCard({
 
   return (
     <article>
-      <Card className="w-85">
+      <Card className="w-85 shadow-2xl -translate-y-2 border-2">
         <CardHeader className="text-center">
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>

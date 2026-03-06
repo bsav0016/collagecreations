@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import CheckoutForm from '../../../components/checkoutForm/checkoutForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -18,6 +18,7 @@ import { toastRef } from '../../../context/toastContext/toastContext';
 import TextInput from '../../../components/textInput/textInput';
 import applyDiscountService from '../../../services/ApplyDiscountService';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
+import LoadingDots from '../../../components/loadingDots';
 import { useOrderContext } from '../../../context/orderContext';
 
 interface DownloadFormData {
@@ -80,8 +81,7 @@ function Download(): React.ReactElement {
     }
   };
 
-  const handleFormSubmit = (e: FormEvent): void => {
-    e.preventDefault();
+  const handleFormSubmit = (): void => {
     if (tax) {
       setTax(null);
     } else {
@@ -166,7 +166,7 @@ function Download(): React.ReactElement {
           <GeneralButton
             type={'submit'}
             disabled={!stripePromise || !formValid || processing}
-            text={tax ? "Edit Info" : formValid ? "Go To Billing" : errorText}
+            text={processing ? <>Processing<LoadingDots /></> : tax ? "Edit Info" : formValid ? "Go To Billing" : errorText}
           />  
         </Form>   
 

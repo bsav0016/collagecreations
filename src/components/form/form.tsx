@@ -1,13 +1,18 @@
 import React from "react";
 
 interface FormProps {
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit: () => void;
     children: React.ReactNode;
 }
 
 const Form: React.FC<FormProps> = ({ onSubmit, children }) => {
+    const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        onSubmit();
+    };
+
     return (
-        <form onSubmit={onSubmit} className="flex-col mx-auto w-[90%] max-w-[600px]">
+        <form onSubmit={handleSubmit} className="flex-col mx-auto w-[90%] max-w-[600px]">
             {children}
         </form>
     );
