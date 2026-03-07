@@ -36,13 +36,13 @@ const FormField: React.FC<FormFieldProps> = ({
     const fieldFlex = 1.75;
     
     return (
-        <div className="flex">
-            <div className="flex-1 flex mr-[10px] mt-2 justify-end">
+        <div className="flex flex-col sm:flex-row mt-2">
+            <div className="flex sm:flex-1 sm:mr-[10px] sm:justify-end sm:mt-0">
                 {required && <span className="text-red-500">*</span>}
                 <label>{text}</label>
             </div>
             {type === "checkbox" ? (
-                <div className="flex-[1.75] flex items-end">
+                <div className="sm:flex-[1.75] flex items-center mt-1 sm:mt-0">
                     <Checkbox
                         id={id}
                         checked={checked ?? false}
@@ -62,9 +62,10 @@ const FormField: React.FC<FormFieldProps> = ({
                     maxLength={maxLength}
                     required={required}
                     flex={fieldFlex}
+                    width="100%"
                 />
             ) : type === "label" ? (
-                <div className="flex-1 flex items-end">
+                <div className="sm:flex-1 flex items-end">
                     <label>{value}</label>
                 </div>
             ) : type === "state" ? (

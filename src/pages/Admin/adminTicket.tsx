@@ -43,7 +43,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
     const fetchTicketData = async (): Promise<void> => {
       setLoading(true);
       try {
-        const id = paramId ? parseInt(paramId) : null;
+        const id = paramId ? parseInt(paramId) : 0;
         setTicketId(id);
         const data = await TicketService.getTicket(userToken, id);
         const ticketDTO = TicketDTO.fromResponse(data);
@@ -69,7 +69,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
 
     setIsSubmitting(true);
     try {
-      const response = await TicketService.updateTicket(userToken, paramId ? parseInt(paramId) : null, ticketData);
+      const response = await TicketService.updateTicket(userToken, paramId ? parseInt(paramId) : 0, ticketData);
       if (response) {
         navigate(customOrder ? '/admin/admin-custom-orders/' : '/admin/admin-support-tickets/');
       } else {

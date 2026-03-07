@@ -27,7 +27,7 @@ const TextInput: React.FC<TextInputProps> = ({
 }) => {
     return (
         <input
-            className="my-[3px] mx-0 border-2 border-gray-300 rounded"
+            className="my-[3px] mx-0 border-2 border-gray-300 rounded w-full sm:w-auto"
             style={{ maxWidth: maxWidth, flex: flex }}
             type={type}
             id={id}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../layout/navBars/navBar';
 import MediumLogoHeader from '../../layout/mediumLogoHeader/mediumLogoHeader';
@@ -49,8 +49,7 @@ function Support({ isCustomOrder }: SupportProps): React.ReactElement {
     });
   };
 
-  const handleSubmit = async (e: FormEvent): Promise<void> => {
-    e.preventDefault();
+  const handleSubmit = async (): Promise<void> => {
     setIsSubmitting(true);
 
     try {

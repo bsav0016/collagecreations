@@ -50,15 +50,15 @@
 
     /* Text Size Scaling - applied to html element */
     .text-size-small {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .text-size-medium {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .text-size-large {
-        font-size: 22px;
+        font-size: 20px;
     }
 }
 
