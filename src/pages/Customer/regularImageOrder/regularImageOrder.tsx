@@ -17,11 +17,9 @@ import CropperButton from '../../../components/cropperButton/cropperButton';
 import QuantitySelection from '../../../components/quantitySelection';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
 import { toastRef } from '../../../context/toastContext/toastContext';
-import appStyles from '../../../App.module.css';
 import { CropCoordinate } from '../collageCreationPage/interfaces/CropCoordinate';
 import { CropArea } from '../collageCreationPage/interfaces/CropArea';
 import { OutputSize } from '../collageCreationPage/enums/OutputSize';
-import styles from './regularImageOrder.module.css';
 import { useOrderContext } from '../../../context/orderContext';
 
 
@@ -41,7 +39,7 @@ const RegularImageOrder: React.FC = () => {
   const [tempQuantity, setTempQuantity] = useState<number>(1);
 
   const { constants } = useConstants();
-  const { setTemporaryImageId, setBaseCost, setQuantity } = useOrderContext();
+  const { setTemporaryImageId, setQuantity } = useOrderContext();
   const navigate = useNavigate();
   usePreventScroll(cropperVisible);
 
@@ -150,48 +148,82 @@ const RegularImageOrder: React.FC = () => {
       {loading ? (
         <LoadingScreen message="Processing image..." />
       ) : constants?.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE' ? (
-        <div className={appStyles.App}>
+        <div className="text-center py-5 gap-10 flex flex-col items-center">
           <MediumLogoHeader title="Large Format" />
 
           <HeaderSection title="Step 1. Choose an output size in inches - width x height.">
-            <select 
-                value={size} 
-                onChange={updateSize} 
-                className={styles.dropDown} 
-                disabled={loading}
-            >
-              {
-                Object.values(OutputSize).map((size) => (
-                  <option value={size}>{size}</option>
-                ))
-              }
-            </select>
+            <div className="flex flex-col items-center gap-2">
+              {/* Make the parent relative for the arrow */}
+              <div className="relative inline-block min-w-[50px] w-auto">
+                <select
+                  value={size}
+                  onChange={updateSize}
+                  disabled={loading}
+                  className={`
+                    appearance-none
+                    bg-transparent
+                    text-primary
+                    border
+                    border-current
+                    rounded-md
+                    py-2.5
+                    pl-3
+                    pr-8
+                    text-base
+                    cursor-pointer
+                    focus:outline-none
+                    focus:ring-2
+                    focus:ring-primary/40
+                    transition-colors
+                    duration-200
+                    w-full
+                  `}
+                >
+                  {Object.values(OutputSize).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Arrow */}
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-primary">
+                  ▼
+                </span>
+              </div>
+
+              <span className="text-base">{`Cost: ${cost / 100} (not including shipping and tax)`}</span>
+            </div>
           </HeaderSection>
 
-          <HeaderSection title={`Cost: ${cost / 100} (not including shipping and tax)`} fontSize={14}/>
+
 
           <HeaderSection title="Step 2. Select if you'd like to crop the image, otherwise it will be automatically adjusted to fit the aspect ratio" marginTop={MARGINS.LARGE}>
-            <div style={{ display: 'flex', justifySelf: 'center', alignItems: 'center', gap: 5 }}>
+            <div className="flex justify-center items-center gap-2">
               <Checkbox id="chooseCrop" checked={chooseCrop} onChange={changeChooseCrop} disabled={loading} />
-              <p>Crop Image</p>
+              <p className="text-foreground">Crop Image</p>
             </div>
           </HeaderSection>
 
           <HeaderSection title="Step 3. Select which image you'd like to print." marginTop={MARGINS.LARGE}>
-            <ImageUpload id="main-image-upload" title={loading ? <>Loading<LoadingDots /></> : 'Choose Image'} onChange={doHandleMainImageChange} disabled={loading} />
+            <ImageUpload id="main-image-upload" title={loading ? 'Loading...' : 'Choose Image'} onChange={doHandleMainImageChange} disabled={loading} />
           </HeaderSection>
 
           {mainImage &&
-            <div style={{ justifySelf: 'center', width: '100%' }}>
-              <img src={mainImage} alt="Image" style={{ width: aspect > 1 ?'50%' : '25%', aspectRatio: aspect }} />
+            <div className="flex justify-center w-full">
+              <img src={mainImage} alt="Image" className={aspect > 1 ? 'w-1/2' : 'w-1/4'} style={{ aspectRatio: aspect }} />
             </div>
           }
 
           {selectedImage && cropperVisible && (
             <CustomCropper selectedImage={selectedImage} crop={crop} setCrop={setCrop} zoom={zoom} setZoom={setZoom} setCropArea={setCroppedAreaPixels} aspect={aspect}>
-              <CropperButton onClick={doHandleCrop} disabled={loading} text="Crop Image" />
-              <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate Image" />
-              <CropperButton onClick={handleCancelCrop} disabled={loading} text="Cancel" />
+              <div className="flex flex-wrap justify-between w-full">
+                <CropperButton onClick={handleCancelCrop} disabled={loading} text="Cancel" />
+                <div className="flex flex-wrap">
+                  <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate Image" />
+                  <CropperButton onClick={doHandleCrop} disabled={loading} text="Finish" variant="primary" />
+                </div>
+              </div>
             </CustomCropper>
           )}
 

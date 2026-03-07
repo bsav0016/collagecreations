@@ -1,9 +1,7 @@
-import React from "react";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
 import { CollageCreationType } from "../../enums/collageCreationType";
 import { OutputSize } from "../../enums/OutputSize";
 import { SmallImageSize } from "../../enums/SmallImageSize";
-import styles from './createCollage.module.css';
 import { createCollage } from "../../../../../services/createCollage";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../../../../../context/orderContext";
@@ -71,8 +69,8 @@ export function CreateCollageStep({
     }
 
     return (
-        <div className={styles.createButton}>
-            <GeneralButton text={'Create Collage'} onClick={clickedCreateCollage}/>
+        <div className="flex self-center justify-self-center">
+            <GeneralButton text={'Create Collage'} onClick={clickedCreateCollage} variant="primary"/>
         </div>
     )
 }

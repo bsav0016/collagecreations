@@ -1,7 +1,5 @@
-import React, { useState } from "react";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
-import styles from "./previewStep.module.css";
 
 interface PreviewStepProps {
     setCurrentStep: (newStep: CollageCreationStep) => void;
@@ -28,6 +26,13 @@ export function PreviewStep({
         setCurrentStep(CollageCreationStep.SelectImagesStep);
     }
 
+    const invertAll = () => {
+        const invertedArray = lightDarkArray.map((row) =>
+            row.map((cell) => !cell)
+        );
+        setLightDarkArray(invertedArray);
+    }
+
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
     const maxSize = Math.min(screenWidth, screenHeight) * 0.9
@@ -37,12 +42,13 @@ export function PreviewStep({
 
     return (
         <div>
-            <div style={{display: 'flex', width: 'auto', justifyContent: 'center'}}>
-                <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} />
+            <div className="flex w-auto justify-center gap-4">
+                <GeneralButton text={"Invert"} onClick={invertAll} variant="ghost" />
+                <GeneralButton text={"Confirm Preview"} onClick={confirmPreview} variant="primary" />
             </div>
-            <div className={styles.gridContainer}>
+            <div className="flex flex-col items-center gap-0">
                 {lightDarkArray.map((lightDarkRow, i) => (
-                    <div className={styles.rowContainer} key={i}>
+                    <div className="flex gap-0 m-0 p-0" key={i}>
                         {lightDarkRow.map((lightDarkCell, j) => (
                             <button
                                 key={j}
@@ -52,6 +58,7 @@ export function PreviewStep({
                                     margin: 0,
                                     width: `${boxSize}px`,
                                     height: `${boxSize}px`,
+                                    border: '1px solid rgba(156, 163, 175, 0.3)',
                                 }}
                                 onClick={() => updateLightDarkArray(i, j)}
                             />

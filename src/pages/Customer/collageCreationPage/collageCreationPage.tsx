@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CollageCreationStep } from "./enums/collageCreationStep";
 import NavBar from "../../../layout/navBars/navBar";
@@ -15,9 +15,6 @@ import { OutputSize } from "./enums/OutputSize";
 import { SmallImageSize } from "./enums/SmallImageSize";
 import { SymbolOption } from "./interfaces/SymbolOption";
 import { useLocalDatabase } from "../../../context/databaseContext";
-import styles from "./collageCreationPage.module.css";
-import appStyles from "../../../App.module.css";
-import MediumLogoHeader from "../../../layout/mediumLogoHeader/mediumLogoHeader";
 import { databaseUtils } from "./databaseUtils";
 import AdminNavBar from "../../../layout/navBars/adminNavBar";
 
@@ -235,20 +232,13 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
       ) : (
         <div>
           {isAdmin ? <AdminNavBar /> : <NavBar />}
-          <div className={appStyles.App}>
+          <div className="text-center py-5">
             {title && (
-              <div className={styles.collageCreationTitleContainer}>
-                <div style={{ textAlign: "center", marginBottom: "20px" }}>
-                  <img
-                    src={require("../../../assets/MosaicMakerNoText.png")}
-                    alt="Mosaic Maker Logo"
-                    style={{ width: "15%", margin: "0 auto" }}
-                  />
-                </div>
-                <h1 className={styles.collageCreationTitle}>{title}</h1>
+              <div className="justify-center p-0">
+                <h1 className="text-4xl font-bold m-0 p-0">{title}</h1>
                 {subtitle && (
-                  <div className={styles.subtitleContainer}>
-                    <p className={styles.collageCreationSubtitle}>{subtitle}</p>
+                  <div className="w-3/4 justify-self-center mb-0 pb-0">
+                    <p className="text-xl font-normal m-0 pt-1.5 pb-5">{subtitle}</p>
                   </div>
                 )}
               </div>

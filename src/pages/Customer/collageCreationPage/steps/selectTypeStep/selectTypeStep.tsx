@@ -1,15 +1,11 @@
-import React from "react";
-import styles from "./selectTypeStep.module.css";
 import imageCollage from "../../../../../assets/exampleImageCollage.png";
 import textCollage from "../../../../../assets/exampleTextCollage.png";
 import symbolCollage from "../../../../../assets/exampleSymbolCollage.png";
 import { CollageCreationType } from "../../enums/collageCreationType";
-import GeneralButton from "../../../../../components/generalButton/generalButton";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "../../../../../components/ui/card";
