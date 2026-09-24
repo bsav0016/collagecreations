@@ -1,10 +1,10 @@
 export class NewCollageResponseDTO {
-    temporaryImageId: number;
+    temporaryImageId: string;
     watermarkCollage: string;
     baseCost: number;
 
     constructor(
-        temporaryImageId: number, 
+        temporaryImageId: string, 
         watermarkCollage: string, 
         baseCost: number
     ) {

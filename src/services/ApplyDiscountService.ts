@@ -5,7 +5,7 @@ import ApplyDiscountResponseDTO from "../dtos/applyDiscountDTO/applyDiscountResp
 
 const applyDiscountService = async (
     discountCode: string, 
-    tempImageId: number, 
+    tempImageId: string, 
     orderType: string
 ): Promise<number> => {
     const headers = {

@@ -3,14 +3,14 @@ import { useLocalDatabase } from "./databaseContext";
 
 type OrderContextType = {
   baseCost: number;
-  temporaryImageId: number;
+  temporaryImageId: string;
   watermarkCollage: string;
   quantity: number;
   shippingCost: number;
   tax: number;
   formData: string[];
   setBaseCost: (value: number) => Promise<void>;
-  setTemporaryImageId: (value: number) => Promise<void>;
+  setTemporaryImageId: (value: string) => Promise<void>;
   setWatermarkCollage: (value: string) => Promise<void>;
   setQuantity: (value: number) => Promise<void>;
   setShippingCost: (value: number) => Promise<void>;
@@ -24,7 +24,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const { setVariable, loadVariable } = useLocalDatabase();
 
   const [baseCost, setBaseCostState] = useState<number>(0);
-  const [temporaryImageId, setTemporaryImageIdState] = useState<number>(0);
+  const [temporaryImageId, setTemporaryImageIdState] = useState<string>("");
   const [watermarkCollage, setWatermarkCollageState] = useState<string>("");
   const [quantity, setQuantityState] = useState<number>(1);
   const [shippingCost, setShippingCostState] = useState<number>(0);
@@ -36,7 +36,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setBaseCostState(value);
   };
 
-  const setTemporaryImageId = async (value: number) => {
+  const setTemporaryImageId = async (value: string) => {
     await setVariable("temporaryImageId", value);
     setTemporaryImageIdState(value);
   };
@@ -77,7 +77,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         try {
             setTemporaryImageIdState(await loadVariable("temporaryImageId"));
         } catch {
-            setTemporaryImageIdState(0);
+            setTemporaryImageIdState("");
         }
 
         try {

@@ -35,7 +35,7 @@ const RegularImageOrder: React.FC = () => {
   const [aspect, setAspect] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [cost, setCost] = useState<number>(0);
-  const [tempImageId, setTempImageId] = useState<number>(-1);
+  const [tempImageId, setTempImageId] = useState<string>('');
   const [tempQuantity, setTempQuantity] = useState<number>(1);
 
   const { constants } = useConstants();

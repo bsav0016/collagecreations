@@ -1,8 +1,9 @@
 import { PaymentMethod } from "@stripe/stripe-js";
 
 class PaymentDTO {
-    paymentMethod: PaymentMethod;
-    tempImageId: number;
+    paymentMethod: PaymentMethod | null;
+    paymentIntentId: string | null;
+    tempImageId: string;
     type: string;
     firstname: string;
     lastname: string;
@@ -14,8 +15,8 @@ class PaymentDTO {
     zip: string;
 
     constructor(
-        paymentMethod: PaymentMethod,
-        tempImageId: number,
+        paymentMethod: PaymentMethod | null,
+        tempImageId: string,
         type: string,
         firstname: string,
         lastname: string,
@@ -24,9 +25,11 @@ class PaymentDTO {
         address2?: string,
         city?: string,
         state?: string,
-        zip?: string
+        zip?: string,
+        paymentIntentId: string | null = null
     ) {
         this.paymentMethod = paymentMethod;
+        this.paymentIntentId = paymentIntentId;
         this.tempImageId = tempImageId;
         this.type = type;
         this.firstname = firstname;
@@ -41,7 +44,8 @@ class PaymentDTO {
 
     jsonify(): string {
         return JSON.stringify({
-            paymentMethod: this.paymentMethod.id,
+            paymentMethod: this.paymentMethod?.id ?? null,
+            paymentIntentId: this.paymentIntentId,
             tempImageId: this.tempImageId,
             type: this.type,
             firstname: this.firstname,
