@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import { IS_DESKTOP, MARGINS } from '../../../utils/constants/constants';
@@ -144,6 +145,7 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
               </div>
             </div>
           </div>
+          {!isAdmin && <Footer />}
         </div>
       )}
     </div>

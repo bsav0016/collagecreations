@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
@@ -64,6 +65,7 @@ function DownloadAccess(): React.ReactElement {
                     </div>
                 </div>
             ) : null}
+            <Footer />
         </div>
     );
 }

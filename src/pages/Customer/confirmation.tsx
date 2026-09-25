@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../layout/navBars/navBar';
+import Footer from '../../layout/footer/footer';
 import MediumLogoHeader from '../../layout/mediumLogoHeader/mediumLogoHeader';
 import GeneralButton from '../../components/generalButton/generalButton';
 
@@ -48,6 +49,7 @@ function Confirmation(): React.ReactElement {
           )}
         </div>
       )}
+      <Footer />
     </div>
   );
 }

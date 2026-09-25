@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import NavBar from "../../../layout/navBars/navBar";
+import Footer from "../../../layout/footer/footer";
 import MediumLogoHeader from "../../../layout/mediumLogoHeader/mediumLogoHeader";
 import { ThemeSettings } from "../../../components/themeSettings/themeSettings";
 import { TextSizeSettings } from "../../../components/textSizeSettings/textSizeSettings";
@@ -43,6 +44,7 @@ function Settings(): React.ReactElement {
             </Card>
           </div>
         </main>
+        <Footer />
       </div>
     </>
   );

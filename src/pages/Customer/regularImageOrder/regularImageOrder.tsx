@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useConstants } from '../../../context/constantsContext';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import { rotateImage } from '../../../utils/modifyImage';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import usePreventScroll from '../../../hooks/preventScroll';
@@ -236,6 +237,7 @@ const RegularImageOrder: React.FC = () => {
       ) : (
         <HeaderSection title={constants?.PRINT_AVAILABLE_MESSAGE} marginTop={MARGINS.LARGE} />
       )}
+      <Footer />
     </div>
   );
 };
