@@ -2,6 +2,7 @@ import imageCollage from "../../../assets/exampleImageCollage.png";
 import textCollage from "../../../assets/exampleTextCollage.png";
 import symbolCollage from "../../../assets/exampleSymbolCollage.png";
 import NavBar from "../../../layout/navBars/navBar";
+import Footer from "../../../layout/footer/footer";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 //import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
@@ -153,6 +154,7 @@ function Home() {
             </section>
           </section>
         </main>
+        <Footer />
       </div>
     </>
   );

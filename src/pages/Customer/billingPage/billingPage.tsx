@@ -1,9 +1,10 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CheckoutForm from '../../../components/checkoutForm/checkoutForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import { MARGINS, STRIPE_KEY } from '../../../utils/constants/constants';
 import HeaderSection from '../../../components/headerSection';
@@ -154,17 +155,23 @@ function BillingPage(): React.ReactElement {
             marginTop={MARGINS.LARGE}
           >
             <Elements stripe={stripePromise}>
-              <CheckoutForm 
-                formValid={true} 
-                formData={formData} 
-                type={'order'} 
-                tempImageId={temporaryImageId} 
+              <CheckoutForm
+                formValid={true}
+                formData={formData}
+                type={'order'}
+                tempImageId={temporaryImageId}
                 setLoading={setLoading}
               />
             </Elements>
+            <p className="text-center text-xs text-muted-foreground mt-3">
+              By completing this order, you agree to our{' '}
+              <Link to="/terms" className="underline">Terms of Service</Link> and{' '}
+              <Link to="/refund-policy" className="underline">Refund &amp; Return Policy</Link>.
+            </p>
           </HeaderSection>
         </div>
       )}
+      <Footer />
     </div>
   );
 }
