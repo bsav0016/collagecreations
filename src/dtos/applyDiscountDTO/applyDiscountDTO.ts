@@ -1,9 +1,9 @@
 class ApplyDiscountDTO {
     discountCode: string;
-    tempImageId: number;
+    tempImageId: string;
     orderType: string;
 
-    constructor(discountCode: string, tempImageId: number, orderType: string) {
+    constructor(discountCode: string, tempImageId: string, orderType: string) {
         this.discountCode = discountCode;
         this.tempImageId = tempImageId;
         this.orderType = orderType;

@@ -1,7 +1,7 @@
 class GetTaxDTO {
-    tempImageId: number;
+    tempImageId: string;
 
-    constructor(tempImageId: number) {
+    constructor(tempImageId: string) {
         this.tempImageId = tempImageId;
     }
 

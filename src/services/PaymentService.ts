@@ -20,7 +20,7 @@ interface FormData {
 }
 
 const PaymentService = {
-    async calculateTax(tempImageId: number): Promise<GetTaxResponseDTO> {
+    async calculateTax(tempImageId: string): Promise<GetTaxResponseDTO> {
         const getTaxDTO = new GetTaxDTO(tempImageId);
         try {
             const headers = {
@@ -42,7 +42,7 @@ const PaymentService = {
 
     async calculateShipping(
         formData: FormData, 
-        tempImageId: number, 
+        tempImageId: string, 
         quantity: number
     ): Promise<GetShippingResponseDTO> {
         const dto = new GetShippingDTO(formData.zipCode, quantity, tempImageId);
@@ -66,11 +66,13 @@ const PaymentService = {
         }
     },
 
+    // Pass a null paymentMethod and the paymentIntentId to finish a payment after 3-D Secure.
     async createPayment(
-        paymentMethod: PaymentMethod,
-        tempImageId: number,
+        paymentMethod: PaymentMethod | null,
+        tempImageId: string,
         type: string,
-        formData: FormData
+        formData: FormData,
+        paymentIntentId: string | null = null
     ): Promise<PaymentResponseDTO> {
         const dto = new PaymentDTO(
             paymentMethod,
@@ -83,7 +85,8 @@ const PaymentService = {
             formData.address2,
             formData.city,
             formData.state,
-            formData.zipCode
+            formData.zipCode,
+            paymentIntentId
         );
 
         const headers = {

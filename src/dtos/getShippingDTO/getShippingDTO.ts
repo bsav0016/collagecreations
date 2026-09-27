@@ -1,10 +1,10 @@
 class GetShippingDTO {
     destinationZIPCode: string;
     quantity: number;
-    tempImageId: number;
+    tempImageId: string;
     mailingDate: string;
 
-    constructor(destinationZIPCode: string, quantity: number, tempImageId: number) {
+    constructor(destinationZIPCode: string, quantity: number, tempImageId: string) {
         this.destinationZIPCode = destinationZIPCode;
         this.quantity = quantity;
         this.tempImageId = tempImageId;

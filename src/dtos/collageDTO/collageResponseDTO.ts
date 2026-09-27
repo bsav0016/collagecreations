@@ -1,15 +1,15 @@
 interface CollageResponse {
-    temporary_image_id: number;
+    temporary_image_id: string;
     watermark_collage: string;
     base_cost: number;
 }
 
 class CollageResponseDTO {
-    temporaryImageId: number;
+    temporaryImageId: string;
     watermarkCollage: string;
     baseCost: number;
 
-    constructor(temporaryImageId: number, watermarkCollage: string, baseCost: number) {
+    constructor(temporaryImageId: string, watermarkCollage: string, baseCost: number) {
         this.temporaryImageId = temporaryImageId;
         this.watermarkCollage = watermarkCollage;
         this.baseCost = baseCost;

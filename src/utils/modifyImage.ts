@@ -82,7 +82,7 @@ export const getCroppedImg = async (imageSrc: string | null, crop: CropArea): Pr
 };
 
 interface CropAndResizeResponse {
-    temporary_image_id: number;
+    temporary_image_id: string;
     smaller_image: string;
 }
 

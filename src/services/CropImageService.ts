@@ -3,7 +3,7 @@ import { POST } from "../lib/networkRequestConstants";
 import CropImageDTO from "../dtos/CropImageDTO";
 
 interface CropImageResponse {
-    temporary_image_id: number;
+    temporary_image_id: string;
     smaller_image: string;
 }
 

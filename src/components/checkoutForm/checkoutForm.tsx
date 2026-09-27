@@ -21,7 +21,7 @@ interface CheckoutFormProps {
     formValid: boolean;
     formData: CheckoutFormData;
     type: string;
-    tempImageId: number;
+    tempImageId: string;
     setLoading: (loading: boolean) => void;
 }
 
@@ -56,12 +56,29 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
         }
 
         try {
-            const response = await PaymentService.createPayment(
+            let response = await PaymentService.createPayment(
                 paymentMethod,
                 tempImageId,
                 type,
                 formData
             );
+
+            // The bank asked for 3-D Secure: show Stripe's challenge, then finish the same payment.
+            if (response.requiresAction && response.clientSecret) {
+                const { error: actionError, paymentIntent } = await stripe.handleNextAction({
+                    clientSecret: response.clientSecret,
+                });
+                if (actionError || !paymentIntent) {
+                    throw new Error(`Card authentication failed: ${actionError?.message ?? "please try again"}`);
+                }
+                response = await PaymentService.createPayment(
+                    null,
+                    tempImageId,
+                    type,
+                    formData,
+                    paymentIntent.id
+                );
+            }
 
             setLoading(false);
             navigate("/confirmation/", {
