@@ -1,6 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../../layout/navBars/navBar';
+import Footer from '../../layout/footer/footer';
 import MediumLogoHeader from '../../layout/mediumLogoHeader/mediumLogoHeader';
 import FormField from '../../components/form/formField';
 import LoadingDots from '../../components/loadingDots';
@@ -163,6 +164,7 @@ function Order(): React.ReactElement {
           />
         </Form>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import CheckoutForm from '../../../components/checkoutForm/checkoutForm';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import FormField from '../../../components/form/formField';
 import { useConstants } from '../../../context/constantsContext';
@@ -237,6 +238,7 @@ function Download(): React.ReactElement {
         </div>
         }
       </div>
+      <Footer />
     </div>
   );
 }

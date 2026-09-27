@@ -1,5 +1,6 @@
 import React from 'react';
 import NavBar from '../../../layout/navBars/navBar';
+import Footer from '../../../layout/footer/footer';
 import ImageCollageTips from './components/imageCollageTips';
 import TextCollageTips from './components/textCollageTips';
 import SymbolCollageTips from './components/symbolCollageTips';
@@ -49,6 +50,7 @@ function Tips(): React.ReactElement {
           </CollageTypeCard>
         </section>
       </div>
+      <Footer />
     </div>
   );
 }
