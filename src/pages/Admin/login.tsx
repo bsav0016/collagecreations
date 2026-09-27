@@ -3,7 +3,6 @@ import Logo from '../../assets/medium-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import GeneralButton from '../../components/generalButton/generalButton';
-import HeaderSection from '../../components/headerSection';
 import Form from '../../components/form/form';
 import FormField from '../../components/form/formField';
 import LoginDTO from '../../dtos/loginDTO/loginDTO';
@@ -55,17 +54,16 @@ function Login(): React.ReactElement {
   };
 
   return (
-    <div className="text-center py-5">
-      <button onClick={updateClicked} className="border-0 bg-transparent w-full cursor-default">
-        <img src={Logo} alt="Collage Creations Logo" className="block mx-auto w-[15%] max-md:w-[60%]" />
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 py-10">
+      <button onClick={updateClicked} className="border-0 bg-transparent cursor-default">
+        <img src={Logo} alt="Collage Creations Logo" className="block h-16 w-auto" />
       </button>
 
-      <HeaderSection
-        title="Admin Login"
-        fontSize="3xl"
-        fontWeight='bold'
-        marginBottom={20}
-      />
+      <div className="text-center">
+        <h1 className="text-2xl font-bold">Admin Login</h1>
+        <p className="text-sm text-muted-foreground mt-1">Sign in to manage orders and tickets</p>
+      </div>
+
       <Form onSubmit={handleSubmit}>
         {fields.map(field => (
           <FormField
@@ -76,17 +74,20 @@ function Login(): React.ReactElement {
             value={field.value}
             onChange={handleFieldChange(field.id)}
             disabled={processing}
+            required
             maxLength={100}
           />
         ))}
 
+        {error && <p className="text-sm text-red-500">{error}</p>}
+
         <GeneralButton
           type="submit"
           text="Login"
+          fullWidth
           disabled={processing}
         />
       </Form>
-      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 }

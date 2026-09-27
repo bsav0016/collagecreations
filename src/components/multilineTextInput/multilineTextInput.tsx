@@ -1,4 +1,5 @@
 import React from "react";
+import { Textarea } from "../ui/input";
 
 interface MultilineTextInputProps {
     maxWidth?: string;
@@ -28,8 +29,7 @@ const MultilineTextInput: React.FC<MultilineTextInputProps> = ({
     flex,
 }) => {
     return (
-        <textarea
-            className="my-[5px] mx-0 border-2 border-input bg-background text-foreground rounded"
+        <Textarea
             style={{ width: width, maxWidth: maxWidth, flex: flex }}
             id={id}
             name={id}

@@ -146,6 +146,7 @@ function AdminTicket({ customOrder }: AdminTicketProps): React.ReactElement {
 
             <GeneralButton
               type="submit"
+              fullWidth
               disabled={isSubmitting}
               text={isSubmitting ? <>Processing<LoadingDots /></> : 'Update'}
             />

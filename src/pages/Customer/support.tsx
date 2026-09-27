@@ -8,7 +8,6 @@ import Form from '../../components/form/form';
 import LoadingDots from '../../components/loadingDots';
 import GeneralButton from '../../components/generalButton/generalButton';
 import TicketService from '../../services/TicketService';
-import RequiredFieldDesignator from '../../components/requiredFieldDesignator/requiredField';
 import { toastRef } from '../../context/toastContext/toastContext';
 
 interface SupportProps {
@@ -82,7 +81,6 @@ function Support({ isCustomOrder }: SupportProps): React.ReactElement {
       <NavBar />
       <div className="text-center py-5">
         <MediumLogoHeader title={isCustomOrder ? "Custom Order" : "Support Page"} />
-        <RequiredFieldDesignator />
 
         <Form onSubmit={handleSubmit}>
           <FormField
@@ -144,6 +142,7 @@ function Support({ isCustomOrder }: SupportProps): React.ReactElement {
 
           <GeneralButton
             type={'submit'}
+            fullWidth
             disabled={isSubmitting}
             text={isSubmitting ? <>Processing<LoadingDots /></> : "Submit"}
           />

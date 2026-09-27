@@ -6,7 +6,6 @@ import MediumLogoHeader from '../../layout/mediumLogoHeader/mediumLogoHeader';
 import FormField from '../../components/form/formField';
 import LoadingDots from '../../components/loadingDots';
 import GeneralButton from '../../components/generalButton/generalButton';
-import RequiredFieldDesignator from '../../components/requiredFieldDesignator/requiredField';
 import Form from '../../components/form/form';
 import PaymentService from '../../services/PaymentService';
 import { toastRef } from '../../context/toastContext/toastContext';
@@ -135,7 +134,6 @@ function Order(): React.ReactElement {
       <NavBar />
       <div className="text-center py-5">
         <MediumLogoHeader title={"Shipping Info"} />
-        <RequiredFieldDesignator />
 
         <Form onSubmit={navigateBillingPage}>
           {fields.map(field => (
@@ -152,16 +150,15 @@ function Order(): React.ReactElement {
             />
           ))}
 
-          <GeneralButton
-            type="submit"
-            disabled={!formValid || gettingShippingCost}
-            text={gettingShippingCost ? 
-              <>Processing<LoadingDots /></> : 
-              formValid ?
-              "Go To Billing" : 
-              errorText
-            }
-          />
+          <div className="flex flex-col gap-2">
+            <GeneralButton
+              type="submit"
+              fullWidth
+              disabled={!formValid || gettingShippingCost}
+              text={gettingShippingCost ? <>Processing<LoadingDots /></> : "Go To Billing"}
+            />
+            {!formValid && <p className="text-sm text-muted-foreground text-center">{errorText}</p>}
+          </div>
         </Form>
       </div>
       <Footer />

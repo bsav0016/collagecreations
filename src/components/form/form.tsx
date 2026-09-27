@@ -12,7 +12,10 @@ const Form: React.FC<FormProps> = ({ onSubmit, children }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex-col mx-auto w-[90%] max-w-[600px]">
+        <form
+            onSubmit={handleSubmit}
+            className="mx-4 sm:mx-auto sm:w-full max-w-lg flex flex-col gap-5 text-left rounded-xl border border-border bg-card text-card-foreground p-6 shadow-sm"
+        >
             {children}
         </form>
     );
