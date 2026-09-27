@@ -98,7 +98,12 @@ export function SelectOutputSizeStep({
         <div>
             <div className="flex flex-row gap-2.5 justify-center items-center flex-wrap">
                 {availableSizes.map((availableSize) => (
-                    <GeneralButton text={availableSize} onClick={() => selectSize(availableSize)} key={availableSize} />
+                    <GeneralButton
+                        text={availableSize}
+                        onClick={() => selectSize(availableSize)}
+                        variant={selectedSize === availableSize ? "primary" : "ghost"}
+                        key={availableSize}
+                    />
                 ))}
             </div>
             {displayConfirm && (
@@ -117,7 +122,7 @@ export function SelectOutputSizeStep({
                     <img 
                         src={outputSizeImages[selectedSize]}
                         alt={selectedSize} 
-                        className="w-[40%] h-auto max-md:w-[75%]"
+                        className="w-[40%] h-auto max-md:w-[75%] rounded-xl dark:bg-slate-100 dark:p-3"
                     />
                 </div>
             )}

@@ -9,7 +9,6 @@ import Form from '../../components/form/form';
 import OrderAddDTO from '../../dtos/OrderDTO/OrderAddDTO';
 import Checkbox from '../../components/checkbox/checkbox';
 import ImageUpload from '../../components/imageUpload/imageUpload';
-import RequiredFieldDesignator from '../../components/requiredFieldDesignator/requiredField';
 import OrderService from '../../services/OrderService';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
@@ -159,7 +158,6 @@ function AdminAddOrder(): React.ReactElement {
                     marginBottom={20}
                 />
 
-                <RequiredFieldDesignator />
                 <Form onSubmit={addOrder}>
                     <div className="flex flex-row items-center justify-center gap-2">
                         <p>Check for full order. Uncheck for download: </p>

@@ -3,6 +3,7 @@ import TextInput from "../textInput/textInput";
 import Checkbox from "../checkbox/checkbox";
 import MultilineTextInput from "../multilineTextInput/multilineTextInput";
 import StateDropDown from "../stateDropDown";
+import { Label } from "../ui/input";
 
 interface FormFieldProps {
     required?: boolean;
@@ -33,27 +34,42 @@ const FormField: React.FC<FormFieldProps> = ({
     placeholder,
     maxLength,
 }) => {
-    const fieldFlex = 1.75;
-    
-    return (
-        <div className="flex flex-col sm:flex-row mt-2">
-            <div className="flex sm:flex-1 sm:mr-[10px] sm:justify-end sm:mt-0">
-                {required && <span className="text-red-500">*</span>}
-                <label>{text}</label>
+    // Call sites pass labels like "First Name: "; the stacked layout doesn't need the colon.
+    const labelText = text.replace(/:\s*$/, "");
+
+    if (type === "checkbox") {
+        return (
+            <div className="flex items-center gap-3">
+                <Checkbox
+                    id={id}
+                    checked={checked ?? false}
+                    onChange={onChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+                    disabled={disabled}
+                    checkboxSize={checkboxSize}
+                />
+                <Label htmlFor={id}>{labelText}</Label>
             </div>
-            {type === "checkbox" ? (
-                <div className="sm:flex-[1.75] flex items-center mt-1 sm:mt-0">
-                    <Checkbox
-                        id={id}
-                        checked={checked ?? false}
-                        onChange={onChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
-                        disabled={disabled}
-                        checkboxSize={checkboxSize}
-                    />
-                </div>
-            ) : type === "multilineTextInput" ? (
+        );
+    }
+
+    if (type === "label") {
+        return (
+            <div className="flex flex-col gap-1">
+                <span className="text-sm text-muted-foreground">{labelText}</span>
+                <span className="whitespace-pre-wrap break-words">{value}</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-2">
+            <Label htmlFor={id}>
+                {labelText}
+                {!required && <span className="ml-1 font-normal text-muted-foreground">(optional)</span>}
+            </Label>
+            {type === "multilineTextInput" ? (
                 <MultilineTextInput
-                    maxWidth={maxWidth ? maxWidth.toString() : undefined}
+                    maxWidth={maxWidth ? maxWidth.toString() : "none"}
                     id={id}
                     value={value}
                     onChange={onChange as (e: React.ChangeEvent<HTMLTextAreaElement>) => void}
@@ -61,24 +77,19 @@ const FormField: React.FC<FormFieldProps> = ({
                     disabled={disabled}
                     maxLength={maxLength}
                     required={required}
-                    flex={fieldFlex}
                     width="100%"
                 />
-            ) : type === "label" ? (
-                <div className="sm:flex-1 flex items-end">
-                    <label>{value}</label>
-                </div>
             ) : type === "state" ? (
                 <StateDropDown
                     value={value}
                     onChange={onChange as (e: React.ChangeEvent<HTMLSelectElement>) => void}
                     disabled={disabled}
                     required={required}
-                    flex={fieldFlex}
+                    maxWidth="none"
                 />
             ) : (
                 <TextInput
-                    maxWidth={maxWidth ? maxWidth.toString() : undefined}
+                    maxWidth={maxWidth ? maxWidth.toString() : "none"}
                     type={type}
                     id={id}
                     value={value}
@@ -87,7 +98,6 @@ const FormField: React.FC<FormFieldProps> = ({
                     disabled={disabled}
                     maxLength={maxLength}
                     required={required}
-                    flex={fieldFlex}
                 />
             )}
         </div>

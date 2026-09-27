@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "../ui/input";
 
 interface TextInputProps {
     maxWidth?: string;
@@ -26,8 +27,7 @@ const TextInput: React.FC<TextInputProps> = ({
     flex,
 }) => {
     return (
-        <input
-            className="my-[3px] mx-0 border-2 border-input bg-background text-foreground rounded w-full sm:w-auto"
+        <Input
             style={{ maxWidth: maxWidth, flex: flex }}
             type={type}
             id={id}

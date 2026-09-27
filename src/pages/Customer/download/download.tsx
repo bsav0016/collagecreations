@@ -10,7 +10,6 @@ import { useConstants } from '../../../context/constantsContext';
 import { MARGINS, STRIPE_KEY } from '../../../utils/constants/constants';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import Form from '../../../components/form/form';
-import RequiredFieldDesignator from '../../../components/requiredFieldDesignator/requiredField';
 import HeaderSection from '../../../components/headerSection';
 import BillingRow from '../../../components/billingSection/billingRow';
 import BillingSection from '../../../components/billingSection/billingSection';
@@ -147,7 +146,6 @@ function Download(): React.ReactElement {
       <NavBar/>
       <div className="text-center py-5">
         <MediumLogoHeader title="Download Order"/>
-        <RequiredFieldDesignator />
         
         <Form onSubmit={handleFormSubmit}>
           {initialFields.map(field => (
@@ -164,11 +162,15 @@ function Download(): React.ReactElement {
             />
           ))}
 
-          <GeneralButton
-            type={'submit'}
-            disabled={!stripePromise || !formValid || processing}
-            text={processing ? <>Processing<LoadingDots /></> : tax ? "Edit Info" : formValid ? "Go To Billing" : errorText}
-          />  
+          <div className="flex flex-col gap-2">
+            <GeneralButton
+              type={'submit'}
+              fullWidth
+              disabled={!stripePromise || !formValid || processing}
+              text={processing ? <>Processing<LoadingDots /></> : tax ? "Edit Info" : "Go To Billing"}
+            />
+            {!formValid && !tax && <p className="text-sm text-muted-foreground text-center">{errorText}</p>}
+          </div>  
         </Form>   
 
         {tax && constants &&
