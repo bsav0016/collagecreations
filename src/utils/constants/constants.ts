@@ -1,5 +1,6 @@
 export const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL;
 export const STRIPE_KEY: string = import.meta.env.VITE_STRIPE_KEY;
+export const SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN;
 
 export const userAgent: string = window.navigator.userAgent;
 export const IS_DESKTOP: boolean = /Windows NT|Macintosh|Linux x86_64|Linux i686/.test(userAgent);
