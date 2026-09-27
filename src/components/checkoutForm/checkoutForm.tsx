@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "next-themes";
 import GeneralButton from "../generalButton/generalButton";
 import PaymentService from "../../services/PaymentService";
 import { toastRef } from "../../context/toastContext/toastContext";
@@ -29,6 +30,8 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
     const [processing, setProcessing] = useState(false);
 
     const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -95,19 +98,23 @@ function CheckoutForm({ formValid, formData, type, tempImageId, setLoading }: Ch
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="mx-auto my-[5px] max-w-[400px] bg-white p-3 rounded-md border border-gray-300">
+            <div className="mx-auto my-[5px] max-w-[400px] bg-background p-3 rounded-md border border-input">
+                {/* Stripe renders in an iframe and can't read CSS variables, so pass the
+                    theme's --foreground / --muted-foreground values explicitly. */}
                 <CardElement
                     options={{
                         style: {
                             base: {
                                 fontSize: "18px",
-                                color: "#000",
+                                color: isDark ? "#f8fafc" : "#000",
+                                iconColor: isDark ? "#94a3b8" : "#64748b",
                                 "::placeholder": {
-                                    color: "#999",
+                                    color: isDark ? "#94a3b8" : "#64748b",
                                 },
                             },
                             invalid: {
-                                color: "#9e2146",
+                                color: "#ef4444",
+                                iconColor: "#ef4444",
                             },
                         },
                     }}

@@ -202,7 +202,7 @@ export function SelectOutputStep({
     return (
         <div className="flex flex-col justify-center">
             {type === CollageCreationType.Text ? (
-                <div className="w-auto">
+                <div className="flex flex-col items-center w-auto">
                     <TextInput
                         maxWidth="50%"
                         value={text}
@@ -213,7 +213,7 @@ export function SelectOutputStep({
                 </div>
             ) : type === CollageCreationType.Symbol ? (
                 <div>
-                    <div className="justify-items-center justify-self-center w-auto content-center">
+                    <div className="flex justify-center">
                         <select 
                             id="symbolSelect" 
                             onChange={handleSymbolChange}
@@ -228,11 +228,11 @@ export function SelectOutputStep({
                         </select>
                     </div>
                     {displayConfirmSymbol && (
-                        <div className="justify-items-center">
+                        <div className="flex flex-col items-center">
                             <div>
                                 Confirm symbol?
                             </div>
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2.5 justify-center">
                                 <GeneralButton text="Yes" onClick={confirmSymbolSelection} variant="confirm" />
                                 <GeneralButton text="No" onClick={cancelSymbolSelection} variant="ghost" />
                             </div>
@@ -310,18 +310,18 @@ export function SelectOutputStep({
                                 onChange={handleMainImageChange}
                             />
                             {displayConfirmImage && (
-                                <div className="justify-items-center">
+                                <div className="flex flex-col items-center">
                                     <div>
                                         Confirm image?
                                     </div>
-                                    <div className="flex flex-row">
+                                    <div className="flex flex-row gap-2.5 justify-center">
                                         <GeneralButton text="Yes" onClick={confirmImageSelection} variant="confirm" />
                                         <GeneralButton text="No" onClick={cancelImageSelection} variant="ghost" />
                                     </div>
                                 </div>
                             )}
                             {tempImage && (
-                                <div className="w-[40%] justify-self-center">
+                                <div className="w-[40%] max-md:w-[75%] mx-auto">
                                     <img src={tempImage} 
                                         alt="Main Image" 
                                         className="w-full" 

@@ -35,26 +35,22 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
             {children}
             {toasts.length > 0 && (
                 <div>
-                    <div className="fixed top-0 left-0 w-full h-full bg-black/30 z-[9998]" />
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] max-w-[50%] w-auto bg-white border border-black rounded-[5px] shadow-lg p-[15px] box-border">
+                    <div className="fixed top-0 left-0 w-full h-full bg-black/30 dark:bg-black/60 z-[9998]" />
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] max-w-[50%] w-auto bg-card text-card-foreground border border-border rounded-[5px] shadow-lg p-[15px] box-border">
                         {toasts.map((toast) => (
                             <div key={toast.id}>
                                 <label className="text-base">{toast.message}</label>
                                 <div className="flex justify-end mt-[5px]">
                                     {toast.okCallback && (
                                         <button
-                                            className="font-bold py-[10px] px-[15px] bg-blue-600 text-white border-none rounded cursor-pointer text-sm transition-colors hover:bg-blue-700"
+                                            className="font-normal py-[10px] px-[15px] bg-secondary text-secondary-foreground border border-border rounded cursor-pointer text-sm transition-colors hover:bg-secondary/80"
                                             onClick={() => removeToast(toast.id)}
                                         >
                                             Cancel
                                         </button>
                                     )}
                                     <button
-                                        className={
-                                            toast.okCallback
-                                                ? "font-normal py-[10px] px-[15px] bg-gray-200 text-gray-600 border border-gray-400 rounded cursor-pointer text-sm transition-colors ml-[5px] hover:bg-gray-400 hover:text-gray-700"
-                                                : "font-bold py-[10px] px-[15px] bg-blue-600 text-white border-none rounded cursor-pointer text-sm transition-colors hover:bg-blue-700"
-                                        }
+                                        className="font-bold py-[10px] px-[15px] bg-primary text-primary-foreground border-none rounded cursor-pointer text-sm transition-colors ml-[5px] hover:bg-primary/90"
                                         onClick={() => {
                                             if (toast.okCallback) {
                                                 toast.okCallback();

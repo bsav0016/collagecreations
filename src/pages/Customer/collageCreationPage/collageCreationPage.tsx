@@ -237,7 +237,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
               <div className="justify-center p-0">
                 <h1 className="text-4xl font-bold m-0 p-0">{title}</h1>
                 {subtitle && (
-                  <div className="w-3/4 justify-self-center mb-0 pb-0">
+                  <div className="w-3/4 mx-auto mb-0 pb-0">
                     <p className="text-xl font-normal m-0 pt-1.5 pb-5">{subtitle}</p>
                   </div>
                 )}

@@ -26,7 +26,7 @@ const QuantitySelection: React.FC<QuantitySelectionProps> = ({
     };
 
     return (
-        <div className="flex flex-row w-fit justify-self-center items-center">
+        <div className="flex flex-row w-fit mx-auto items-center">
             <BasicButton
                 onClick={() => changeQuantity(quantity - 1)}
                 disabled={quantity <= 1}

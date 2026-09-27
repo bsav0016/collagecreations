@@ -60,7 +60,7 @@ function DownloadAccess(): React.ReactElement {
                 <div className="text-center py-5">
                     <MediumLogoHeader title="Download Your Image" />
                     <GeneralButton onClick={downloadImage} text="Download" />
-                    <div className="w-4/5 justify-self-center mt-4">
+                    <div className="w-4/5 mx-auto mt-4">
                         <img src={imageUrl} alt="Your Collage" className="w-full" />
                     </div>
                 </div>

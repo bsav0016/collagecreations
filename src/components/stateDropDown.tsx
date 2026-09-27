@@ -26,7 +26,7 @@ const StateDropDown: React.FC<StateDropDownProps> = ({
             onChange={onChange}
             required={required}
             disabled={disabled}
-            className="my-[3px] mx-0"
+            className="my-[3px] mx-0 border-2 border-input bg-background text-foreground rounded w-full sm:w-auto"
         >
             <option value="">Select State</option>
             <option value="AL">Alabama</option>

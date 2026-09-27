@@ -102,11 +102,11 @@ export function SelectOutputSizeStep({
                 ))}
             </div>
             {displayConfirm && (
-                <div className="justify-items-center mt-5">
+                <div className="flex flex-col items-center mt-5">
                     <div>
                         Confirm size?
                     </div>
-                    <div className="flex flex-row gap-2.5">
+                    <div className="flex flex-row gap-2.5 justify-center">
                         <GeneralButton text="Yes" onClick={confirmSelection} variant="confirm" />
                         <GeneralButton text="No" onClick={cancelSelection} variant="ghost" />
                     </div>
@@ -117,7 +117,7 @@ export function SelectOutputSizeStep({
                     <img 
                         src={outputSizeImages[selectedSize]}
                         alt={selectedSize} 
-                        className="w-[40%] h-auto justify-self-center max-md:w-[75%]"
+                        className="w-[40%] h-auto max-md:w-[75%]"
                     />
                 </div>
             )}
