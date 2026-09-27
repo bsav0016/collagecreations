@@ -29,7 +29,7 @@ const MultilineTextInput: React.FC<MultilineTextInputProps> = ({
 }) => {
     return (
         <textarea
-            className="my-[5px] mx-0 border-2 border-gray-300 rounded"
+            className="my-[5px] mx-0 border-2 border-input bg-background text-foreground rounded"
             style={{ width: width, maxWidth: maxWidth, flex: flex }}
             id={id}
             name={id}

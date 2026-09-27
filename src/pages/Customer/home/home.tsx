@@ -6,7 +6,6 @@ import Footer from "../../../layout/footer/footer";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 //import MosaicMaker from "../../../assets/MosaicMakerNoText.png";
-import Logo from "../../..//assets/medium-logo.png"
 import { Helmet } from "react-helmet-async";
 import { CollageCreationType } from "../collageCreationPage/enums/collageCreationType";
 import { CollageTypeCard } from "../../../components/collageTypeCard/collageTypeCard";
@@ -111,14 +110,9 @@ function Home() {
         <NavBar />
         <main className="flex-col items-center justify-center">
           <section className="text-center py-5">
-            <button onClick={updateClicked} className="border-0 bg-transparent w-full cursor-default">
-              <img
-                src={Logo}
-                alt="Collage Creations Logo"
-                className="w-[15%] justify-self-center max-md:w-[60%]"
-              />
-            </button>
-            <h1 className="text-center font-bold text-3xl">Collage Creations</h1>
+            <h1 onClick={updateClicked} className="text-center font-bold text-3xl cursor-default select-none">
+              Collage Creations
+            </h1>
             <p className="m-0 p-2.5">
               Create stunning photo collages using hundreds of your own pictures.
             </p>

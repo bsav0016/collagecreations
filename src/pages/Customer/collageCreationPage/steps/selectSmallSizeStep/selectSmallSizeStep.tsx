@@ -85,15 +85,15 @@ export function SelectSmallSizeStep({
     }
 
     return (
-        <div className="flex flex-row gap-12 max-md:flex-col max-md:gap-6">
+        <div className="flex flex-row gap-12 px-4 max-md:flex-col max-md:gap-6">
             {availableSmallSizes.map((availableSize, index) => (
                 <div 
-                    className="flex-1 justify-items-center flex-col border border-gray-300 rounded-lg shadow-md transition-all duration-200" 
+                    className="flex-1 flex flex-col items-center pb-4 border border-border bg-card text-card-foreground rounded-lg shadow-md transition-all duration-200" 
                     key={index}
                 >
                     <p className="p-0 m-2.5 text-2xl font-medium">{availableSize.text}</p>
                     <GeneralButton text={"Next Step"} onClick={() => selectSmallSize(availableSize.text)} variant="primary" />
-                    <img src={availableSize.image} className="w-auto h-[150px] mt-2.5" alt={availableSize.text} />
+                    <img src={availableSize.image} className="max-w-full h-[150px] object-contain mt-2.5" alt={availableSize.text} />
                 </div>
             ))}
         </div>

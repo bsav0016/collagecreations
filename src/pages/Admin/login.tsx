@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from 'react';
-import bigLogo from '../../assets/big-logo.png';
+import Logo from '../../assets/medium-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 import GeneralButton from '../../components/generalButton/generalButton';
@@ -56,8 +56,8 @@ function Login(): React.ReactElement {
 
   return (
     <div className="text-center py-5">
-      <button onClick={updateClicked} className="border-0 bg-white">
-        <img src={bigLogo} alt="Big Logo" className="w-[20%] justify-self-center md:w-[60%]" />
+      <button onClick={updateClicked} className="border-0 bg-transparent w-full cursor-default">
+        <img src={Logo} alt="Collage Creations Logo" className="block mx-auto w-[15%] max-md:w-[60%]" />
       </button>
 
       <HeaderSection

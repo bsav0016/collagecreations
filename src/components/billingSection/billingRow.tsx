@@ -25,7 +25,7 @@ const BillingRow: React.FC<BillingRowProps> = ({ text1, text2, lastCharge = fals
                 <strong ref={text2Ref}>{text2}</strong>
                 {lastCharge && (
                     <div
-                        className="mt-1 border-b-[3px] border-black"
+                        className="mt-1 border-b-[3px] border-foreground"
                         style={{ width: `${underlineWidth}px` }}
                     />
                 )}

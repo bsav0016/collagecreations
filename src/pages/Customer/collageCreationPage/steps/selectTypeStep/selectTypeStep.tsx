@@ -74,9 +74,9 @@ export function SelectTypeStep({
   };
 
   return (
-    <div className="flex gap-6 justify-center mt-8">
+    <div className="flex flex-col md:flex-row items-center md:items-stretch gap-6 justify-center mt-8 px-4">
       {collageOptions.map((option) => (
-        <Card className="w-85" key={option.title}>
+        <Card className="w-full max-w-sm md:w-85" key={option.title}>
           <CardHeader>
             <CardTitle>Custom {option.title} Mosaic</CardTitle>
           </CardHeader>

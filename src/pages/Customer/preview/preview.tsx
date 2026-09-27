@@ -133,7 +133,7 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
                 </div>
               )}
 
-              <div className="w-[40%] justify-self-center">
+              <div className="w-[40%] max-md:w-[90%] mx-auto">
                 <img 
                   src={collageImage || ''} 
                   alt="Collage" 

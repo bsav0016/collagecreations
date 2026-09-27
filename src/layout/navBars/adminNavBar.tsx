@@ -1,26 +1,35 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+} from "../../components/ui/menubar";
+import { cn } from "../../lib/utils";
 import { toastRef } from "../../context/toastContext/toastContext";
+import { Menu, X } from "lucide-react";
 
 function AdminNavBar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [openDropdown, setOpenDropdown] = useState<number>(-1);
+    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-        setOpenDropdown(-1);
+    const isActive = (path: string | string[]) => {
+        const paths = Array.isArray(path) ? path : [path];
+        return paths.some((p) => location.pathname.startsWith(p));
     };
 
-    const toggleDropdown = (index: number) => {
-        if (openDropdown === index) {
-            setOpenDropdown(-1);
-        } else {
-            setOpenDropdown(index);
-        }
+    const activeClass = "bg-primary text-primary-foreground font-semibold";
+
+    const handleNavigation = (path: string) => {
+        navigate(path);
+        setMenuOpen(false);
     };
 
     const confirmSignOut = () => {
+        setMenuOpen(false);
         toastRef.current?.("Sign Out?", "info", async () => {
             signOut();
         });
@@ -31,94 +40,105 @@ function AdminNavBar() {
         navigate("/admin/login");
     };
 
+    const navLinks = [
+        { label: "Create Collage", path: "/admin/admin-collage" },
+        { label: "Orders", path: "/admin/admin-orders" },
+        { label: "Support Tickets", path: "/admin/admin-support-tickets" },
+        { label: "Custom Orders", path: "/admin/admin-custom-orders" },
+    ];
+
     return (
-        <nav className="bg-white">
-            <div
-                className="hidden max-md:block cursor-pointer p-[3px] text-white text-2xl bg-[#282c34] ml-[15px] pt-2"
-                onClick={toggleMenu}
-            >
-                ☰ Menu
-            </div>
-            <ul
-                className={`list-none py-[3px] px-0 m-0 flex justify-around max-md:flex-col max-md:w-full max-md:text-center ${
-                    isOpen ? "max-md:flex" : "max-md:hidden"
-                }`}
-            >
-                <li className="relative text-center max-md:w-full">
-                    <Link
-                        to="/admin/admin-collage"
-                        className="block text-white no-underline p-[10px] cursor-pointer max-md:border-t max-md:border-b max-md:border-[#444]"
-                    >
-                        Create Collage
-                    </Link>
-                </li>
-                <li className="relative text-center max-md:w-full">
-                    <Link
-                        to="/admin/admin-orders"
-                        className="block text-white no-underline p-[10px] cursor-pointer max-md:border-t max-md:border-b max-md:border-[#444]"
-                    >
-                        Orders
-                    </Link>
-                </li>
-                <li className="relative text-center max-md:w-full">
-                    <Link
-                        to="/admin/admin-support-tickets"
-                        className="block text-white no-underline p-[10px] cursor-pointer max-md:border-t max-md:border-b max-md:border-[#444]"
-                    >
-                        Support Tickets
-                    </Link>
-                </li>
-                <li className="relative text-center max-md:w-full">
-                    <Link
-                        to="/admin/admin-custom-orders"
-                        className="block text-white no-underline p-[10px] cursor-pointer max-md:border-t max-md:border-b max-md:border-[#444]"
-                    >
-                        Custom Orders
-                    </Link>
-                </li>
-                <li className="relative text-center max-md:w-full group">
-                    <span
-                        onClick={() => toggleDropdown(0)}
-                        className="block text-white no-underline p-[10px] cursor-pointer"
-                    >
-                        Other
-                        <span className="ml-[10px] text-xs">
-                            {openDropdown === 0 ? "▲" : "▼"}
-                        </span>
-                    </span>
-                    {openDropdown === 0 && (
-                        <ul
-                            className={`absolute top-full left-1/2 -translate-x-1/2 bg-[#282c34] min-w-[200px] shadow-lg z-10 text-white list-none p-0 m-0 max-md:relative max-md:top-0 max-md:w-full max-md:shadow-none ${
-                                openDropdown === 0 ? "block max-md:flex max-md:flex-col max-md:items-center" : "hidden"
-                            }`}
-                        >
-                            <li className="p-[2px]">
-                                <Link
-                                    to="/admin/admin-add-order"
-                                    className="block text-white no-underline p-[10px] hover:bg-[#282c34] max-md:text-sm"
+        <>
+            {menuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 dark:bg-black/65 z-40 md:hidden"
+                    onClick={() => setMenuOpen(false)}
+                />
+            )}
+            <nav className="w-full bg-background border-b border-border shadow-sm relative z-50">
+                <div className="flex items-center p-4">
+                    <div className={cn("hidden md:flex justify-center flex-1")}>
+                        <Menubar>
+                            {navLinks.map(({ label, path }) => (
+                                <MenubarMenu key={path}>
+                                    <MenubarTrigger
+                                        onClick={() => handleNavigation(path)}
+                                        className={cn(isActive(path) && activeClass)}
+                                    >
+                                        {label}
+                                    </MenubarTrigger>
+                                </MenubarMenu>
+                            ))}
+
+                            <MenubarMenu>
+                                <MenubarTrigger
+                                    className={cn(
+                                        isActive(["/admin/admin-add-order", "/admin/admin-add-white"]) && activeClass
+                                    )}
                                 >
-                                    Add Order
-                                </Link>
-                            </li>
-                            <li className="p-[2px]">
-                                <Link
-                                    to="/admin/admin-add-white"
-                                    className="block text-white no-underline p-[10px] hover:bg-[#282c34] max-md:text-sm"
-                                >
-                                    Add White
-                                </Link>
-                            </li>
-                            <li
-                                onClick={confirmSignOut}
-                                className="m-2 cursor-pointer text-white p-[10px]"
+                                    Other
+                                </MenubarTrigger>
+                                <MenubarContent>
+                                    <MenubarItem onClick={() => handleNavigation("/admin/admin-add-order")}>
+                                        Add Order
+                                    </MenubarItem>
+                                    <MenubarItem onClick={() => handleNavigation("/admin/admin-add-white")}>
+                                        Add White
+                                    </MenubarItem>
+                                    <MenubarItem onClick={confirmSignOut}>
+                                        Sign Out
+                                    </MenubarItem>
+                                </MenubarContent>
+                            </MenubarMenu>
+                        </Menubar>
+                    </div>
+
+                    <button
+                        className="md:hidden ml-auto p-2"
+                        onClick={() => setMenuOpen((o) => !o)}
+                        aria-label="Toggle menu"
+                    >
+                        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+
+                {menuOpen && (
+                    <div className="md:hidden absolute top-full left-0 w-full bg-background border-b border-border shadow-lg flex flex-col">
+                        {navLinks.map(({ label, path }) => (
+                            <button
+                                key={path}
+                                onClick={() => handleNavigation(path)}
+                                className={cn(
+                                    "text-left px-6 py-3 hover:bg-muted",
+                                    isActive(path) && activeClass
+                                )}
                             >
-                                Sign Out
-                            </li>
-                        </ul>
-                    )}
-                </li>
-            </ul>
-        </nav>
+                                {label}
+                            </button>
+                        ))}
+                        <div className="px-6 py-1 text-sm text-muted-foreground font-medium">Other</div>
+                        <button
+                            onClick={() => handleNavigation("/admin/admin-add-order")}
+                            className="text-left px-8 py-2 hover:bg-muted"
+                        >
+                            Add Order
+                        </button>
+                        <button
+                            onClick={() => handleNavigation("/admin/admin-add-white")}
+                            className="text-left px-8 py-2 hover:bg-muted mb-2"
+                        >
+                            Add White
+                        </button>
+                        <button
+                            onClick={confirmSignOut}
+                            className="text-left px-8 py-2 hover:bg-muted mb-2"
+                        >
+                            Sign Out
+                        </button>
+                    </div>
+                )}
+            </nav>
+        </>
     );
 }
 
