@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
-import GeneralButton from "../../../../../components/generalButton/generalButton";
 import { SmallImageSize } from "../../enums/SmallImageSize";
+import { cn } from "../../../../../lib/utils";
 import { CollageCreationType } from "../../enums/collageCreationType";
 import { OutputSize } from "../../enums/OutputSize";
 import { SizeOption } from "../../interfaces/SizeOption";
@@ -57,7 +58,11 @@ export function SelectSmallSizeStep({
         }
     ]
 
+    const [selecting, setSelecting] = useState<SmallImageSize | null>(null);
+
     const selectSmallSize = async (newSize: SmallImageSize) => {
+        if (selecting) return;
+        setSelecting(newSize);
         setSmallImageSize(newSize);
         if (newSize === defaultSmallImageSize) {
             dbUtils.storeSmallImageSize(newSize);
@@ -80,21 +85,29 @@ export function SelectSmallSizeStep({
         } finally {
             setShowLoading(false);
             setLoadingMessage(null);
+            setSelecting(null);
         }
-        
+
     }
 
     return (
-        <div className="flex flex-row gap-12 px-4 max-md:flex-col max-md:gap-6">
+        <div className="flex flex-row gap-6 px-4 max-md:flex-col">
             {availableSmallSizes.map((availableSize, index) => (
-                <div 
-                    className="flex-1 flex flex-col items-center pb-4 border border-border bg-card text-card-foreground rounded-lg shadow-md transition-all duration-200" 
+                <button
+                    type="button"
                     key={index}
+                    onClick={() => selectSmallSize(availableSize.text)}
+                    disabled={!!selecting}
+                    className={cn(
+                        "flex-1 flex flex-col items-center gap-1 pb-5 pt-5 border-2 border-border bg-card text-card-foreground rounded-xl shadow-sm transition-colors",
+                        !selecting && "hover:border-primary/50 cursor-pointer",
+                        selecting && selecting !== availableSize.text && "opacity-50",
+                    )}
                 >
-                    <p className="p-0 m-2.5 text-2xl font-medium">{availableSize.text}</p>
-                    <GeneralButton text={"Next Step"} onClick={() => selectSmallSize(availableSize.text)} variant="primary" />
+                    <p className="p-0 m-0 text-xl font-semibold">{availableSize.text}</p>
+                    <p className="text-sm text-muted-foreground">{availableSize.size}</p>
                     <img src={availableSize.image} className="max-w-full h-[150px] object-contain mt-2.5" alt={availableSize.text} />
-                </div>
+                </button>
             ))}
         </div>
     )

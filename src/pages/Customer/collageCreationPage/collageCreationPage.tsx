@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CollageCreationStep } from "./enums/collageCreationStep";
+import { ProgressStepper } from "./steps/progressStepper/progressStepper";
 import NavBar from "../../../layout/navBars/navBar";
 import LoadingScreen from "../../../components/loadingScreen/loadingScreen";
 import { SelectTypeStep } from "./steps/selectTypeStep/selectTypeStep";
@@ -232,6 +233,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
       ) : (
         <div>
           {isAdmin ? <AdminNavBar /> : <NavBar />}
+          <ProgressStepper currentStep={currentStep} type={type} onNavigate={goToNextStep} />
           <div className="text-center py-5">
             {title && (
               <div className="justify-center p-0">

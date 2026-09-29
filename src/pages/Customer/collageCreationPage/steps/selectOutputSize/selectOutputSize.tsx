@@ -3,6 +3,7 @@ import { CollageCreationType } from "../../enums/collageCreationType";
 import { OutputSize } from "../../enums/OutputSize";
 import GeneralButton from "../../../../../components/generalButton/generalButton";
 import { CollageCreationStep } from "../../enums/collageCreationStep";
+import { cn } from "../../../../../lib/utils";
 import img12x12 from "../../../../../assets/comparison12x12.png";
 import img12x18 from "../../../../../assets/comparison12x18.png";
 import img18x12 from "../../../../../assets/comparison18x12.png";
@@ -27,7 +28,6 @@ export function SelectOutputSizeStep({
 }: SelectOutputSizeStepProps) {
     const [availableSizes, setAvailableSizes] = useState<OutputSize[]>([]);
     const [selectedSize, setSelectedSize] = useState<OutputSize | null>(null);
-    const [displayConfirm, setDisplayConfirm] = useState<boolean>(false);
 
     const outputSizeImages: Record<OutputSize, string> = {
         [OutputSize.x12x12]: img12x12,
@@ -72,10 +72,24 @@ export function SelectOutputSizeStep({
         setAvailableSizes(newAvailableSizes);
     }
 
-    const selectSize = (newSelectedSize: OutputSize) => {
-        setSelectedSize(newSelectedSize);
-        setDisplayConfirm(true);
-    }
+    // A small rectangle drawn to scale so each card shows its shape at a glance,
+    // in addition to the "width x height" text.
+    const ShapePreview = ({ size, active }: { size: OutputSize; active: boolean }) => {
+        const [width, height] = size.split("x").map(Number);
+        const longestSide = 44;
+        const scale = longestSide / Math.max(width, height);
+        return (
+            <div style={{ height: longestSide }} className="flex items-end justify-center">
+                <div
+                    style={{ width: width * scale, height: height * scale }}
+                    className={cn(
+                        "rounded-sm border-2",
+                        active ? "border-primary bg-primary/20" : "border-muted-foreground/50 bg-muted",
+                    )}
+                />
+            </div>
+        );
+    };
 
     const confirmSelection = () => {
         if (!selectedSize) {
@@ -89,42 +103,42 @@ export function SelectOutputSizeStep({
         setCurrentStep(CollageCreationStep.SelectOutputStep);
     }
 
-    const cancelSelection = () => {
-        setSelectedSize(null);
-        setDisplayConfirm(false);
-    }
-
     return (
-        <div>
-            <div className="flex flex-row gap-2.5 justify-center items-center flex-wrap">
-                {availableSizes.map((availableSize) => (
-                    <GeneralButton
-                        text={availableSize}
-                        onClick={() => selectSize(availableSize)}
-                        variant={selectedSize === availableSize ? "primary" : "ghost"}
-                        key={availableSize}
-                    />
-                ))}
+        <div className="flex flex-col items-center gap-8 px-4">
+            <div className="flex flex-row gap-4 justify-center items-stretch flex-wrap">
+                {availableSizes.map((availableSize) => {
+                    const active = selectedSize === availableSize;
+                    return (
+                        <button
+                            type="button"
+                            key={availableSize}
+                            onClick={() => setSelectedSize(availableSize)}
+                            aria-pressed={active}
+                            className={cn(
+                                "flex flex-col items-center gap-2 w-28 rounded-xl border-2 bg-card px-3 py-4 shadow-sm transition-colors",
+                                active ? "border-primary bg-primary/5" : "border-border hover:border-primary/50",
+                            )}
+                        >
+                            <ShapePreview size={availableSize} active={active} />
+                            <span className={cn("text-sm font-semibold", active && "text-primary")}>
+                                {availableSize.replace("x", " x ")}"
+                            </span>
+                        </button>
+                    );
+                })}
             </div>
-            {displayConfirm && (
-                <div className="flex flex-col items-center mt-5">
-                    <div>
-                        Confirm size?
-                    </div>
-                    <div className="flex flex-row gap-2.5 justify-center">
-                        <GeneralButton text="Yes" onClick={confirmSelection} variant="confirm" />
-                        <GeneralButton text="No" onClick={cancelSelection} variant="ghost" />
-                    </div>
-                </div>
-            )}
+
             {selectedSize && (
-                <div className="flex justify-center">
-                    <img 
+                <>
+                    <img
                         src={outputSizeImages[selectedSize]}
-                        alt={selectedSize} 
+                        alt={selectedSize}
                         className="w-[40%] h-auto max-md:w-[75%] rounded-xl dark:bg-slate-100 dark:p-3"
                     />
-                </div>
+                    <div className="w-full max-w-xs">
+                        <GeneralButton text="Continue" onClick={confirmSelection} variant="primary" fullWidth />
+                    </div>
+                </>
             )}
         </div>
     )
