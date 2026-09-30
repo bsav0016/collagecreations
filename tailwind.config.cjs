@@ -18,6 +18,10 @@ module.exports = {
       },
     },
     extend: {
+      spacing: {
+        // Card width used by CollageTypeCard; without this, "w-85" silently resolved to nothing.
+        85: "21.25rem",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
