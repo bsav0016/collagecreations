@@ -31,15 +31,18 @@ export function ZoomableImage({ src, alt, zoomScale = 2.2, className }: Zoomable
     };
 
     return (
-        // These mosaic example PNGs have a white background baked into the file itself
-        // (visible once shown larger than a small card), so give it a light "photo mat"
-        // backing rather than the theme's card color -- same treatment used for the
-        // output-size comparison art in dark mode (see selectOutputSize.tsx).
-        <div className={cn("relative overflow-hidden rounded-xl border border-border bg-white dark:bg-slate-100 shadow-lg p-2", className)}>
+        // These mosaic example PNGs have real alpha transparency around the callout-photo
+        // corner, not a baked-in fill color -- it's meant to show whatever sits behind it,
+        // same as the small type-picker cards already do correctly (CollageTypeCard's
+        // <img> has no background of its own, letting the card's bg-card show through).
+        // This used to force a hardcoded white/slate backing here regardless of theme or
+        // the actual section background, which looked like a mismatched box sitting on
+        // top of the page instead of blending into it.
+        <div className={cn("relative overflow-hidden rounded-xl border border-border shadow-lg", className)}>
             <img
                 src={src}
                 alt={alt}
-                className="w-full h-auto rounded-lg transition-transform duration-200 ease-out"
+                className="w-full h-auto transition-transform duration-200 ease-out"
                 style={{ transform: `scale(${zoomed ? zoomScale : 1})` }}
                 onMouseMove={IS_DESKTOP ? handleMouseMove : undefined}
                 onMouseLeave={IS_DESKTOP ? handleMouseLeave : undefined}
