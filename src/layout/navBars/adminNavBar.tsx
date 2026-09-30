@@ -10,6 +10,7 @@ import {
 import { cn } from "../../lib/utils";
 import { toastRef } from "../../context/toastContext/toastContext";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "../../components/themeToggle/themeToggle";
 
 function AdminNavBar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -93,13 +94,17 @@ function AdminNavBar() {
                         </Menubar>
                     </div>
 
-                    <button
-                        className="md:hidden ml-auto p-2"
-                        onClick={() => setMenuOpen((o) => !o)}
-                        aria-label="Toggle menu"
-                    >
-                        {menuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+                    <div className="flex items-center gap-1 ml-auto md:ml-0">
+                        <ThemeToggle />
+
+                        <button
+                            className="md:hidden p-2"
+                            onClick={() => setMenuOpen((o) => !o)}
+                            aria-label="Toggle menu"
+                        >
+                            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                 </div>
 
                 {menuOpen && (

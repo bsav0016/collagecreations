@@ -10,11 +10,11 @@ import {
 import { cn } from "../../lib/utils";
 import Logo from "../../assets/medium-logo.png";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "../../components/themeToggle/themeToggle";
 
 function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isHomePage = location.pathname === "/" || location.pathname === "/collage";
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleNavigation = (path: string) => {
@@ -60,7 +60,7 @@ function NavBar() {
         />
 
         {/* Desktop menu */}
-        <div className={cn("hidden md:flex justify-center", isHomePage ? "w-full" : "flex-1")}>
+        <div className="hidden md:flex justify-center flex-1">
           <Menubar>
             <MenubarMenu>
               <MenubarTrigger
@@ -116,14 +116,18 @@ function NavBar() {
           </Menubar>
         </div>
 
-        {/* Hamburger button */}
-        <button
-          className="md:hidden ml-auto p-2"
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-1 ml-auto md:ml-0">
+          <ThemeToggle />
+
+          {/* Hamburger button */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown overlay */}
