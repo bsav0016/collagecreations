@@ -20,12 +20,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
     return (
         <div>
             <input
-                style={{ 
-                    width: checkboxSize, 
-                    height: checkboxSize, 
-                    marginLeft: marginLeft 
+                style={{
+                    width: checkboxSize,
+                    height: checkboxSize,
+                    marginLeft: marginLeft
                 }}
-                className="float-left"
+                className="float-left accent-primary cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                 checked={checked}
                 type="checkbox"
                 id={id}
