@@ -9,6 +9,7 @@ interface GeneralButtonProps {
     type?: "button" | "submit" | "reset";
     fullWidth?: boolean;
     variant?: "default" | "primary" | "confirm" | "ghost";
+    size?: "default" | "sm" | "lg";
 }
 
 // Every call site shares one primary style; "ghost" is the secondary (outline) style.
@@ -26,11 +27,13 @@ function GeneralButton({
     type = "button",
     fullWidth = false,
     variant = "default",
+    size = "default",
 }: GeneralButtonProps) {
     const buttonElement = (
         <Button
             className={cn("m-1.5", fullWidth && "w-full mx-0")}
             variant={variantMap[variant]}
+            size={size}
             onClick={onClick}
             disabled={disabled}
             type={type}
