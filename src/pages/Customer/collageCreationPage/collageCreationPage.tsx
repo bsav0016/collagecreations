@@ -236,7 +236,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
           <ProgressStepper currentStep={currentStep} type={type} onNavigate={goToNextStep} />
           <div className="text-center py-5">
             {title && (
-              <div className="justify-center p-0">
+              <div className="justify-center py-0 px-4">
                 <h1 className="text-4xl font-bold m-0 p-0">{title}</h1>
                 {subtitle && (
                   <div className="w-3/4 mx-auto mb-0 pb-0">
