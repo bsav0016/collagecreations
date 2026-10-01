@@ -32,7 +32,11 @@ export function ProgressStepper({ currentStep, type, onNavigate }: ProgressStepp
     };
 
     const stepOrder = getStepOrderForType(type);
-    const currentIndex = stepOrder.indexOf(currentStep);
+    // currentStep can briefly be a step the current type's order doesn't include (e.g. right
+    // after a refresh, before the stored type finishes loading asynchronously and type is still
+    // its default). indexOf would return -1 then, showing "Step 0 of N" -- fall back to the first
+    // step instead of a negative index.
+    const currentIndex = Math.max(stepOrder.indexOf(currentStep), 0);
 
     return (
         <div className="w-full max-w-3xl mx-auto px-4 pt-4">
