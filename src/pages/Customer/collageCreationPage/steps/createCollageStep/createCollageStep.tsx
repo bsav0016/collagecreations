@@ -17,6 +17,7 @@ interface CreateCollageStepProps {
     color: boolean;
     setShowLoading: (isLoading: boolean) => void
     setLoadingMessage: (loadingMessage: string | null) => void;
+    setLoadingProgress: (loadingProgress: number | null) => void;
     isAdmin: boolean;
 }
 
@@ -30,6 +31,7 @@ export function CreateCollageStep({
     color,
     setShowLoading,
     setLoadingMessage,
+    setLoadingProgress,
     isAdmin
 }: CreateCollageStepProps) {
     const navigate = useNavigate();
@@ -41,6 +43,7 @@ export function CreateCollageStep({
         try {
             setShowLoading(true);
             setLoadingMessage("Creating your collage. This may take a minute...");
+            setLoadingProgress(0);
             const collageData = await createCollage(
                 userToken,
                 false,
@@ -50,7 +53,8 @@ export function CreateCollageStep({
                 smallImages,
                 mainImage,
                 lightDarkArray,
-                color
+                color,
+                setLoadingProgress
             );
 
             setTemporaryImageId(collageData.temporaryImageId);
@@ -64,6 +68,7 @@ export function CreateCollageStep({
             console.error(error);
         } finally {
             setLoadingMessage(null);
+            setLoadingProgress(null);
             setShowLoading(false);
         }
     }
