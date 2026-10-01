@@ -196,7 +196,7 @@ function Home() {
             <p className="text-muted-foreground mt-1 mb-8">
               Every collage starts with one of these three building blocks.
             </p>
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-start">
+            <div className="flex flex-col md:flex-row flex-wrap gap-6 justify-center items-start">
               {collageOptions.map((option) => (
                 <CollageTypeCard
                   key={option.type}
