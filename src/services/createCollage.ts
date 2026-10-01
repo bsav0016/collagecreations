@@ -9,11 +9,20 @@ import { NewCollageResponseDTO } from "../dtos/collageDTO/newCollageResponseDTO"
 const POLL_INTERVAL_MS = 3000; // Poll every 3 seconds
 const MAX_POLL_ATTEMPTS = 120; // Max 6 minutes of polling
 
-async function pollTaskResult(taskId: string, userToken: string | null): Promise<any> {
+interface TaskResultPendingResponse {
+    message: string;
+    percent?: number;
+}
+
+async function pollTaskResult(
+    taskId: string,
+    userToken: string | null,
+    onProgress?: (percent: number) => void,
+): Promise<any> {
     const headers = userToken ? { ...AUTHORIZATION_HEADER(userToken) } : {};
-    
+
     for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
-        const response = await NetworkRequest({
+        const response = await NetworkRequest<TaskResultPendingResponse | any>({
             urlExtension: `api/task-result/${taskId}/`,
             method: GET,
             headers: headers,
@@ -23,14 +32,18 @@ async function pollTaskResult(taskId: string, userToken: string | null): Promise
             // Task completed successfully
             return response.data;
         } else if (response.status === 202) {
-            // Task still pending, wait and retry
+            // Task still pending; report real build progress if the backend has started
+            // reporting it, then wait and retry
+            if (onProgress && typeof response.data?.percent === "number") {
+                onProgress(response.data.percent);
+            }
             await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
         } else {
             // Unexpected status
             throw new Error('Unexpected response from task status endpoint');
         }
     }
-    
+
     throw new Error('Collage creation timed out. Please try again.');
 }
 
@@ -44,6 +57,7 @@ export async function createCollage (
     mainImage?: any,
     lightDarkArray?: boolean[][],
     color?: boolean | null,
+    onProgress?: (percent: number) => void,
 ) {
     const collageDTO = NewCollageDTO.fromVariables(
         isMobile,
@@ -72,8 +86,9 @@ export async function createCollage (
     }
 
     const taskId = response.data.task_id;
-    const resultData = await pollTaskResult(taskId, userToken);
-    
+    const resultData = await pollTaskResult(taskId, userToken, onProgress);
+    onProgress?.(100);
+
     const collageData = NewCollageResponseDTO.fromResponse(resultData);
     return collageData;
 }

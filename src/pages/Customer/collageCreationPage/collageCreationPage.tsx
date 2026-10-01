@@ -53,6 +53,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
 
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState<number | null>(null);
   const [type, setType] = useState<CollageCreationType>(defaultType);
   const [outputSize, setOutputSize] = useState<OutputSize>(defaultOutputSize);
   const [mainImage, setMainImage] = useState<string | null>(defaultMainImage);
@@ -229,7 +230,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
   return (
     <div>
       {showLoading ? (
-        <LoadingScreen message={loadingMessage} />
+        <LoadingScreen message={loadingMessage} progress={loadingProgress} />
       ) : (
         <div>
           {isAdmin ? <AdminNavBar /> : <NavBar />}
@@ -308,6 +309,7 @@ export function CollageCreation({ isAdmin = false }: CollageCreationPageProps) {
                 color={color}
                 setShowLoading={setShowLoading}
                 setLoadingMessage={setLoadingMessage}
+                setLoadingProgress={setLoadingProgress}
                 isAdmin={isAdmin}
               />
             )}
