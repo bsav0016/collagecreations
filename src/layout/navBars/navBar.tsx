@@ -11,11 +11,19 @@ import { cn } from "../../lib/utils";
 import Logo from "../../assets/medium-logo.png";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "../../components/themeToggle/themeToggle";
+import { useCustomerAuth } from "../../context/customerAuthContext";
 
 function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { customerToken, customerEmail, signOut } = useCustomerAuth();
+
+  const handleSignOut = () => {
+    signOut();
+    setMenuOpen(false);
+    if (location.pathname.startsWith("/my-orders")) navigate("/");
+  };
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -113,6 +121,28 @@ function NavBar() {
                 Settings
               </MenubarTrigger>
             </MenubarMenu>
+
+            {customerToken ? (
+              <MenubarMenu>
+                <MenubarTrigger className={cn(isActive("/my-orders") && activeClass)}>
+                  Account
+                </MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem disabled className="text-xs">{customerEmail}</MenubarItem>
+                  <MenubarItem onClick={() => handleNavigation("/my-orders")}>My Orders</MenubarItem>
+                  <MenubarItem onClick={handleSignOut}>Sign out</MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            ) : (
+              <MenubarMenu>
+                <MenubarTrigger
+                  onClick={() => handleNavigation("/sign-in")}
+                  className={cn(isActive("/sign-in") && activeClass)}
+                >
+                  Sign in
+                </MenubarTrigger>
+              </MenubarMenu>
+            )}
           </Menubar>
         </div>
 
@@ -158,6 +188,29 @@ function NavBar() {
           >
             Request Custom Order
           </button>
+          {customerToken ? (
+            <>
+              <div className="px-6 py-1 text-sm text-muted-foreground font-medium">
+                Signed in as {customerEmail}
+              </div>
+              <button
+                onClick={() => handleNavigation("/my-orders")}
+                className={cn("text-left px-8 py-2 hover:bg-muted", isActive("/my-orders") && activeClass)}
+              >
+                My Orders
+              </button>
+              <button onClick={handleSignOut} className="text-left px-8 py-2 hover:bg-muted mb-2">
+                Sign out
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => handleNavigation("/sign-in")}
+              className={cn("text-left px-6 py-3 hover:bg-muted", isActive("/sign-in") && activeClass)}
+            >
+              Sign in
+            </button>
+          )}
         </div>
       )}
     </nav>

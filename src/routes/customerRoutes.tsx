@@ -15,6 +15,8 @@ import NotFound from '../pages/NotFound/notFound';
 import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';
 import DownloadAccess from '../pages/Customer/downloadAccess/downloadAccess';
 import SavedCollage from '../pages/Customer/savedCollage/savedCollage';
+import SignIn from '../pages/Customer/signIn/signIn';
+import MyOrders from '../pages/Customer/myOrders/myOrders';
 import TermsOfService from '../pages/Customer/legal/termsOfService';
 import PrivacyPolicy from '../pages/Customer/legal/privacyPolicy';
 import RefundPolicy from '../pages/Customer/legal/refundPolicy';
@@ -37,6 +39,8 @@ const CustomerRoutes: React.FC = () => (
     <Route path="settings" element={<Settings />} />
     <Route path="download-access/:token" element={<DownloadAccess />} />
     <Route path="saved-collage/:id" element={<SavedCollage />} />
+    <Route path="sign-in" element={<SignIn />} />
+    <Route path="my-orders" element={<MyOrders />} />
     <Route path="terms" element={<TermsOfService />} />
     <Route path="privacy" element={<PrivacyPolicy />} />
     <Route path="refund-policy" element={<RefundPolicy />} />
