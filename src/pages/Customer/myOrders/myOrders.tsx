@@ -87,11 +87,13 @@ function MyOrders(): React.ReactElement {
                                         </div>
                                     </div>
                                     {order.download_token && (
-                                        <GeneralButton
-                                            text="Download"
-                                            size="sm"
-                                            onClick={() => navigate(`/download-access/${order.download_token}`)}
-                                        />
+                                        <div className="-m-1.5">
+                                            <GeneralButton
+                                                text="Download"
+                                                size="sm"
+                                                onClick={() => navigate(`/download-access/${order.download_token}`)}
+                                            />
+                                        </div>
                                     )}
                                 </li>
                             ))}

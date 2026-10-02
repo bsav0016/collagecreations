@@ -128,7 +128,7 @@ function NavBar() {
                   Account
                 </MenubarTrigger>
                 <MenubarContent>
-                  <MenubarItem disabled className="text-xs">{customerEmail}</MenubarItem>
+                  <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">{customerEmail}</div>
                   <MenubarItem onClick={() => handleNavigation("/my-orders")}>My Orders</MenubarItem>
                   <MenubarItem onClick={handleSignOut}>Sign out</MenubarItem>
                 </MenubarContent>
