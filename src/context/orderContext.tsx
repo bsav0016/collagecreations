@@ -5,6 +5,8 @@ type OrderContextType = {
   baseCost: number;
   temporaryImageId: string;
   watermarkCollage: string;
+  previewLocked: boolean;
+  expiresAt: string;
   quantity: number;
   shippingCost: number;
   tax: number;
@@ -12,6 +14,8 @@ type OrderContextType = {
   setBaseCost: (value: number) => Promise<void>;
   setTemporaryImageId: (value: string) => Promise<void>;
   setWatermarkCollage: (value: string) => Promise<void>;
+  setPreviewLocked: (value: boolean) => Promise<void>;
+  setExpiresAt: (value: string) => Promise<void>;
   setQuantity: (value: number) => Promise<void>;
   setShippingCost: (value: number) => Promise<void>;
   setTax: (value: number) => Promise<void>;
@@ -26,6 +30,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [baseCost, setBaseCostState] = useState<number>(0);
   const [temporaryImageId, setTemporaryImageIdState] = useState<string>("");
   const [watermarkCollage, setWatermarkCollageState] = useState<string>("");
+  const [previewLocked, setPreviewLockedState] = useState<boolean>(false);
+  const [expiresAt, setExpiresAtState] = useState<string>("");
   const [quantity, setQuantityState] = useState<number>(1);
   const [shippingCost, setShippingCostState] = useState<number>(0);
   const [tax, setTaxState] = useState<number>(0);
@@ -44,6 +50,16 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const setWatermarkCollage = async (value: string) => {
     await setVariable("watermarkCollage", value);
     setWatermarkCollageState(value);
+  };
+
+  const setPreviewLocked = async (value: boolean) => {
+    await setVariable("previewLocked", value);
+    setPreviewLockedState(value);
+  };
+
+  const setExpiresAt = async (value: string) => {
+    await setVariable("expiresAt", value);
+    setExpiresAtState(value);
   };
 
   const setQuantity = async (value: number) => {
@@ -87,6 +103,18 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         }
 
         try {
+            setPreviewLockedState((await loadVariable("previewLocked")) === true);
+        } catch {
+            setPreviewLockedState(false);
+        }
+
+        try {
+            setExpiresAtState(await loadVariable("expiresAt"));
+        } catch {
+            setExpiresAtState("");
+        }
+
+        try {
             setQuantityState(await loadVariable("quantity"));
         } catch {
             setQuantityState(1);
@@ -120,6 +148,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         baseCost,
         temporaryImageId,
         watermarkCollage,
+        previewLocked,
+        expiresAt,
         quantity,
         shippingCost,
         tax,
@@ -127,6 +157,8 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
         setBaseCost,
         setTemporaryImageId,
         setWatermarkCollage,
+        setPreviewLocked,
+        setExpiresAt,
         setQuantity,
         setShippingCost,
         setTax,

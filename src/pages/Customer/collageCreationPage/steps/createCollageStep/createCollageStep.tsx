@@ -6,6 +6,8 @@ import { createCollage } from "../../../../../services/createCollage";
 import { useNavigate } from "react-router-dom";
 import { useOrderContext } from "../../../../../context/orderContext";
 import { useAuth } from "../../../../../context/authContext";
+import { useCustomerAuth } from "../../../../../context/customerAuthContext";
+import { claimCollage } from "../../../../../services/customerAuthService";
 
 interface CreateCollageStepProps {
     type: CollageCreationType;
@@ -35,8 +37,9 @@ export function CreateCollageStep({
     isAdmin
 }: CreateCollageStepProps) {
     const navigate = useNavigate();
-    const { setTemporaryImageId, setWatermarkCollage, setBaseCost } = useOrderContext();
+    const { setTemporaryImageId, setWatermarkCollage, setBaseCost, setPreviewLocked, setExpiresAt } = useOrderContext();
     const { userToken } = useAuth();
+    const { customerToken } = useCustomerAuth();
 
 
     const clickedCreateCollage = async () => {
@@ -54,12 +57,25 @@ export function CreateCollageStep({
                 mainImage,
                 lightDarkArray,
                 color,
-                setLoadingProgress
+                setLoadingProgress,
+                customerToken
             );
 
             setTemporaryImageId(collageData.temporaryImageId);
             setWatermarkCollage(collageData.watermarkCollage);
             setBaseCost(collageData.baseCost);
+            setPreviewLocked(collageData.requiresSignin);
+            setExpiresAt(collageData.expiresAt);
+
+            // A signed-in customer's collage is attached to them right away so it is kept longer.
+            if (customerToken && !isAdmin) {
+                try {
+                    const claimed = await claimCollage(customerToken, collageData.temporaryImageId);
+                    setExpiresAt(claimed.expires_at);
+                } catch (claimError) {
+                    console.error(claimError); // not fatal: the collage still works, it just expires sooner
+                }
+            }
 
             const navigationUrlExt = isAdmin ? '/admin/admin-preview/' : '/preview/'
             navigate(navigationUrlExt, {state: { isAdmin: isAdmin }});

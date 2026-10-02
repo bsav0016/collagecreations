@@ -1,6 +1,6 @@
 import { NewCollageDTO } from "../dtos/collageDTO/newCollageDTO";
 import NetworkRequest from "../lib/networkClient";
-import { AUTHORIZATION_HEADER, POST, GET } from "../lib/networkRequestConstants";
+import { AUTHORIZATION_HEADER, CUSTOMER_AUTHORIZATION_HEADER, POST, GET } from "../lib/networkRequestConstants";
 import { CollageCreationType } from "../pages/Customer/collageCreationPage/enums/collageCreationType";
 import { OutputSize } from "../pages/Customer/collageCreationPage/enums/OutputSize";
 import { SmallImageSize } from "../pages/Customer/collageCreationPage/enums/SmallImageSize";
@@ -18,8 +18,11 @@ async function pollTaskResult(
     taskId: string,
     userToken: string | null,
     onProgress?: (percent: number) => void,
+    customerToken?: string | null,
 ): Promise<any> {
-    const headers = userToken ? { ...AUTHORIZATION_HEADER(userToken) } : {};
+    const headers = userToken
+        ? { ...AUTHORIZATION_HEADER(userToken) }
+        : customerToken ? { ...CUSTOMER_AUTHORIZATION_HEADER(customerToken) } : {};
 
     for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
         const response = await NetworkRequest<TaskResultPendingResponse | any>({
@@ -58,6 +61,7 @@ export async function createCollage (
     lightDarkArray?: boolean[][],
     color?: boolean | null,
     onProgress?: (percent: number) => void,
+    customerToken?: string | null,
 ) {
     const collageDTO = NewCollageDTO.fromVariables(
         isMobile,
@@ -86,7 +90,7 @@ export async function createCollage (
     }
 
     const taskId = response.data.task_id;
-    const resultData = await pollTaskResult(taskId, userToken, onProgress);
+    const resultData = await pollTaskResult(taskId, userToken, onProgress, customerToken);
     onProgress?.(100);
 
     const collageData = NewCollageResponseDTO.fromResponse(resultData);
