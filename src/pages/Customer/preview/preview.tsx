@@ -13,6 +13,9 @@ import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
 import { useOrderContext } from '../../../context/orderContext';
 import AdminNavBar from '../../../layout/navBars/adminNavBar';
 import { cn } from '../../../lib/utils';
+import { useCustomerAuth } from '../../../context/customerAuthContext';
+import { claimCollage } from '../../../services/customerAuthService';
+import SignInPanel from '../../../components/signIn/signInPanel';
 
 interface PreviewProps {
   isAdmin?: boolean;
@@ -27,7 +30,41 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
 
   const navigate = useNavigate();
   const { constants } = useConstants();
-  const { watermarkCollage, baseCost, quantity, setQuantity } = useOrderContext();
+  const {
+    watermarkCollage, baseCost, quantity, setQuantity, previewLocked, expiresAt, temporaryImageId,
+    setWatermarkCollage, setBaseCost, setPreviewLocked, setExpiresAt,
+  } = useOrderContext();
+  const { customerToken, customerEmail, signIn, signOut } = useCustomerAuth();
+  const [unlockError, setUnlockError] = useState<string>('');
+  const [unlocking, setUnlocking] = useState<boolean>(false);
+
+  // The server only sends visitors who aren't signed in a small blurred teaser. Once there is a
+  // customer token, claiming the collage (which also keeps it longer) returns the real preview.
+  const showSignIn = !isAdmin && previewLocked && !customerToken;
+
+  useEffect(() => {
+    if (isAdmin || !previewLocked || !customerToken || !temporaryImageId) return;
+    let cancelled = false;
+    setUnlocking(true);
+    setUnlockError('');
+    claimCollage(customerToken, temporaryImageId)
+      .then(async (claimed) => {
+        if (cancelled || !claimed.watermark_collage) return;
+        await setWatermarkCollage(claimed.watermark_collage);
+        await setBaseCost(claimed.base_cost);
+        await setExpiresAt(claimed.expires_at);
+        await setPreviewLocked(false);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        // A stale or expired sign-in: drop it so the sign-in options come back.
+        if (error?.detail) signOut();
+        setUnlockError(typeof error === 'string' ? error : 'We could not unlock your preview. Please sign in again.');
+      })
+      .finally(() => { if (!cancelled) setUnlocking(false); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, previewLocked, customerToken, temporaryImageId]);
 
   const isPrintAvailable = constants?.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE';
 
@@ -156,9 +193,37 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
                   />
                 </div>
 
-                {IS_DESKTOP && (
+                {IS_DESKTOP && !showSignIn && (
                   <p className="text-center text-xs text-muted-foreground mt-2">
                     Hover over the image to zoom in
+                  </p>
+                )}
+
+                {showSignIn && (
+                  <div className="mt-4 rounded-xl border border-border bg-card p-5 shadow-sm">
+                    <h2 className="text-center text-lg font-semibold text-foreground">
+                      Sign in to see your full preview
+                    </h2>
+                    <p className="mt-1 mb-4 text-center text-sm text-muted-foreground">
+                      This is a small blurred version. Signing in unlocks the full preview and keeps your
+                      collage saved longer.
+                    </p>
+                    <SignInPanel onSignedIn={signIn} />
+                  </div>
+                )}
+
+                {!isAdmin && previewLocked && customerToken && (
+                  <p className="mt-4 text-center text-sm text-muted-foreground">
+                    {unlocking ? 'Unlocking your preview...' : unlockError}
+                  </p>
+                )}
+
+                {!isAdmin && expiresAt && (
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    Your collage is saved until {new Date(expiresAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.
+                    {customerToken
+                      ? <> Signed in as {customerEmail}. <button type="button" className="underline" onClick={signOut}>Sign out</button></>
+                      : previewLocked ? ' Sign in to keep it longer.' : null}
                   </p>
                 )}
               </div>

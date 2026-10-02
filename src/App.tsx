@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { ConstantsProvider } from "./context/constantsContext";
 import { ToastProvider } from "./context/toastContext/toastContext";
 import { AuthProvider } from "./context/authContext";
+import { CustomerAuthProvider } from "./context/customerAuthContext";
 import { LocalDatabaseProvider } from "./context/databaseContext";
 import AdminRoutes from "./routes/adminRoutes";
 import CustomerRoutes from "./routes/customerRoutes";
@@ -30,7 +31,14 @@ function App(): React.ReactElement {
                       </AuthProvider>
                     }
                   />
-                  <Route path="/*" element={<CustomerRoutes />} />
+                  <Route
+                    path="/*"
+                    element={
+                      <CustomerAuthProvider>
+                        <CustomerRoutes />
+                      </CustomerAuthProvider>
+                    }
+                  />
                 </Routes>
               </Router>
             </OrderProvider>

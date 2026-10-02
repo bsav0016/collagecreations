@@ -6,3 +6,7 @@ export const APPLICATION_JSON_HEADER: HeadersInit = { "Content-Type": "applicati
 export const AUTHORIZATION_HEADER = (token: string): HeadersInit => ({
     Authorization: `Token ${token}`,
 });
+// Shoppers who sign in (Google / Microsoft / emailed code) use a separate token from admins.
+export const CUSTOMER_AUTHORIZATION_HEADER = (token: string): HeadersInit => ({
+    Authorization: `Customer ${token}`,
+});
