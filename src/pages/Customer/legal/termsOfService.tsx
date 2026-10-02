@@ -44,7 +44,7 @@ function TermsOfService(): React.ReactElement {
       <p>
         We may refuse to process an order if we believe Your Content violates the above. Photos
         you upload while building an order are automatically deleted from our systems within
-        about 48 hours if you don't complete the purchase; see our{' '}
+        about 48 hours (about 7 days if you're signed in) if you don't complete the purchase; see our{' '}
         <a href="/privacy">Privacy Policy</a> for more on how we handle images tied to completed
         orders.
       </p>
