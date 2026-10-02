@@ -2,6 +2,7 @@ import NetworkRequest from "../lib/networkClient";
 import {
     APPLICATION_JSON_HEADER,
     CUSTOMER_AUTHORIZATION_HEADER,
+    GET,
     POST,
 } from "../lib/networkRequestConstants";
 
@@ -53,4 +54,25 @@ export async function claimCollage(token: string, temporaryImageId: string): Pro
         { temporary_image_id: temporaryImageId },
         token,
     )).data;
+}
+
+export interface CustomerOrder {
+    id: number;
+    order_date: string;
+    order_type: string;
+    quantity: number;
+    printed: boolean;
+    shipped: boolean;
+    delivered: boolean;
+    shipping_number: string;
+    download_token: string | null;
+}
+
+export async function getMyOrders(token: string): Promise<CustomerOrder[]> {
+    const response = await NetworkRequest<{ orders: CustomerOrder[] }>({
+        urlExtension: "api/customer/orders/",
+        method: GET,
+        headers: CUSTOMER_AUTHORIZATION_HEADER(token),
+    });
+    return response.data.orders;
 }
