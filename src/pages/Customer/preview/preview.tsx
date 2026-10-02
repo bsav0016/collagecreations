@@ -40,31 +40,38 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
 
   // The server only sends visitors who aren't signed in a small blurred teaser. Once there is a
   // customer token, claiming the collage (which also keeps it longer) returns the real preview.
+  // Claiming also ties the collage, and so the order placed from it, to the account, so it runs
+  // for every signed-in customer, not only when the preview is locked.
   const showSignIn = !isAdmin && previewLocked && !customerToken;
 
   useEffect(() => {
-    if (isAdmin || !previewLocked || !customerToken || !temporaryImageId) return;
+    if (isAdmin || !customerToken || !temporaryImageId) return;
     let cancelled = false;
-    setUnlocking(true);
-    setUnlockError('');
+    if (previewLocked) {
+      setUnlocking(true);
+      setUnlockError('');
+    }
     claimCollage(customerToken, temporaryImageId)
       .then(async (claimed) => {
         if (cancelled || !claimed.watermark_collage) return;
-        await setWatermarkCollage(claimed.watermark_collage);
-        await setBaseCost(claimed.base_cost);
+        if (previewLocked) {
+          await setWatermarkCollage(claimed.watermark_collage);
+          await setBaseCost(claimed.base_cost);
+          await setPreviewLocked(false);
+        }
         await setExpiresAt(claimed.expires_at);
-        await setPreviewLocked(false);
       })
       .catch((error) => {
         if (cancelled) return;
         // A stale or expired sign-in: drop it so the sign-in options come back.
         if (error?.detail) signOut();
+        if (!previewLocked) return; // the preview they already have is fine; nothing to report
         setUnlockError(typeof error === 'string' ? error : 'We could not unlock your preview. Please sign in again.');
       })
       .finally(() => { if (!cancelled) setUnlocking(false); });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, previewLocked, customerToken, temporaryImageId]);
+  }, [isAdmin, customerToken, temporaryImageId]);
 
   const isPrintAvailable = constants?.PRINT_AVAILABLE_MESSAGE === 'AVAILABLE';
 
