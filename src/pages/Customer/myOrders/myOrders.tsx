@@ -6,7 +6,8 @@ import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader'
 import GeneralButton from '../../../components/generalButton/generalButton';
 import SignInPanel from '../../../components/signIn/signInPanel';
 import { useCustomerAuth } from '../../../context/customerAuthContext';
-import { CustomerOrder, getMyOrders } from '../../../services/customerAuthService';
+import { useOrderContext } from '../../../context/orderContext';
+import { CustomerOrder, getMyOrders, reorderOrder } from '../../../services/customerAuthService';
 
 function statusOf(order: CustomerOrder): string {
     if (order.order_type === 'download') return 'Ready to download';
@@ -19,8 +20,39 @@ function statusOf(order: CustomerOrder): string {
 function MyOrders(): React.ReactElement {
     const navigate = useNavigate();
     const { customerToken, customerEmail, signIn, signOut } = useCustomerAuth();
+    const {
+        setTemporaryImageId, setWatermarkCollage, setBaseCost, setPreviewLocked, setExpiresAt,
+    } = useOrderContext();
     const [orders, setOrders] = useState<CustomerOrder[] | null>(null);
     const [error, setError] = useState<string>('');
+    const [reorderingId, setReorderingId] = useState<number | null>(null);
+    const [reorderError, setReorderError] = useState<string>('');
+
+    // Loads a past order's collage into the order flow as a fresh saved collage, then opens the preview.
+    const handleReorder = async (orderId: number) => {
+        if (!customerToken || reorderingId !== null) return;
+        setReorderingId(orderId);
+        setReorderError('');
+        try {
+            const claimed = await reorderOrder(customerToken, orderId);
+            if (!claimed.watermark_collage) throw new Error('no preview');
+            await setTemporaryImageId(claimed.temporary_image_id);
+            await setWatermarkCollage(claimed.watermark_collage);
+            await setBaseCost(claimed.base_cost);
+            await setExpiresAt(claimed.expires_at);
+            await setPreviewLocked(false);
+            navigate('/preview');
+        } catch (err: any) {
+            if (err?.detail) {
+                signOut();
+                return;
+            }
+            setReorderError(typeof err === 'string'
+                ? err
+                : 'We could not start that reorder. Please try again.');
+            setReorderingId(null);
+        }
+    };
 
     useEffect(() => {
         if (!customerToken) {
@@ -68,6 +100,9 @@ function MyOrders(): React.ReactElement {
                         </div>
                     ) : (
                         <ul className="flex flex-col gap-3">
+                            {reorderError && (
+                                <li className="text-center text-sm text-destructive">{reorderError}</li>
+                            )}
                             {orders.map((order) => (
                                 <li
                                     key={order.id}
@@ -86,15 +121,22 @@ function MyOrders(): React.ReactElement {
                                             {order.shipping_number && ` · Tracking ${order.shipping_number}`}
                                         </div>
                                     </div>
-                                    {order.download_token && (
-                                        <div className="-m-1.5">
+                                    <div className="-m-1.5 flex flex-wrap items-center">
+                                        {order.download_token && (
                                             <GeneralButton
                                                 text="Download"
                                                 size="sm"
                                                 onClick={() => navigate(`/download-access/${order.download_token}`)}
                                             />
-                                        </div>
-                                    )}
+                                        )}
+                                        {order.can_reorder && (
+                                            <GeneralButton
+                                                text={reorderingId === order.id ? 'Opening...' : 'Reorder'}
+                                                size="sm"
+                                                onClick={() => handleReorder(order.id)}
+                                            />
+                                        )}
+                                    </div>
                                 </li>
                             ))}
                         </ul>
