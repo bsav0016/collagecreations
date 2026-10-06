@@ -2,6 +2,7 @@ import NetworkRequest from "../lib/networkClient";
 import {
     APPLICATION_JSON_HEADER,
     CUSTOMER_AUTHORIZATION_HEADER,
+    DELETE,
     GET,
     POST,
 } from "../lib/networkRequestConstants";
@@ -81,4 +82,41 @@ export async function getMyOrders(token: string): Promise<CustomerOrder[]> {
 // Starts a new saved collage from a past order and returns it ready for the preview page.
 export async function reorderOrder(token: string, orderId: number): Promise<ClaimedCollage> {
     return (await postJson<ClaimedCollage>(`api/customer/orders/${orderId}/reorder/`, {}, token)).data;
+}
+
+export interface SavedCollage {
+    id: string;
+    width: number;
+    height: number;
+    created_at: string;
+    expires_at: string;
+}
+
+export async function getSavedCollages(token: string): Promise<SavedCollage[]> {
+    const response = await NetworkRequest<{ collages: SavedCollage[] }>({
+        urlExtension: "api/customer/collages/",
+        method: GET,
+        headers: CUSTOMER_AUTHORIZATION_HEADER(token),
+    });
+    return response.data.collages;
+}
+
+export async function deleteSavedCollage(token: string, collageId: string): Promise<void> {
+    await NetworkRequest({
+        urlExtension: `api/customer/collages/${collageId}/`,
+        method: DELETE,
+        headers: CUSTOMER_AUTHORIZATION_HEADER(token),
+    });
+}
+
+export async function exportMyData(token: string): Promise<object> {
+    return (await NetworkRequest<object>({
+        urlExtension: "api/customer/export/",
+        method: GET,
+        headers: CUSTOMER_AUTHORIZATION_HEADER(token),
+    })).data;
+}
+
+export async function deleteMyAccount(token: string, confirmEmail: string): Promise<void> {
+    await postJson("api/customer/delete-account/", { confirm_email: confirmEmail }, token);
 }

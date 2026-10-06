@@ -5,6 +5,8 @@ import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import SignInPanel from '../../../components/signIn/signInPanel';
+import SavedCollages from './savedCollages';
+import AccountData from './accountData';
 import { useCustomerAuth } from '../../../context/customerAuthContext';
 import { useOrderContext } from '../../../context/orderContext';
 import { CustomerOrder, getMyOrders, reorderOrder } from '../../../services/customerAuthService';
@@ -140,6 +142,12 @@ function MyOrders(): React.ReactElement {
                                 </li>
                             ))}
                         </ul>
+                    )}
+                    {customerToken && (
+                        <>
+                            <SavedCollages token={customerToken} onSignedOut={signOut} />
+                            <AccountData token={customerToken} email={customerEmail ?? ''} onSignedOut={signOut} />
+                        </>
                     )}
                 </div>
             </div>
