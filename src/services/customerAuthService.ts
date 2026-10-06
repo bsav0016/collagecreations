@@ -66,6 +66,7 @@ export interface CustomerOrder {
     delivered: boolean;
     shipping_number: string;
     download_token: string | null;
+    can_reorder: boolean;
 }
 
 export async function getMyOrders(token: string): Promise<CustomerOrder[]> {
@@ -75,4 +76,9 @@ export async function getMyOrders(token: string): Promise<CustomerOrder[]> {
         headers: CUSTOMER_AUTHORIZATION_HEADER(token),
     });
     return response.data.orders;
+}
+
+// Starts a new saved collage from a past order and returns it ready for the preview page.
+export async function reorderOrder(token: string, orderId: number): Promise<ClaimedCollage> {
+    return (await postJson<ClaimedCollage>(`api/customer/orders/${orderId}/reorder/`, {}, token)).data;
 }
