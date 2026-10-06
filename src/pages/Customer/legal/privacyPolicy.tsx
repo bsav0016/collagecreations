@@ -3,7 +3,7 @@ import LegalPageLayout from './legalPageLayout';
 
 function PrivacyPolicy(): React.ReactElement {
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="October 2, 2026">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="October 6, 2026">
       <p>
         This Privacy Policy explains what information Collage Creations ("we," "us," or "our")
         collects through collagecreations.org (the "Site"), why we collect it, and how it's
@@ -61,7 +61,7 @@ function PrivacyPolicy(): React.ReactElement {
         If you upload photos but don't complete a purchase, that data — including the images
         themselves — is automatically deleted from our systems. If you aren't signed in, that
         happens within about 48 hours. If you sign in, we keep your collage for about 7 days so
-        you can come back to it, and then delete it. Once you complete an order, we keep the associated image on file to fulfill that order, handle
+        you can come back to it, and then delete it. You can also delete a saved collage yourself at any time from My Orders. Once you complete an order, we keep the associated image on file to fulfill that order, handle
         any support issue or reprint request related to it, and comply with our recordkeeping
         obligations. You can ask us to delete a completed order's stored image at any time by
         contacting <a href="/support">Support</a>, though we may need to retain limited order
@@ -81,7 +81,10 @@ function PrivacyPolicy(): React.ReactElement {
           practices);
         </li>
         <li><strong>USPS</strong>, to calculate shipping costs and ship physical orders;</li>
-        <li>our email delivery provider, to send order and account-related emails; and</li>
+        <li>
+          our email delivery provider, to send order and account-related emails (it tells us when
+          an email could not be delivered, so we can stop sending to an address that bounces); and
+        </li>
         <li>our hosting and infrastructure providers, to store data and run the Site.</li>
       </ul>
       <p>
@@ -115,10 +118,14 @@ function PrivacyPolicy(): React.ReactElement {
 
       <h2>8. Your Choices</h2>
       <p>
-        You can ask us what personal information we have about you, request a correction, or
-        request deletion (subject to the limits described in Section 3) by contacting us through{' '}
-        <a href="/support">Support</a>. Every reminder email we send includes an unsubscribe link
-        that stops further reminders immediately.
+        If you have an account, you can download a copy of the information we hold about you, or
+        delete your account, from the My Orders page. Deleting your account removes your saved
+        collages and your sign-in details; orders you've already placed are kept as described in
+        Section 3 but are no longer linked to an account. You can also ask us what personal
+        information we have about you, request a correction, or request deletion (subject to the
+        limits described in Section 3) by contacting us through <a href="/support">Support</a>.
+        Every reminder email we send includes an unsubscribe link that stops further reminders
+        immediately.
       </p>
 
       <h2>9. Changes to This Policy</h2>
