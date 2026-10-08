@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { PublicClientApplication } from "@azure/msal-browser";
+import { Loader2 } from "lucide-react";
 import GeneralButton from "../generalButton/generalButton";
 import TextInput from "../textInput/textInput";
 import { GOOGLE_CLIENT_ID, MICROSOFT_CLIENT_ID } from "../../utils/constants/constants";
@@ -49,6 +50,15 @@ function loadGoogleScript(): Promise<void> {
     });
 }
 
+function Working({ label }: { label: string }): React.ReactElement {
+    return (
+        <span className="inline-flex items-center">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+            {label}
+        </span>
+    );
+}
+
 function errorText(error: unknown, fallback: string): string {
     return typeof error === "string" ? error : fallback;
 }
@@ -58,7 +68,9 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
     const [email, setEmail] = useState("");
     const [code, setCode] = useState("");
     const [codeSent, setCodeSent] = useState(false);
-    const [busy, setBusy] = useState(false);
+    // Which step is in flight, so the matching button can say so; any value disables the others.
+    const [working, setWorking] = useState<"google" | "microsoft" | "send" | "verify" | null>(null);
+    const busy = working !== null;
     const [error, setError] = useState("");
 
     // Latest callback without re-initialising the Google button on every render.
@@ -75,13 +87,13 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
                     client_id: GOOGLE_CLIENT_ID,
                     callback: async (response: { credential: string }) => {
                         setError("");
-                        setBusy(true);
+                        setWorking("google");
                         try {
                             onSignedInRef.current(await signInWithGoogle(response.credential));
                         } catch (err) {
                             setError(errorText(err, "Google sign-in failed. Please try again."));
                         } finally {
-                            setBusy(false);
+                            setWorking(null);
                         }
                     },
                 });
@@ -100,33 +112,33 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
         };
     }, []);
 
-    const run = async (action: () => Promise<void>, fallback: string) => {
+    const run = async (step: "microsoft" | "send" | "verify", action: () => Promise<void>, fallback: string) => {
         setError("");
-        setBusy(true);
+        setWorking(step);
         try {
             await action();
         } catch (err) {
             setError(errorText(err, fallback));
         } finally {
-            setBusy(false);
+            setWorking(null);
         }
     };
 
     const clickedMicrosoft = () =>
-        run(async () => {
+        run("microsoft", async () => {
             const msal = await getMsal();
             const result = await msal.loginPopup({ scopes: ["openid", "email", "profile"] });
             onSignedIn(await signInWithMicrosoft(result.idToken));
         }, "Microsoft sign-in failed. Please try again.");
 
     const clickedSendCode = () =>
-        run(async () => {
+        run("send", async () => {
             await requestEmailCode(email.trim());
             setCodeSent(true);
         }, "We couldn't send the code. Please check the address and try again.");
 
     const clickedVerify = () =>
-        run(async () => {
+        run("verify", async () => {
             onSignedIn(await verifyEmailCode(email.trim(), code.trim()));
         }, "That code is invalid or has expired.");
 
@@ -136,7 +148,7 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
 
             <GeneralButton
                 onClick={clickedMicrosoft}
-                text="Continue with Microsoft"
+                text={working === "microsoft" ? <Working label="Opening Microsoft..." /> : "Continue with Microsoft"}
                 variant="ghost"
                 disabled={busy}
             />
@@ -163,7 +175,10 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
                         placeholder="you@example.com"
                         required
                     />
-                    <GeneralButton type="submit" text="Email me a code" disabled={busy || !email.trim()} />
+                    <GeneralButton
+                        type="submit"
+                        text={working === "send" ? <Working label="Sending code..." /> : "Email me a code"}
+                        disabled={busy || !email.trim()} />
                 </form>
             ) : (
                 <form
@@ -184,7 +199,10 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
                         maxLength={6}
                         required
                     />
-                    <GeneralButton type="submit" text="Verify code" disabled={busy || code.trim().length !== 6} />
+                    <GeneralButton
+                        type="submit"
+                        text={working === "verify" ? <Working label="Verifying..." /> : "Verify code"}
+                        disabled={busy || code.trim().length !== 6} />
                     <button
                         type="button"
                         className="text-xs text-muted-foreground underline"
@@ -198,6 +216,11 @@ export function SignInPanel({ onSignedIn }: SignInPanelProps): React.ReactElemen
                 </form>
             )}
 
+            {working === "google" && (
+                <p className="text-sm text-muted-foreground text-center" role="status">
+                    <Working label="Signing you in..." />
+                </p>
+            )}
             {error && <p className="text-sm text-destructive text-center">{error}</p>}
         </div>
     );

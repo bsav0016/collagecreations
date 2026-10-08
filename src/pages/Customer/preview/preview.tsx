@@ -167,6 +167,19 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
             >
               {/* Collage image */}
               <div>
+                {showSignIn && (
+                  <div className="mb-4 rounded-xl border border-border bg-card p-5 shadow-sm">
+                    <h2 className="text-center text-lg font-semibold text-foreground">
+                      Sign in to see your full preview
+                    </h2>
+                    <p className="mt-1 mb-4 text-center text-sm text-muted-foreground">
+                      This is a small blurred version. Signing in unlocks the full preview and keeps your
+                      collage saved longer.
+                    </p>
+                    <SignInPanel onSignedIn={signIn} />
+                  </div>
+                )}
+
                 {IS_DESKTOP && (
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <span className="text-sm text-muted-foreground">Zoom:</span>
@@ -204,19 +217,6 @@ function Preview({ isAdmin = false }: PreviewProps): React.ReactElement {
                   <p className="text-center text-xs text-muted-foreground mt-2">
                     Hover over the image to zoom in
                   </p>
-                )}
-
-                {showSignIn && (
-                  <div className="mt-4 rounded-xl border border-border bg-card p-5 shadow-sm">
-                    <h2 className="text-center text-lg font-semibold text-foreground">
-                      Sign in to see your full preview
-                    </h2>
-                    <p className="mt-1 mb-4 text-center text-sm text-muted-foreground">
-                      This is a small blurred version. Signing in unlocks the full preview and keeps your
-                      collage saved longer.
-                    </p>
-                    <SignInPanel onSignedIn={signIn} />
-                  </div>
                 )}
 
                 {!isAdmin && previewLocked && customerToken && (
