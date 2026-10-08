@@ -10,6 +10,7 @@ import imageCompression from 'browser-image-compression';
 import heic2any from 'heic2any';
 import CustomCropper from "../../../../../components/customCropper/customCropper";
 import CropperButton from "../../../../../components/cropperButton/cropperButton";
+import { ArrowRight, Check, RotateCw, SkipForward } from "lucide-react";
 import { useConstants } from "../../../../../context/constantsContext";
 import LoadingScreen from "../../../../../components/loadingScreen/loadingScreen";
 import { CropCoordinate } from "../../interfaces/CropCoordinate";
@@ -195,29 +196,34 @@ export function SelectImagesStep({
                             zoom={zoom}
                             setZoom={setZoom}
                             setCropArea={setCropArea}
-                        >
-                            <div className="flex flex-wrap justify-between w-full">
-                                <CropperButton
-                                    onClick={confirmCancelCrop}
-                                    text="Cancel All"
-                                />
-                                <div className="flex flex-wrap">
+                            title={`Photo ${currentImageIndex + 1} of ${totalImages}`}
+                            hint="Drag the photo to position it. Use the slider to zoom."
+                            cancelText="Cancel all"
+                            onCancel={confirmCancelCrop}
+                            actions={
+                                <>
                                     <CropperButton
                                         onClick={rotate}
-                                        text="Rotate Image"
+                                        text="Rotate"
+                                        icon={<RotateCw className="h-4 w-4" />}
                                     />
                                     <CropperButton
                                         onClick={skipImage}
-                                        text="Skip Image"
+                                        text="Skip"
+                                        icon={<SkipForward className="h-4 w-4" />}
                                     />
                                     <CropperButton
                                         onClick={cropIndividualImage}
-                                        text={currentImageIndex === totalImages - 1 ? "Finish" : "Next Image"}
+                                        text={currentImageIndex === totalImages - 1 ? "Finish" : "Next photo"}
+                                        icon={currentImageIndex === totalImages - 1
+                                            ? <Check className="h-4 w-4" />
+                                            : <ArrowRight className="h-4 w-4" />}
                                         variant="primary"
+                                        className="col-span-2 sm:col-span-1"
                                     />
-                                </div>
-                            </div>
-                        </CustomCropper>
+                                </>
+                            }
+                        />
                     }
                 </div>
             ) : (

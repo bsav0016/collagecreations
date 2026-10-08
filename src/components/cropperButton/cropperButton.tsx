@@ -5,35 +5,39 @@ interface CropperButtonProps {
     text: React.ReactNode;
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
-    fullWidth?: boolean;
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | "ghost";
+    icon?: React.ReactNode;
+    className?: string;
 }
 
-function CropperButton({ 
-    onClick, 
-    text, 
-    disabled = false, 
-    type = "button", 
-    fullWidth = false,
-    variant = "secondary"
+// Buttons for the cropper's dark control bar. min-h-11 keeps them at a comfortable 44px tap target.
+function CropperButton({
+    onClick,
+    text,
+    disabled = false,
+    type = "button",
+    variant = "secondary",
+    icon,
+    className = "",
 }: CropperButtonProps) {
-    const baseClasses = "inline-block py-2 px-4 cursor-pointer border-none rounded-md text-sm mx-[3px] disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed";
-    const variantClasses = variant === "primary"
-        ? "bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
-        : "bg-muted text-muted-foreground hover:bg-muted/80";
+    const baseClasses = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+    const variantClasses = {
+        primary: "bg-primary text-primary-foreground font-semibold hover:bg-primary/90",
+        secondary: "bg-white/10 text-white hover:bg-white/20",
+        ghost: "text-white/70 hover:bg-white/10 hover:text-white",
+    }[variant];
 
-    const buttonElement = (
+    return (
         <button
-            className={`${baseClasses} ${variantClasses}`}
+            className={`${baseClasses} ${variantClasses} ${className}`}
             onClick={onClick}
             disabled={disabled}
             type={type}
         >
+            {icon}
             {text}
         </button>
     );
-
-    return fullWidth ? buttonElement : <div>{buttonElement}</div>;
 }
 
 export default CropperButton;

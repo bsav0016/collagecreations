@@ -15,6 +15,7 @@ import CustomCropper from '../../../components/customCropper/customCropper';
 import { MARGINS } from '../../../utils/constants/constants';
 import { createTempImage, processImageString, cropAndResizeLarge } from "../../../utils/modifyImage";
 import CropperButton from '../../../components/cropperButton/cropperButton';
+import { Check, RotateCw } from 'lucide-react';
 import QuantitySelection from '../../../components/quantitySelection';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
 import { toastRef } from '../../../context/toastContext/toastContext';
@@ -217,15 +218,25 @@ const RegularImageOrder: React.FC = () => {
           }
 
           {selectedImage && cropperVisible && (
-            <CustomCropper selectedImage={selectedImage} crop={crop} setCrop={setCrop} zoom={zoom} setZoom={setZoom} setCropArea={setCroppedAreaPixels} aspect={aspect}>
-              <div className="flex flex-wrap justify-between w-full">
-                <CropperButton onClick={handleCancelCrop} disabled={loading} text="Cancel" />
-                <div className="flex flex-wrap">
-                  <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate Image" />
-                  <CropperButton onClick={doHandleCrop} disabled={loading} text="Finish" variant="primary" />
-                </div>
-              </div>
-            </CustomCropper>
+            <CustomCropper
+              selectedImage={selectedImage}
+              crop={crop}
+              setCrop={setCrop}
+              zoom={zoom}
+              setZoom={setZoom}
+              setCropArea={setCroppedAreaPixels}
+              aspect={aspect}
+              title="Crop your image"
+              hint="Drag the photo to position it. Use the slider to zoom."
+              onCancel={handleCancelCrop}
+              disabled={loading}
+              actions={
+                <>
+                  <CropperButton onClick={doRotateImage} disabled={loading} text="Rotate" icon={<RotateCw className="h-4 w-4" />} />
+                  <CropperButton onClick={doHandleCrop} disabled={loading} text="Finish" icon={<Check className="h-4 w-4" />} variant="primary" />
+                </>
+              }
+            />
           )}
 
           <HeaderSection title="Step 4. Select the quantity." marginTop={MARGINS.LARGE}>

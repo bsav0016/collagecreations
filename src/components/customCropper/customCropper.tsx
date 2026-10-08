@@ -1,5 +1,7 @@
 import React from "react";
 import Cropper from "react-easy-crop";
+import { ZoomIn, ZoomOut } from "lucide-react";
+import CropperButton from "../cropperButton/cropperButton";
 
 interface CropArea {
     x: number;
@@ -9,7 +11,15 @@ interface CropArea {
 }
 
 interface CustomCropperProps {
-    children: React.ReactNode;
+    /** The buttons for the right-hand side of the bar (Rotate, Skip, the primary action...). */
+    actions: React.ReactNode;
+    onCancel: () => void;
+    cancelText?: string;
+    /** Heading above the photo, e.g. "Photo 2 of 6". */
+    title?: string;
+    /** One line of instructions under the heading. */
+    hint?: string;
+    disabled?: boolean;
     selectedImage: string;
     crop: { x: number; y: number };
     setCrop: (crop: { x: number; y: number }) => void;
@@ -19,8 +29,16 @@ interface CustomCropperProps {
     aspect?: number;
 }
 
+// Full-screen cropper: heading, then the photo in whatever space is left, then a control bar below it
+// (so the controls never cover the photo). On a phone the actions sit in a 2-column grid with the
+// primary action full width; on a wider screen everything is on one row.
 const CustomCropper: React.FC<CustomCropperProps> = ({
-    children,
+    actions,
+    onCancel,
+    cancelText = "Cancel",
+    title,
+    hint,
+    disabled = false,
     selectedImage,
     crop,
     setCrop,
@@ -29,30 +47,46 @@ const CustomCropper: React.FC<CustomCropperProps> = ({
     setCropArea,
     aspect = 1,
 }) => (
-    <div className="grid justify-items-center fixed top-0 left-0 w-screen h-screen z-[1000] transition-none">
-        <Cropper
-            style={{ containerStyle: { backgroundColor: "#282c34" } }}
-            image={selectedImage}
-            crop={crop}
-            zoom={zoom}
-            aspect={aspect}
-            onCropChange={setCrop}
-            onCropComplete={(_, croppedAreaPixels) => setCropArea(croppedAreaPixels)}
-            onZoomChange={setZoom}
-            zoomWithScroll={false}
-        />
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 bg-black/50 p-[10px] rounded-[5px] z-[1000] max-md:bottom-[90px] max-md:left-[30%] max-md:w-[70%] max-md:-translate-x-[21.4%]">
-            <input
-                type="range"
-                min="1"
-                max="3"
-                step="0.1"
-                value={zoom}
-                onChange={(e) => setZoom(parseFloat(e.target.value))}
-                className="w-full mb-[10px] z-[1000] max-md:h-5"
+    <div className="fixed inset-0 z-[1000] flex flex-col bg-[#282c34] text-white transition-none">
+        {(title || hint) && (
+            <div className="shrink-0 px-4 pb-2 pt-3 text-center">
+                {title && <div className="text-base font-semibold">{title}</div>}
+                {hint && <div className="text-xs text-white/70">{hint}</div>}
+            </div>
+        )}
+        <div className="relative min-h-0 flex-1">
+            <Cropper
+                style={{ containerStyle: { backgroundColor: "#282c34" } }}
+                image={selectedImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={aspect}
+                onCropChange={setCrop}
+                onCropComplete={(_, croppedAreaPixels) => setCropArea(croppedAreaPixels)}
+                onZoomChange={setZoom}
+                zoomWithScroll={false}
             />
-            <div className="flex flex-wrap justify-center">
-                {children}
+        </div>
+        <div className="shrink-0 bg-neutral-950 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="mx-auto flex w-full max-w-xl flex-col gap-3">
+                <div className="flex items-center gap-3">
+                    <ZoomOut className="h-5 w-5 shrink-0 text-white/70" aria-hidden="true" />
+                    <input
+                        type="range"
+                        min="1"
+                        max="3"
+                        step="0.1"
+                        value={zoom}
+                        onChange={(e) => setZoom(parseFloat(e.target.value))}
+                        aria-label="Zoom"
+                        className="h-6 w-full cursor-pointer accent-primary"
+                    />
+                    <ZoomIn className="h-5 w-5 shrink-0 text-white/70" aria-hidden="true" />
+                </div>
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <CropperButton variant="ghost" text={cancelText} onClick={onCancel} disabled={disabled} />
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">{actions}</div>
+                </div>
             </div>
         </div>
     </div>

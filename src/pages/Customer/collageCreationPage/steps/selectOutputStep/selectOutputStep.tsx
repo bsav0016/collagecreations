@@ -16,6 +16,7 @@ import usePreventScroll from "../../../../../hooks/preventScroll";
 import CustomCropper from "../../../../../components/customCropper/customCropper";
 import LoadingScreen from "../../../../../components/loadingScreen/loadingScreen";
 import CropperButton from "../../../../../components/cropperButton/cropperButton";
+import { Check, RotateCw } from "lucide-react";
 import { getCroppedImg, rotateImage } from "../../../../../utils/modifyImage";
 import { useConstants } from "../../../../../context/constantsContext";
 import { toastRef } from "../../../../../context/toastContext/toastContext";
@@ -266,25 +267,25 @@ export function SelectOutputStep({
                                     setZoom={setZoom}
                                     setCropArea={setCropArea}
                                     aspect={mapAspectRatio(outputSize)}
-                                >
-                                    <div className="flex flex-wrap justify-between w-full">
-                                        <CropperButton
-                                            onClick={confirmCancelCrop}
-                                            text="Cancel"
-                                        />
-                                        <div className="flex flex-wrap">
+                                    title="Crop your image"
+                                    hint="Drag the photo to position it. Use the slider to zoom."
+                                    onCancel={confirmCancelCrop}
+                                    actions={
+                                        <>
                                             <CropperButton
                                                 onClick={rotate}
-                                                text="Rotate Image"
+                                                text="Rotate"
+                                                icon={<RotateCw className="h-4 w-4" />}
                                             />
                                             <CropperButton
                                                 onClick={cropMainImage}
                                                 text="Finish"
+                                                icon={<Check className="h-4 w-4" />}
                                                 variant="primary"
                                             />
-                                        </div>
-                                    </div>
-                                </CustomCropper>
+                                        </>
+                                    }
+                                />
                             }
                         </div>
                     ) : (

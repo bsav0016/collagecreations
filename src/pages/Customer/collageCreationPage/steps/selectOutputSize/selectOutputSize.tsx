@@ -105,7 +105,7 @@ export function SelectOutputSizeStep({
 
     return (
         <div className="flex flex-col items-center gap-8 px-4">
-            <div className="flex flex-row gap-4 justify-center items-stretch flex-wrap">
+            <div className="flex flex-row gap-3 sm:gap-4 justify-center items-stretch flex-wrap">
                 {availableSizes.map((availableSize) => {
                     const active = selectedSize === availableSize;
                     return (
@@ -115,7 +115,7 @@ export function SelectOutputSizeStep({
                             onClick={() => setSelectedSize(availableSize)}
                             aria-pressed={active}
                             className={cn(
-                                "flex flex-col items-center gap-2 w-28 rounded-xl border-2 bg-card px-3 py-4 shadow-sm transition-colors",
+                                "flex flex-col items-center gap-2 w-24 sm:w-28 rounded-xl border-2 bg-card px-2 sm:px-3 py-3 sm:py-4 shadow-sm transition-colors",
                                 active ? "border-primary bg-primary/5" : "border-border hover:border-primary/50",
                             )}
                         >
@@ -130,14 +130,16 @@ export function SelectOutputSizeStep({
 
             {selectedSize && (
                 <>
+                    {/* Right under the choices, and pinned to the bottom of the screen while it is in view,
+                        so it can't be missed or pushed below the fold on a phone. */}
+                    <div className="sticky bottom-4 z-10 -mt-4 w-full max-w-xs rounded-md shadow-lg">
+                        <GeneralButton text="Continue" onClick={confirmSelection} variant="primary" fullWidth />
+                    </div>
                     <img
                         src={outputSizeImages[selectedSize]}
                         alt={selectedSize}
                         className="w-[40%] h-auto max-md:w-[75%] rounded-xl dark:bg-slate-100 dark:p-3"
                     />
-                    <div className="w-full max-w-xs">
-                        <GeneralButton text="Continue" onClick={confirmSelection} variant="primary" fullWidth />
-                    </div>
                 </>
             )}
         </div>
