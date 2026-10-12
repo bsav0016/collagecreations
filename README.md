@@ -62,3 +62,7 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, buil
 - No working automated tests; the old Create React App placeholder test was removed.
 - Everything depends on the backend being up, since previews, pricing and checkout all call it.
 - <!-- TODO: anything else you want to say (traffic, what you'd improve next) -->
+
+## License
+
+MIT. See [LICENSE](LICENSE).
