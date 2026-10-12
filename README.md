@@ -10,7 +10,7 @@ The storefront for [collagecreations.org](https://collagecreations.org): custome
 
 ## Why it exists
 
-<!-- TODO: in your own words, why you built it (the business/gift idea, who it is for) -->
+A photo mosaic - one big image made of many small photos - is tedious to build by hand, because each small photo has to be matched to the part of the picture it fills. This site lets a customer upload photos, pick a size, see a watermarked preview and order a print, with no design work. The collage itself is built by the backend.
 
 ## The customer flow
 
