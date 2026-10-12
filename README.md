@@ -33,21 +33,32 @@ Other pages: sign-in (Google, Microsoft or an emailed code), my orders with reor
 
 ## Running it
 
+Requires Node 20.
+
 ```bash
-npm install
-npm run dev          # Vite dev server on http://localhost:4000
-npm run build        # type-check, then build into build/
-npm run preview
+npm ci
+cp .env.example .env.local     # Windows: copy .env.example .env.local
+npm run dev                    # Vite dev server on http://localhost:4000
 ```
 
-You need a running backend and a few environment variables in a `.env` file (git-ignored):
+Start the backend first (its README explains how); the API URL defaults to `http://localhost:8000/` and the backend already allows `http://localhost:4000` for CORS. Put a Stripe **publishable test key** in `.env.local` to use the checkout form. `.env.local` is git-ignored.
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Dev server on port 4000 |
+| `npm run typecheck` | TypeScript check (what CI runs before building) |
+| `npm test` | Unit tests (Vitest + Testing Library); CI runs them before every deploy |
+| `npm run build` | Type-check, then build into `build/` |
+| `npm run preview` | Serve the production build locally |
+
+Settings are `VITE_*` variables read at build time and bundled into the page, so never put secrets in them. `.env.example` lists them:
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_BACKEND_URL` | Base URL of the API |
+| `VITE_BACKEND_URL` | Base URL of the API, with a trailing slash (defaults to `http://localhost:8000/` in `npm run dev`) |
 | `VITE_STRIPE_KEY` | Stripe publishable key |
 | `VITE_SENTRY_DSN` | Sentry project DSN (optional) |
-| `VITE_GOOGLE_CLIENT_ID`, `VITE_MICROSOFT_CLIENT_ID` | Customer sign-in |
+| `VITE_GOOGLE_CLIENT_ID`, `VITE_MICROSOFT_CLIENT_ID` | Customer sign-in (default to the production apps' public IDs) |
 
 ## Deployment
 
@@ -59,11 +70,11 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, buil
 - **Progress bar driven by real task progress**, because building a large collage takes long enough that users would otherwise think the page had frozen.
 - **Mobile-first layout.** Recent work reworked the crop screen and the size step so the main action stays visible on a phone.
 - **Static hosting.** The app is a client-side SPA on GitHub Pages, so there is no server to run for the frontend; `public/404.html` supports client-side routes.
-- **Type-checked in CI** before every deploy.
+- **Type-checked and tested in CI** before every deploy.
 
 ## Limitations
 
-- No working automated tests; the old Create React App placeholder test was removed.
+- Test coverage is focused on the network layer, payment requests, sign-in state and the wizard step logic; most page components and the crop screens (which need a real browser) are untested.
 - Everything depends on the backend being up, since previews, pricing and checkout all call it.
 - <!-- TODO: anything else you want to say (traffic, what you'd improve next) -->
 

@@ -1,4 +1,6 @@
-export const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL;
+// Must end with a slash. Local dev falls back to the Django dev server; production builds set it explicitly.
+export const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL
+    || (import.meta.env.DEV ? 'http://localhost:8000/' : '');
 export const STRIPE_KEY: string = import.meta.env.VITE_STRIPE_KEY;
 export const SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN;
 // Public OAuth application IDs (not secrets) for customer sign-in.
