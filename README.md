@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# Collage Creations
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The storefront for [collagecreations.org](https://collagecreations.org): customers upload photos and order a printed **photo mosaic** – one large image (a photo, a word, or a symbol such as a heart) made out of many small photos. The API that builds the collages and takes payment is in [collageCreationsBackend](https://github.com/bsav0016/collageCreationsBackend).
 
-## Available Scripts
+<!-- TODO: add screenshots (home page, crop step, preview, a finished collage) -->
 
-In the project directory, you can run:
+## Why it exists
 
-### `npm start`
+<!-- TODO: in your own words, why you built it (the business/gift idea, who it is for) -->
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## The customer flow
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. **Pick a type** – a collage of a photo, of a word, or of a symbol (heart, paw, rings, flower), or an order of regular prints.
+2. **Choose the main image, text or symbol**, the output size and the size of the small photos.
+3. **Upload and crop the small photos** (touch-friendly crop screen with zoom).
+4. **Create** – the backend builds the collage and the page shows real progress while it works.
+5. **Preview** – a watermarked preview; signing in lets you save it and come back to it later.
+6. **Check out** with Stripe (shipping and tax are calculated by the backend), then **download** or wait for delivery.
 
-### `npm test`
+Other pages: sign-in (Google, Microsoft or an emailed code), my orders with reorder, saved collages, account settings with data export and deletion, tips, support tickets, and the legal pages. There is also a small **admin area** for orders and support tickets.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Stack
 
-### `npm run build`
+- React 18, TypeScript, Vite 6, React Router 6
+- Tailwind CSS, Radix UI primitives, lucide icons, light/dark theme (`next-themes`)
+- `react-easy-crop` and `react-image-crop` for cropping, `react-image-file-resizer` for resizing
+- Stripe Elements (`@stripe/react-stripe-js`), Sentry for error reporting
+- GitHub Pages hosting, deployed by GitHub Actions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Running it
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm install
+npm run dev          # Vite dev server on http://localhost:4000
+npm run build        # type-check, then build into build/
+npm run preview
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+You need a running backend and a few environment variables in a `.env` file (git-ignored):
 
-### `npm run eject`
+| Variable | Purpose |
+| --- | --- |
+| `VITE_BACKEND_URL` | Base URL of the API |
+| `VITE_STRIPE_KEY` | Stripe publishable key |
+| `VITE_SENTRY_DSN` | Sentry project DSN (optional) |
+| `VITE_GOOGLE_CLIENT_ID`, `VITE_MICROSOFT_CLIENT_ID` | Customer sign-in |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Deployment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, build (with the three secrets `VITE_BACKEND_URL`, `VITE_STRIPE_KEY` and `VITE_SENTRY_DSN`), then publish `build/` to GitHub Pages under the custom domain `collagecreations.org`. `npm run deploy` does the same from a laptop with `gh-pages`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Design decisions
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **Server builds the collage; the browser only collects inputs.** Heavy image work and price, shipping and tax calculation all happen on the backend, so the page only displays what the API returns.
+- **Progress bar driven by real task progress**, because building a large collage takes long enough that users would otherwise think the page had frozen.
+- **Mobile-first layout.** Recent work reworked the crop screen and the size step so the main action stays visible on a phone.
+- **Static hosting.** The app is a client-side SPA on GitHub Pages, so there is no server to run for the frontend; `public/404.html` supports client-side routes.
+- **Type-checked in CI** before every deploy.
 
-## Learn More
+## Limitations
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- No working automated tests; the old Create React App placeholder test was removed.
+- Everything depends on the backend being up, since previews, pricing and checkout all call it.
+- <!-- TODO: anything else you want to say (traffic, what you'd improve next) -->
