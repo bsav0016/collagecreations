@@ -1,11 +1,21 @@
 name: Tests
 
+# Pull-request validation only: nothing here deploys, publishes or uses a repository secret. The
+# build gets placeholder VITE_* values, so it also works for pull requests from forks.
 on:
   pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -24,3 +34,9 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Build
+        env:
+          VITE_BACKEND_URL: http://localhost:8000/
+          VITE_STRIPE_KEY: pk_test_ci_placeholder
+        run: npm run build
