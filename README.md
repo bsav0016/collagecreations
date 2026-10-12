@@ -6,6 +6,8 @@ The storefront for [collagecreations.org](https://collagecreations.org): custome
 
 <p><img src="docs/screenshots/order-size.png" alt="Choosing the print size, with a scale comparison" width="49%"> <img src="docs/screenshots/photo-size.png" alt="Choosing the size of the small photos, compared with a US quarter" width="49%"></p>
 
+<p><img src="docs/screenshots/light-dark-preview.png" alt="Light and dark preview of a heart collage, where each square can be flipped" width="49%"></p>
+
 ## Why it exists
 
 <!-- TODO: in your own words, why you built it (the business/gift idea, who it is for) -->
