@@ -30,6 +30,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit -p .
 
+      - name: Test
+        run: npm test
+
       - name: Build
         env:
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
