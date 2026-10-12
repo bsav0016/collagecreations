@@ -2,7 +2,7 @@
 
 The storefront for [collagecreations.org](https://collagecreations.org): customers upload photos and order a printed **photo mosaic** – one large image (a photo, a word, or a symbol such as a heart) made out of many small photos. The API that builds the collages and takes payment is in [collageCreationsBackend](https://github.com/bsav0016/collageCreationsBackend).
 
-<!-- TODO: add screenshots (home page, crop step, preview, a finished collage) -->
+![Collage Creations home page](docs/screenshots/home.png)
 
 ## Why it exists
 
