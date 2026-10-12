@@ -76,7 +76,6 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, buil
 
 - Test coverage is focused on the network layer, payment requests, sign-in state and the wizard step logic; most page components and the crop screens (which need a real browser) are untested.
 - Everything depends on the backend being up, since previews, pricing and checkout all call it.
-- <!-- TODO: anything else you want to say (traffic, what you'd improve next) -->
 
 ## License
 
