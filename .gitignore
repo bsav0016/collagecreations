@@ -23,3 +23,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# build output (CI builds and publishes it to GitHub Pages)
+/build
+/dist
+
+# editor settings
+.idea/
