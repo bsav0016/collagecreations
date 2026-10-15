@@ -1,6 +1,6 @@
 # Collage Creations
 
-The storefront for [collagecreations.org](https://collagecreations.org): customers upload photos and order a printed **photo mosaic** – one large image (a photo, a word, or a symbol such as a heart) made out of many small photos. The API that builds the collages and takes payment is in [collageCreationsBackend](https://github.com/bsav0016/collageCreationsBackend).
+The storefront for [collagecreations.org](https://collagecreations.org): customers upload photos and order a printed **photo mosaic** – one large image (a photo, a word, or a symbol such as a heart) made out of many small photos. The API that builds the collages and takes payment is a separate Django and Celery project in a private repository.
 
 ![Collage Creations home page](docs/screenshots/home.png)
 
@@ -23,6 +23,28 @@ A photo mosaic - one big image made of many small photos - is tedious to build b
 
 Other pages: sign-in (Google, Microsoft or an emailed code), my orders with reorder, saved collages, account settings with data export and deletion, tips, support tickets, and the legal pages. There is also a small **admin area** for orders and support tickets.
 
+## How it fits together
+
+```
+Browser: this React single-page app (static hosting)
+   │  JSON over HTTPS
+   ▼
+Django REST API ───────────── Stripe (card payments)
+   │          │
+   │          └─ Celery worker (Redis queue): matches photos to the grid with OpenCV, NumPy and Pillow,
+   │             reporting progress that the page polls for the progress bar
+   ▼
+PostgreSQL (accounts, orders)      Object storage (customer images)
+```
+
+The backend is where the hard parts live:
+
+- **Photo matching.** The main image is split into a grid and each cell gets the small photo whose average colour, measured in all four quadrants, is closest. Text and symbol collages brighten or dim photos to draw the shape.
+- **Preview first.** A watermarked preview is built before any payment; the full-resolution file is created only for a paid order, and an hourly job deletes unpaid uploads.
+- **One pricing module.** The price shown, the amount charged and the tax all come from the same server-side code.
+- **Abuse and access controls.** Rate limits on the payment, discount and support endpoints, and unguessable ids and download tokens for temporary images.
+- **Tested without real services.** The backend has a 167-test suite that mocks Stripe, USPS and email.
+
 ## Stack
 
 - React 18, TypeScript, Vite 6, React Router 6
@@ -41,7 +63,7 @@ cp .env.example .env.local     # Windows: copy .env.example .env.local
 npm run dev                    # Vite dev server on http://localhost:4000
 ```
 
-Start the backend first (its README explains how); the API URL defaults to `http://localhost:8000/` and the backend already allows `http://localhost:4000` for CORS. Put a Stripe **publishable test key** in `.env.local` to use the checkout form. `.env.local` is git-ignored.
+Previews, pricing and checkout need the backend API, which is a private repository, so this repo alone cannot run the full order flow. The API URL defaults to `http://localhost:8000/` (the backend already allows `http://localhost:4000` for CORS), or set `VITE_BACKEND_URL` to point at any server that implements the API. Put a Stripe **publishable test key** in `.env.local` to use the checkout form. `.env.local` is git-ignored.
 
 | Command | What it does |
 | --- | --- |
