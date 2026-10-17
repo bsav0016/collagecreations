@@ -82,6 +82,19 @@ Settings are `VITE_*` variables read at build time and bundled into the page, so
 | `VITE_SENTRY_DSN` | Sentry project DSN (optional) |
 | `VITE_GOOGLE_CLIENT_ID`, `VITE_MICROSOFT_CLIENT_ID` | Customer sign-in (default to the production apps' public IDs) |
 
+### Regenerating the screenshots
+
+The images in `docs/screenshots/` come from a script, so a refresh is one command. Start the frontend and the backend (see above), then:
+
+```bash
+cd scripts/screenshots
+npm ci
+npx playwright install chromium
+npm run capture              # APP_URL=... to capture another server
+```
+
+It walks the home page and the symbol and text order flows at 1440x900 with no sign-in and no customer data, and overwrites the four files. `home.png` is also reduced to a 256-colour palette to keep it small. The script lives in its own `package.json` so the app does not depend on Playwright.
+
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, build (with the three secrets `VITE_BACKEND_URL`, `VITE_STRIPE_KEY` and `VITE_SENTRY_DSN`), then publish `build/` to GitHub Pages under the custom domain `collagecreations.org`. `npm run deploy` does the same from a laptop with `gh-pages`.

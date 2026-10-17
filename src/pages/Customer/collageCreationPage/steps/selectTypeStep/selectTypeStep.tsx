@@ -33,6 +33,16 @@ export function SelectTypeStep({
 }: SelectTypeStepProps) {
   const collageOptions: CollageTypeOption[] = [
     {
+      title: "Symbol",
+      type: CollageCreationType.Symbol,
+      considerations: [
+        "Similar considerations as text collage",
+        "There are a limited number of symbols to choose from",
+        "You may request custom symbol if you do not like the options",
+      ],
+      image: symbolCollage,
+    },
+    {
       title: "Image",
       type: CollageCreationType.Image,
       considerations: [
@@ -53,16 +63,6 @@ export function SelectTypeStep({
       ],
       image: textCollage,
     },
-    {
-      title: "Symbol",
-      type: CollageCreationType.Symbol,
-      considerations: [
-        "Similar considerations as text collage",
-        "There are a limited number of symbols to choose from",
-        "You may request custom symbol if you do not like the options",
-      ],
-      image: symbolCollage,
-    },
   ];
 
   const clickedSelect = (type: CollageCreationType) => {
@@ -78,7 +78,7 @@ export function SelectTypeStep({
       {collageOptions.map((option) => (
         <Card className="w-full max-w-sm md:w-85" key={option.title}>
           <CardHeader>
-            <CardTitle>Custom {option.title} Mosaic</CardTitle>
+            <CardTitle>Custom {option.title} Collage</CardTitle>
           </CardHeader>
           <CardContent>
             <img

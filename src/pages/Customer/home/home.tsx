@@ -32,7 +32,7 @@ function Home() {
 
   const collageOptions: CollageOption[] = [
     {
-      title: "Symbol Based Collage",
+      title: "Custom Symbol Collage",
       heroLabel: "Symbols",
       description: "Create with symbols",
       type: CollageCreationType.Symbol,
@@ -57,7 +57,7 @@ function Home() {
       ],
     },
     {
-      title: "Text Based Collage",
+      title: "Custom Text Collage",
       heroLabel: "Words",
       description: "Create with words",
       type: CollageCreationType.Text,
