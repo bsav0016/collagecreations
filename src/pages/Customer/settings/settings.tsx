@@ -20,7 +20,7 @@ function Settings(): React.ReactElement {
         <title>Settings | Collage Creations</title>
         <meta
           name="description"
-          content="Customize your Mosaic Maker experience. Adjust theme preferences and other settings."
+          content="Customize your Collage Creations experience. Adjust theme preferences and other settings."
         />
       </Helmet>
 
@@ -34,7 +34,7 @@ function Settings(): React.ReactElement {
               <CardHeader>
                 <CardTitle>Appearance</CardTitle>
                 <CardDescription>
-                  Customize how Mosaic Maker looks on your device.
+                  Customize how Collage Creations looks on your device.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">

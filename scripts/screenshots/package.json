@@ -1,0 +1,12 @@
+{
+  "name": "collagecreations-screenshots",
+  "private": true,
+  "type": "module",
+  "description": "Regenerates docs/screenshots with Playwright. Kept separate so the app does not depend on it.",
+  "scripts": {
+    "capture": "node capture.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}
