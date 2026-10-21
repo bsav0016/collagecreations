@@ -46,6 +46,7 @@ function AdminNavBar() {
         { label: "Orders", path: "/admin/admin-orders" },
         { label: "Support Tickets", path: "/admin/admin-support-tickets" },
         { label: "Custom Orders", path: "/admin/admin-custom-orders" },
+        { label: "Pricing", path: "/admin/admin-pricing" },
     ];
 
     return (
