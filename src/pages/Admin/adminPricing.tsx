@@ -94,9 +94,7 @@ function CatalogRow({ item, editable, token, onSaved }: { item: CatalogItem; edi
 
 const inRange = (text: string, max: number) => /^\d+$/.test(text.trim()) && Number(text) >= 1 && Number(text) <= max;
 
-function PackageRow({ pkg, editable, token, onSaved, canRemove, single }: {
-    pkg: ShippingPackage; editable: boolean; token: string; onSaved: () => void; canRemove: boolean; single: boolean;
-}) {
+function PackageForm({ pkg, editable, token, onSaved }: { pkg: ShippingPackage; editable: boolean; token: string; onSaved: () => void }) {
     const [charge, setCharge] = useState(centsToDollars(pkg.customer_charge_cents));
     const [cost, setCost] = useState(centsToDollars(pkg.material_cost_cents));
     const [length, setLength] = useState(String(pkg.length));
@@ -107,7 +105,6 @@ function PackageRow({ pkg, editable, token, onSaved, canRemove, single }: {
     const costCents = dollarsToCents(cost);
     const valid = chargeCents !== null && costCents !== null && chargeCents <= MAX_COST_CENTS && costCents <= MAX_COST_CENTS
         && inRange(length, 108) && inRange(width, 108) && inRange(height, 108) && inRange(weight, 70);
-    const title = single ? "Shipping tube" : `${pkg.name} tube`;
 
     const save = async () => {
         if (!valid || chargeCents === null || costCents === null) return;
@@ -123,35 +120,15 @@ function PackageRow({ pkg, editable, token, onSaved, canRemove, single }: {
         }
     };
 
-    const remove = () => {
-        toastRef.current?.(`Remove the ${pkg.name} package? The remaining package will be used for every print size.`, "info", async () => {
-            try {
-                await PricingService.deletePackage(token, pkg.id);
-                onSaved();
-            } catch {
-                notify("Could not remove the package.");
-            }
-        });
-    };
-
     return (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-end border-b border-border pb-3">
-            <div className="col-span-2 md:col-span-4 font-semibold">
-                <span className="capitalize">{title}</span>
-                {!single && pkg.max_short_side_inches ? ` (prints with a side up to ${pkg.max_short_side_inches} in)` : ""}
-            </div>
-            <MoneyField label={`${title} charged to customer`} value={charge} onChange={setCharge} disabled={!editable} max={MAX_COST_CENTS} />
-            <MoneyField label={`${title} material cost`} value={cost} onChange={setCost} disabled={!editable} max={MAX_COST_CENTS} />
-            <NumberField label={`${title} length (in)`} value={length} onChange={setLength} disabled={!editable} valid={inRange(length, 108)} />
-            <NumberField label={`${title} width (in)`} value={width} onChange={setWidth} disabled={!editable} valid={inRange(width, 108)} />
-            <NumberField label={`${title} height (in)`} value={height} onChange={setHeight} disabled={!editable} valid={inRange(height, 108)} />
-            <NumberField label={`${title} weight (lb)`} value={weight} onChange={setWeight} disabled={!editable} valid={inRange(weight, 70)} />
-            {editable && (
-                <div className="flex gap-2">
-                    <GeneralButton text="Save" onClick={save} disabled={!valid} size="sm" />
-                    {canRemove && <GeneralButton text="Remove" onClick={remove} variant="ghost" size="sm" />}
-                </div>
-            )}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-end">
+            <MoneyField label="Shipping charge to customer" value={charge} onChange={setCharge} disabled={!editable} max={MAX_COST_CENTS} />
+            <MoneyField label="Shipping material cost" value={cost} onChange={setCost} disabled={!editable} max={MAX_COST_CENTS} />
+            <NumberField label="Package length (in)" value={length} onChange={setLength} disabled={!editable} valid={inRange(length, 108)} />
+            <NumberField label="Package width (in)" value={width} onChange={setWidth} disabled={!editable} valid={inRange(width, 108)} />
+            <NumberField label="Package height (in)" value={height} onChange={setHeight} disabled={!editable} valid={inRange(height, 108)} />
+            <NumberField label="Package weight (lb)" value={weight} onChange={setWeight} disabled={!editable} valid={inRange(weight, 70)} />
+            {editable && <GeneralButton text="Save" onClick={save} disabled={!valid} size="sm" />}
         </div>
     );
 }
@@ -256,11 +233,11 @@ function AdminPricing(): React.ReactElement {
                 </section>
 
                 <section className="flex flex-col gap-3">
-                    <h2 className="text-lg font-semibold">Shipping packages</h2>
-                    {pricing.packages.map((pkg) => (
-                        <PackageRow key={`${pkg.id}-${pkg.customer_charge_cents}-${pkg.material_cost_cents}-${pkg.length}-${pkg.width}-${pkg.height}-${pkg.weight}`}
-                            pkg={pkg} editable={editable} token={userToken} onSaved={load}
-                            canRemove={pricing.packages.length > 1} single={pricing.packages.length === 1} />
+                    <h2 className="text-lg font-semibold">Shipping package</h2>
+                    <p className="text-sm text-muted-foreground">One package is used for every print size. The charge is added once per order to the postage quote.</p>
+                    {pricing.packages.slice(0, 1).map((pkg) => (
+                        <PackageForm key={`${pkg.id}-${pkg.customer_charge_cents}-${pkg.material_cost_cents}-${pkg.length}-${pkg.width}-${pkg.height}-${pkg.weight}`}
+                            pkg={pkg} editable={editable} token={userToken} onSaved={load} />
                     ))}
                 </section>
 
