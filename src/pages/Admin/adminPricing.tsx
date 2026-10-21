@@ -8,7 +8,7 @@ import { Input } from "../../components/ui/input";
 import { toastRef } from "../../context/toastContext/toastContext";
 import { useAuth } from "../../context/authContext";
 import PricingService, { CatalogItem, PriceChange, Pricing, ShippingPackage } from "../../services/PricingService";
-import { MAX_COST_CENTS, MAX_PRICE_CENTS, centsToDollars, dollarsToCents } from "../../utils/money";
+import { MAX_COST_CENTS, MAX_PRICE_CENTS, centsToDollars, dollarsToCents, rateToPercent } from "../../utils/money";
 
 // Prices and costs are stored in cents; the fields below show and edit dollars.
 interface MoneyFieldProps {
@@ -41,6 +41,18 @@ function MoneyField({ label, value, onChange, disabled, max }: MoneyFieldProps) 
 // History stores raw values; amounts in cents are shown as dollars.
 const showValue = (field: string, value: string): string =>
     field.endsWith("_cents") && /^\d+$/.test(value) ? `$${centsToDollars(Number(value))}` : value;
+
+function NumberField({ label, value, onChange, disabled, valid }: {
+    label: string; value: string; onChange: (value: string) => void; disabled: boolean; valid: boolean;
+}) {
+    return (
+        <label className="flex flex-col gap-1 text-sm">
+            <span className="text-muted-foreground">{label}</span>
+            <Input inputMode="numeric" aria-label={label} value={value} disabled={disabled} aria-invalid={!valid}
+                className={valid ? "" : "border-destructive"} onChange={(e) => onChange(e.target.value)} />
+        </label>
+    );
+}
 
 const notify = (message: string) => toastRef.current?.(message);
 
@@ -80,17 +92,30 @@ function CatalogRow({ item, editable, token, onSaved }: { item: CatalogItem; edi
     );
 }
 
-function PackageRow({ pkg, editable, token, onSaved }: { pkg: ShippingPackage; editable: boolean; token: string; onSaved: () => void }) {
+const inRange = (text: string, max: number) => /^\d+$/.test(text.trim()) && Number(text) >= 1 && Number(text) <= max;
+
+function PackageRow({ pkg, editable, token, onSaved, canRemove, single }: {
+    pkg: ShippingPackage; editable: boolean; token: string; onSaved: () => void; canRemove: boolean; single: boolean;
+}) {
     const [charge, setCharge] = useState(centsToDollars(pkg.customer_charge_cents));
     const [cost, setCost] = useState(centsToDollars(pkg.material_cost_cents));
+    const [length, setLength] = useState(String(pkg.length));
+    const [width, setWidth] = useState(String(pkg.width));
+    const [height, setHeight] = useState(String(pkg.height));
+    const [weight, setWeight] = useState(String(pkg.weight));
     const chargeCents = dollarsToCents(charge);
     const costCents = dollarsToCents(cost);
-    const valid = chargeCents !== null && costCents !== null && chargeCents <= MAX_COST_CENTS && costCents <= MAX_COST_CENTS;
+    const valid = chargeCents !== null && costCents !== null && chargeCents <= MAX_COST_CENTS && costCents <= MAX_COST_CENTS
+        && inRange(length, 108) && inRange(width, 108) && inRange(height, 108) && inRange(weight, 70);
+    const title = single ? "Shipping tube" : `${pkg.name} tube`;
 
     const save = async () => {
-        if (!valid) return;
+        if (!valid || chargeCents === null || costCents === null) return;
         try {
-            await PricingService.updatePackage(token, pkg.id, { customer_charge_cents: chargeCents, material_cost_cents: costCents });
+            await PricingService.updatePackage(token, pkg.id, {
+                customer_charge_cents: chargeCents, material_cost_cents: costCents,
+                length: Number(length), width: Number(width), height: Number(height), weight: Number(weight),
+            });
             notify("Saved");
             onSaved();
         } catch {
@@ -98,12 +123,35 @@ function PackageRow({ pkg, editable, token, onSaved }: { pkg: ShippingPackage; e
         }
     };
 
+    const remove = () => {
+        toastRef.current?.(`Remove the ${pkg.name} package? The remaining package will be used for every print size.`, "info", async () => {
+            try {
+                await PricingService.deletePackage(token, pkg.id);
+                onSaved();
+            } catch {
+                notify("Could not remove the package.");
+            }
+        });
+    };
+
     return (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-end border-b border-border pb-3">
-            <div className="font-semibold capitalize">{pkg.name} tube ({pkg.length}x{pkg.width}x{pkg.height} in, {pkg.weight} lb)</div>
-            <MoneyField label={`${pkg.name} tube charged to customer`} value={charge} onChange={setCharge} disabled={!editable} max={MAX_COST_CENTS} />
-            <MoneyField label={`${pkg.name} tube material cost`} value={cost} onChange={setCost} disabled={!editable} max={MAX_COST_CENTS} />
-            {editable && <GeneralButton text="Save" onClick={save} disabled={!valid} size="sm" />}
+            <div className="col-span-2 md:col-span-4 font-semibold">
+                <span className="capitalize">{title}</span>
+                {!single && pkg.max_short_side_inches ? ` (prints with a side up to ${pkg.max_short_side_inches} in)` : ""}
+            </div>
+            <MoneyField label={`${title} charged to customer`} value={charge} onChange={setCharge} disabled={!editable} max={MAX_COST_CENTS} />
+            <MoneyField label={`${title} material cost`} value={cost} onChange={setCost} disabled={!editable} max={MAX_COST_CENTS} />
+            <NumberField label={`${title} length (in)`} value={length} onChange={setLength} disabled={!editable} valid={inRange(length, 108)} />
+            <NumberField label={`${title} width (in)`} value={width} onChange={setWidth} disabled={!editable} valid={inRange(width, 108)} />
+            <NumberField label={`${title} height (in)`} value={height} onChange={setHeight} disabled={!editable} valid={inRange(height, 108)} />
+            <NumberField label={`${title} weight (lb)`} value={weight} onChange={setWeight} disabled={!editable} valid={inRange(weight, 70)} />
+            {editable && (
+                <div className="flex gap-2">
+                    <GeneralButton text="Save" onClick={save} disabled={!valid} size="sm" />
+                    {canRemove && <GeneralButton text="Remove" onClick={remove} variant="ghost" size="sm" />}
+                </div>
+            )}
         </div>
     );
 }
@@ -113,7 +161,7 @@ function SettingsForm({ pricing, token, onSaved }: { pricing: Pricing; token: st
     const editable = pricing.can_edit;
     const [price, setPrice] = useState(centsToDollars(s.download_price_cents));
     const [cost, setCost] = useState(centsToDollars(s.download_cost_cents));
-    const [tax, setTax] = useState((parseFloat(s.tax_rate) * 100).toString());
+    const [tax, setTax] = useState(rateToPercent(s.tax_rate));
     const [perShip, setPerShip] = useState(String(s.num_per_ship));
     const priceCents = dollarsToCents(price);
     const costCents = dollarsToCents(cost);
@@ -210,8 +258,9 @@ function AdminPricing(): React.ReactElement {
                 <section className="flex flex-col gap-3">
                     <h2 className="text-lg font-semibold">Shipping packages</h2>
                     {pricing.packages.map((pkg) => (
-                        <PackageRow key={`${pkg.id}-${pkg.customer_charge_cents}-${pkg.material_cost_cents}`}
-                            pkg={pkg} editable={editable} token={userToken} onSaved={load} />
+                        <PackageRow key={`${pkg.id}-${pkg.customer_charge_cents}-${pkg.material_cost_cents}-${pkg.length}-${pkg.width}-${pkg.height}-${pkg.weight}`}
+                            pkg={pkg} editable={editable} token={userToken} onSaved={load}
+                            canRemove={pricing.packages.length > 1} single={pricing.packages.length === 1} />
                     ))}
                 </section>
 

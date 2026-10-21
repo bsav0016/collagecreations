@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { centsToDollars, dollarsToCents, MAX_COST_CENTS } from "./money";
+import { centsToDollars, dollarsToCents, MAX_COST_CENTS, rateToPercent } from "./money";
 
 describe("money", () => {
     it("shows cents as dollars", () => {
@@ -16,5 +16,11 @@ describe("money", () => {
 
     it.each(["", "abc", "-1", "1.234", "1,50", "1e3"])("rejects %j", (text) => {
         expect(dollarsToCents(text)).toBeNull();
+    });
+
+    it("turns a tax rate into a clean percentage", () => {
+        expect(rateToPercent("0.04712")).toBe("4.712");
+        expect(rateToPercent("0.05000")).toBe("5");
+        expect(rateToPercent(0.07)).toBe("7");
     });
 });
