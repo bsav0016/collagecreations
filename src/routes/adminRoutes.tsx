@@ -8,6 +8,7 @@ import AdminAddOrder from '../pages/Admin/adminAddOrder';
 import AdminAddWhite from '../pages/Admin/adminAddWhite';
 import AdminTicket from '../pages/Admin/adminTicket';
 import AdminTickets from '../pages/Admin/adminTickets';
+import AdminPricing from '../pages/Admin/adminPricing';
 import Resolved from '../pages/Admin/resolved';
 import NotFound from '../pages/NotFound/notFound';
 import { CollageCreation } from '../pages/Customer/collageCreationPage/collageCreationPage';
@@ -48,6 +49,7 @@ const AdminRoutes: React.FC = () => (
       navigationExtension="admin-custom-order"
       type="customOrder"
     />} />
+    <Route path="admin-pricing" element={<AdminPricing />} />
     <Route path="admin-collage" element={<CollageCreation isAdmin={true} />} />
     <Route path="admin-collage/:step" element={<CollageCreation isAdmin={true} />} />
     <Route path="admin-preview" element={<Preview isAdmin={true} />} />
