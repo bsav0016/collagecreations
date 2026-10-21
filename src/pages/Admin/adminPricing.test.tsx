@@ -3,28 +3,19 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AdminPricing from "./adminPricing";
 import PricingService, { Pricing } from "../../services/PricingService";
-import { toastRef } from "../../context/toastContext/toastContext";
 
 vi.mock("../../context/authContext", () => ({ useAuth: () => ({ userToken: "tok", isSuperuser: true }) }));
 vi.mock("../../layout/navBars/adminNavBar", () => ({ default: () => <nav /> }));
 vi.mock("../../services/PricingService", async (original) => {
     const real = await original<typeof import("../../services/PricingService")>();
-    return { ...real, default: { getPricing: vi.fn(), getHistory: vi.fn(), updateCatalogItem: vi.fn(), updateSettings: vi.fn(), updatePackage: vi.fn(), deletePackage: vi.fn() } };
+    return { ...real, default: { getPricing: vi.fn(), getHistory: vi.fn(), updateCatalogItem: vi.fn(), updateSettings: vi.fn(), updatePackage: vi.fn() } };
 });
 
 const pricing = (canEdit: boolean): Pricing => ({
     can_edit: canEdit, max_cents: 6000,
     catalog: [{ id: 1, size: "24x36", kind: "collage", price_cents: 8000, print_material_cost_cents: 2000, active: true }],
     settings: { download_price_cents: 500, download_cost_cents: 0, tax_rate: "0.04712", num_per_ship: 3 },
-    packages: [{ id: 1, name: "small", max_short_side_inches: 12, weight: 1, length: 16, width: 3, height: 3, customer_charge_cents: 150, material_cost_cents: 80 }],
-});
-
-const twoPackages = (): Pricing => ({
-    ...pricing(true),
-    packages: [
-        ...pricing(true).packages,
-        { id: 2, name: "large", max_short_side_inches: null, weight: 2, length: 26, width: 4, height: 4, customer_charge_cents: 240, material_cost_cents: 90 },
-    ],
+    packages: [{ id: 1, name: "general", weight: 2, length: 26, width: 4, height: 4, customer_charge_cents: 240, material_cost_cents: 80 }],
 });
 
 const mocked = vi.mocked(PricingService);
@@ -85,45 +76,37 @@ describe("AdminPricing", () => {
         expect(await screen.findByDisplayValue("4.712")).toBeTruthy();
     });
 
-    it("calls a lone package the shipping tube and offers no remove button", async () => {
+    it("shows the one general shipping package with no remove button", async () => {
         mocked.getPricing.mockResolvedValue(pricing(true));
         open();
-        expect(await screen.findByText("Shipping tube")).toBeTruthy();
+        expect(await screen.findByText("Shipping package")).toBeTruthy();
         expect(screen.queryByText("Remove")).toBeNull();
-        expect(screen.queryByText(/16×3×3/)).toBeNull();
+        expect(((await screen.findByLabelText("Package length (in)")) as HTMLInputElement).value).toBe("26");
     });
 
-    it("saves a tube's dimensions and weight along with its amounts", async () => {
+    it("saves the package's dimensions and weight along with its amounts", async () => {
         mocked.getPricing.mockResolvedValue(pricing(true));
         mocked.updatePackage.mockResolvedValue({});
         open();
-        fireEvent.change(await screen.findByLabelText("Shipping tube length (in)"), { target: { value: "30" } });
-        fireEvent.click(screen.getAllByText("Save")[screen.getAllByText("Save").length - 1]);
+        fireEvent.change(await screen.findByLabelText("Package length (in)"), { target: { value: "30" } });
+        const saves = screen.getAllByText("Save");
+        fireEvent.click(saves[saves.length - 1]);
         await waitFor(() => expect(mocked.updatePackage).toHaveBeenCalledWith("tok", 1, {
-            customer_charge_cents: 150, material_cost_cents: 80, length: 30, width: 3, height: 3, weight: 1,
+            customer_charge_cents: 240, material_cost_cents: 80, length: 30, width: 4, height: 4, weight: 2,
         }));
     });
 
-    it("blocks impossible tube dimensions", async () => {
+    it("blocks impossible package dimensions", async () => {
         mocked.getPricing.mockResolvedValue(pricing(true));
         open();
-        fireEvent.change(await screen.findByLabelText("Shipping tube weight (lb)"), { target: { value: "0" } });
+        fireEvent.change(await screen.findByLabelText("Package weight (lb)"), { target: { value: "0" } });
         const saves = screen.getAllByText("Save");
         expect(saves[saves.length - 1].closest("button")!.disabled).toBe(true);
     });
 
-    it("lets a superuser remove one of two packages after confirming", async () => {
-        mocked.getPricing.mockResolvedValue(twoPackages());
-        mocked.deletePackage.mockResolvedValue(undefined);
-        let confirm: (() => void) | null | undefined;
-        toastRef.current = ((_m: string, _t?: string, cb?: (() => void) | null) => { confirm = cb; }) as never;
+    it("shows the package read-only to staff", async () => {
+        mocked.getPricing.mockResolvedValue(pricing(false));
         open();
-        const removes = await screen.findAllByText("Remove");
-        expect(removes).toHaveLength(2);
-        expect(screen.getByText("small tube")).toBeTruthy();
-        fireEvent.click(removes[1]);
-        expect(mocked.deletePackage).not.toHaveBeenCalled();  // nothing happens until confirmed
-        confirm?.();
-        await waitFor(() => expect(mocked.deletePackage).toHaveBeenCalledWith("tok", 2));
+        expect(((await screen.findByLabelText("Package length (in)")) as HTMLInputElement).disabled).toBe(true);
     });
 });

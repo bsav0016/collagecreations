@@ -27,14 +27,6 @@ describe("PricingService", () => {
         expect(JSON.parse(init!.body as string)).toEqual({ price_cents: 5000, active: true });
     });
 
-    it("removes a package with a DELETE", async () => {
-        const fetchMock = reply(200, { deleted: 2 });
-        await PricingService.deletePackage("tok", 2);
-        const [url, init] = fetchMock.mock.calls[0];
-        expect(url).toBe(`${BACKEND_URL}api/admin/pricing/packages/2/`);
-        expect(init!.method).toBe("DELETE");
-    });
-
     it("returns the history list", async () => {
         reply(200, { history: [{ id: 1, user: "boss" }] });
         expect(await PricingService.getHistory("tok")).toEqual([{ id: 1, user: "boss" }]);

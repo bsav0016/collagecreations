@@ -1,5 +1,5 @@
 import NetworkRequest from "../lib/networkClient";
-import { APPLICATION_JSON_HEADER, AUTHORIZATION_HEADER, DELETE, GET, PUT } from "../lib/networkRequestConstants";
+import { APPLICATION_JSON_HEADER, AUTHORIZATION_HEADER, GET, PUT } from "../lib/networkRequestConstants";
 
 export interface CatalogItem {
     id: number;
@@ -20,7 +20,6 @@ export interface ShopSettings {
 export interface ShippingPackage {
     id: number;
     name: string;
-    max_short_side_inches: number | null;
     weight: number;
     length: number;
     width: number;
@@ -68,10 +67,6 @@ const PricingService = {
 
     updatePackage: (token: string, id: number, body: Partial<Omit<ShippingPackage, "id" | "name">>) =>
         put<object>(`packages/${id}/`, token, body),
-
-    deletePackage: async (token: string, id: number): Promise<void> => {
-        await NetworkRequest<object>({ urlExtension: `api/admin/pricing/packages/${id}/`, method: DELETE, headers: headers(token) });
-    },
 };
 
 export default PricingService;
