@@ -7,7 +7,7 @@ import PartnerDashboard from "./partnerDashboard";
 import PartnerService from "../../services/PartnerService";
 
 vi.mock("../../services/PartnerService", () => ({
-    default: { requestCode: vi.fn(), verifyCode: vi.fn(), getProfile: vi.fn(), getSummary: vi.fn(), getCommissions: vi.fn() },
+    default: { requestCode: vi.fn(), verifyCode: vi.fn(), getProfile: vi.fn(), getSummary: vi.fn(), getCommissions: vi.fn(), getPayouts: vi.fn(), startPayoutSetup: vi.fn() },
 }));
 
 const svc = vi.mocked(PartnerService);
@@ -31,6 +31,7 @@ beforeEach(() => {
     svc.getSummary.mockResolvedValue({ hold_days: 30, by_status: {
         pending: total("8.67", 1), payable: total("0.00", 0), paid: total("20.00", 2), void: total("0.00", 0),
     } });
+    svc.getPayouts.mockResolvedValue({ enabled: false, status: "not_started", payouts_enabled: false });
     svc.getCommissions.mockResolvedValue({ count: 1, next: null, previous: null, results: [
         { id: 5, order_date: "2026-10-01", net_sales: "90.00", amount: "8.67", status: "pending", payable_on: "2026-10-31", paid_at: null },
     ] });
@@ -80,5 +81,53 @@ describe("partner portal", () => {
         fireEvent.click(screen.getByText("Email me a code"));
         fireEvent.change(await screen.findByLabelText("Code"), { target: { value: "123" } });
         expect(screen.getByText("Sign in").closest("button")!.disabled).toBe(true);
+    });
+
+    const signedInDashboard = async () => {
+        svc.requestCode.mockResolvedValue({ message: "ok" });
+        svc.verifyCode.mockResolvedValue({ token: "tok", email: "o@petal.com", partner: "Petal" });
+        open("/partner/login");
+        fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "o@petal.com" } });
+        fireEvent.click(screen.getByText("Email me a code"));
+        fireEvent.change(await screen.findByLabelText("Code"), { target: { value: "123456" } });
+        fireEvent.click(screen.getByText("Sign in"));
+        await screen.findByText("PETAL10");
+    };
+
+    it("hides the payouts panel while Stripe payouts are switched off", async () => {
+        await signedInDashboard();
+        expect(screen.queryByText("Payouts")).toBeNull();
+    });
+
+    it("offers payout setup and sends the partner to Stripe's page", async () => {
+        svc.getPayouts.mockResolvedValue({ enabled: true, status: "not_started", payouts_enabled: false });
+        svc.startPayoutSetup.mockResolvedValue({ url: "https://connect.stripe.com/setup/x" });
+        const assign = vi.fn();
+        vi.stubGlobal("location", { ...window.location, assign });
+        await signedInDashboard();
+        fireEvent.click(await screen.findByText("Set up payouts"));
+        await waitFor(() => expect(assign).toHaveBeenCalledWith("https://connect.stripe.com/setup/x"));
+        vi.unstubAllGlobals();
+    });
+
+    it("says continue when setup is unfinished and ready when it is done", async () => {
+        svc.getPayouts.mockResolvedValue({ enabled: true, status: "incomplete", payouts_enabled: false });
+        await signedInDashboard();
+        expect(await screen.findByText("Continue payout setup")).toBeTruthy();
+    });
+
+    it("shows a ready message and no button once payouts are enabled", async () => {
+        svc.getPayouts.mockResolvedValue({ enabled: true, status: "ready", payouts_enabled: true });
+        await signedInDashboard();
+        expect(await screen.findByText(/payout account is ready/)).toBeTruthy();
+        expect(screen.queryByText("Set up payouts")).toBeNull();
+    });
+
+    it("shows the error when payout setup can't be opened", async () => {
+        svc.getPayouts.mockResolvedValue({ enabled: true, status: "not_started", payouts_enabled: false });
+        svc.startPayoutSetup.mockRejectedValue(new Error("We couldn't open payout setup. Please try again later."));
+        await signedInDashboard();
+        fireEvent.click(await screen.findByText("Set up payouts"));
+        expect(await screen.findByText(/couldn't open payout setup/)).toBeTruthy();
     });
 });

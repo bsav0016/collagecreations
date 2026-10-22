@@ -37,6 +37,12 @@ export interface PartnerCommission {
     paid_at: string | null;
 }
 
+export interface PayoutState {
+    enabled: boolean;
+    status: "not_started" | "incomplete" | "ready";
+    payouts_enabled: boolean;
+}
+
 export interface CommissionPage {
     count: number;
     next: string | null;
@@ -74,6 +80,11 @@ const PartnerService = {
     getProfile: (token: string) => call<PartnerProfile>("me/", GET, "Could not load your account.", token),
 
     getSummary: (token: string) => call<PartnerSummary>("summary/", GET, "Could not load your totals.", token),
+
+    getPayouts: (token: string) => call<PayoutState>("payouts/", GET, "Could not load your payout status.", token),
+
+    startPayoutSetup: (token: string) =>
+        call<{ url: string }>("payouts/onboard/", POST, "We couldn't open payout setup. Please try again later.", token),
 
     getCommissions: (token: string, page = 1) =>
         call<CommissionPage>(`commissions/?page=${page}`, GET, "Could not load your commissions.", token),
