@@ -5,7 +5,7 @@ import HeaderSection from "../../components/headerSection";
 import LoadingScreen from "../../components/loadingScreen/loadingScreen";
 import { usePartnerAuth } from "../../context/partnerAuthContext";
 import PartnerService, {
-    CommissionPage, CommissionStatus, PartnerProfile, PartnerSummary,
+    CommissionPage, CommissionStatus, PartnerProfile, PartnerSummary, PayoutState,
 } from "../../services/PartnerService";
 
 const PAGE_SIZE = 50;
@@ -28,6 +28,9 @@ function PartnerDashboard(): React.ReactElement {
     const [profile, setProfile] = useState<PartnerProfile | null>(null);
     const [summary, setSummary] = useState<PartnerSummary | null>(null);
     const [commissions, setCommissions] = useState<CommissionPage | null>(null);
+    const [payouts, setPayouts] = useState<PayoutState | null>(null);
+    const [settingUp, setSettingUp] = useState(false);
+    const [payoutError, setPayoutError] = useState("");
     const [page, setPage] = useState(1);
     const [error, setError] = useState("");
 
@@ -40,6 +43,8 @@ function PartnerDashboard(): React.ReactElement {
             setSummary(s);
             setCommissions(c);
             setError("");
+            // Payout status is a bonus: if it can't be read, the rest of the page still works.
+            PartnerService.getPayouts(token).then(setPayouts).catch(() => setPayouts(null));
         } catch (err) {
             setError(err instanceof Error ? err.message : "Could not load your account.");
         }
@@ -58,6 +63,17 @@ function PartnerDashboard(): React.ReactElement {
             </div>
         );
     }
+    const setUpPayouts = async () => {
+        setPayoutError("");
+        setSettingUp(true);
+        try {
+            window.location.assign((await PartnerService.startPayoutSetup(token)).url);
+        } catch (err) {
+            setPayoutError(err instanceof Error ? err.message : "We couldn't open payout setup.");
+            setSettingUp(false);
+        }
+    };
+
     if (!profile || !summary || !commissions) return <LoadingScreen />;
 
     const totals = summary.by_status;
@@ -73,6 +89,28 @@ function PartnerDashboard(): React.ReactElement {
                 the profit on each order that uses it. Commissions are paid {summary.hold_days} days after the order, once the
                 return window has passed, and are cancelled if the order is refunded.
             </p>
+
+            {payouts?.enabled && (
+                <section className="rounded-lg border p-3 flex flex-col gap-2" aria-label="Payouts">
+                    <h2 className="text-lg font-semibold">Payouts</h2>
+                    {payouts.status === "ready" ? (
+                        <p className="text-sm">Your payout account is ready. Commissions are sent to your bank through Stripe.</p>
+                    ) : (
+                        <>
+                            <p className="text-sm text-muted-foreground">
+                                {payouts.status === "incomplete"
+                                    ? "Your payout setup isn't finished yet. Continue to add what Stripe still needs."
+                                    : "Set up payouts with Stripe to receive your commissions in your bank account. Until then we pay you by hand."}
+                            </p>
+                            <div>
+                                <GeneralButton size="sm" disabled={settingUp} onClick={setUpPayouts}
+                                    text={settingUp ? "Opening Stripe..." : payouts.status === "incomplete" ? "Continue payout setup" : "Set up payouts"} />
+                            </div>
+                        </>
+                    )}
+                    {payoutError && <p className="text-sm text-red-500">{payoutError}</p>}
+                </section>
+            )}
 
             <section className="grid grid-cols-2 md:grid-cols-4 gap-3" aria-label="Totals">
                 {(["pending", "payable", "paid", "void"] as CommissionStatus[]).map((s) => (
