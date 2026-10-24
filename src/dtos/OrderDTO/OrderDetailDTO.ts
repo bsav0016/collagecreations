@@ -21,6 +21,9 @@ export interface OrderDetailResponse {
     base_cost: number;
     shipping_cost: number;
     tax: number;
+    refund_amount?: number;
+    disputed?: boolean;
+    stripe_payment_intent?: string | null;
 }
 
 class OrderDetailDTO {
@@ -46,6 +49,11 @@ class OrderDetailDTO {
     baseCost: number;
     shippingCost: number;
     tax: number;
+    /** Total refunded so far, in cents. */
+    refundAmount: number;
+    disputed: boolean;
+    /** Paid through Stripe, so it can be refunded from the app. */
+    hasStripePayment: boolean;
 
     constructor(
         firstname: string,
@@ -69,7 +77,10 @@ class OrderDetailDTO {
         quantity: number,
         baseCost: number,
         shippingCost: number,
-        tax: number
+        tax: number,
+        refundAmount: number = 0,
+        disputed: boolean = false,
+        hasStripePayment: boolean = false
     ) {
         this.firstname = firstname;
         this.lastname = lastname;
@@ -93,6 +104,9 @@ class OrderDetailDTO {
         this.baseCost = baseCost;
         this.shippingCost = shippingCost;
         this.tax = tax;
+        this.refundAmount = refundAmount;
+        this.disputed = disputed;
+        this.hasStripePayment = hasStripePayment;
     }
 
     updateField(fieldName: keyof OrderDetailDTO, value: string | number | boolean): void {
@@ -143,7 +157,10 @@ class OrderDetailDTO {
             response.quantity,
             response.base_cost,
             response.shipping_cost,
-            response.tax
+            response.tax,
+            response.refund_amount ?? 0,
+            response.disputed ?? false,
+            Boolean(response.stripe_payment_intent)
         );
     }
 }

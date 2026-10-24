@@ -55,6 +55,21 @@ const OrderService = {
         }
     },
 
+    /** Refund an order through Stripe. Leave the amount out to refund everything that is left. Resolves to the new total refunded, in cents. */
+    async refundOrder(token: string | null, id: string, amountCents?: number): Promise<number> {
+        const headers = {
+            ...(token && AUTHORIZATION_HEADER(token)),
+            ...APPLICATION_JSON_HEADER
+        };
+        const response = await NetworkRequest<{ refund_amount: number }>({
+            urlExtension: `api/admin/orders/${id}/refund/`,
+            method: POST,
+            headers: headers,
+            body: JSON.stringify(amountCents === undefined ? {} : { amount_cents: amountCents })
+        });
+        return response.data.refund_amount;
+    },
+
     async sendShipmentEmail(
         token: string | null, 
         id: string, 
