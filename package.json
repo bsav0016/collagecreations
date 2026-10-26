@@ -5,15 +5,15 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@azure/msal-browser": "^5.25.0",
+    "@azure/msal-browser": "^5.26.0",
     "@radix-ui/react-menubar": "^1.2.1",
     "@radix-ui/react-slot": "^1.2.4",
-    "@sentry/react": "^11.7.0",
+    "@sentry/react": "^11.9.0",
     "@stripe/react-stripe-js": "^2.7.0",
     "@stripe/stripe-js": "^3.3.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^14.6.7",
+    "@testing-library/user-event": "^14.6.8",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -60,11 +60,11 @@
     "@vitejs/plugin-react": "^4.5.2",
     "autoprefixer": "^10.6.1",
     "jsdom": "^26.1.0",
-    "postcss": "^8.5.30",
+    "postcss": "^8.5.31",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3",
     "vite": "^6.3.5",
-    "vitest": "^5.0.4"
+    "vitest": "^5.0.5"
   }
 }
