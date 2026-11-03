@@ -9,6 +9,8 @@ interface LoginCredentials {
 
 interface LoginResponse {
     token: string;
+    is_staff?: boolean;
+    is_superuser?: boolean;
 }
 
 interface LoginError {

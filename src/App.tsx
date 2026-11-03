@@ -6,9 +6,11 @@ import { ConstantsProvider } from "./context/constantsContext";
 import { ToastProvider } from "./context/toastContext/toastContext";
 import { AuthProvider } from "./context/authContext";
 import { CustomerAuthProvider } from "./context/customerAuthContext";
+import { PartnerAuthProvider } from "./context/partnerAuthContext";
 import { LocalDatabaseProvider } from "./context/databaseContext";
 import AdminRoutes from "./routes/adminRoutes";
 import CustomerRoutes from "./routes/customerRoutes";
+import PartnerRoutes from "./routes/partnerRoutes";
 import { OrderProvider } from "./context/orderContext";
 import { TextSizeProvider } from "./context/textSizeContext";
 
@@ -29,6 +31,14 @@ function App(): React.ReactElement {
                       <AuthProvider>
                         <AdminRoutes />
                       </AuthProvider>
+                    }
+                  />
+                  <Route
+                    path="partner/*"
+                    element={
+                      <PartnerAuthProvider>
+                        <PartnerRoutes />
+                      </PartnerAuthProvider>
                     }
                   />
                   <Route

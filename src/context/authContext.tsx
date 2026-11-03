@@ -8,6 +8,7 @@ interface LoginData {
 
 interface AuthContextType {
     userToken: string | null;
+    isSuperuser: boolean;
     login: (loginData: LoginData) => Promise<boolean>;
     logout: () => void;
     error: string;
@@ -15,6 +16,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
     userToken: null,
+    isSuperuser: false,
     login: async () => false,
     logout: () => {},
     error: "",
@@ -26,6 +28,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [userToken, setUserToken] = useState<string | null>(null);
+    const [isSuperuser, setIsSuperuser] = useState(false);
     const [error, setError] = useState("");
 
     const login = async (loginData: LoginData): Promise<boolean> => {
@@ -40,6 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setError("");
             const data = await loginService(loginData);
             setUserToken(data.token);
+            setIsSuperuser(Boolean(data.is_superuser));
             return true;
         } catch (err) {
             if (err instanceof Error && err.message === "Invalid username/password") {
@@ -53,10 +57,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const logout = () => {
         setUserToken(null);
+        setIsSuperuser(false);
     };
 
     return (
-        <AuthContext.Provider value={{ userToken, login, logout, error }}>
+        <AuthContext.Provider value={{ userToken, isSuperuser, login, logout, error }}>
             {children}
         </AuthContext.Provider>
     );

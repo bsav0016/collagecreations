@@ -12,6 +12,7 @@ import { toastRef } from '../../context/toastContext/toastContext';
 import LoadingScreen from '../../components/loadingScreen/loadingScreen';
 import { useAuth } from '../../context/authContext';
 import OrderDetailDTO from '../../dtos/OrderDTO/OrderDetailDTO';
+import RefundPanel from './refundPanel';
 
 interface FormFieldConfig {
   type: string;
@@ -32,7 +33,7 @@ function AdminOrder(): React.ReactElement {
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { id: paramId } = useParams<{ id: string }>();
-  const { userToken } = useAuth();
+  const { userToken, isSuperuser } = useAuth();
 
   useEffect(() => {
     if (!userToken) {
@@ -243,6 +244,22 @@ function AdminOrder(): React.ReactElement {
             />
           </Form>
     
+          {orderDetails && (
+            <RefundPanel
+              token={userToken}
+              orderId={id}
+              refundedCents={orderDetails.refundAmount}
+              disputed={orderDetails.disputed}
+              canRefund={isSuperuser && orderDetails.hasStripePayment}
+              onRefunded={total => setOrderDetails(prev => {
+                if (!prev) return prev;
+                const next = Object.create(Object.getPrototypeOf(prev));
+                Object.assign(next, prev, { refundAmount: total });
+                return next;
+              })}
+            />
+          )}
+
           <div className="flex justify-center">
             <img src={imageUrl || ''} alt="Collage" className="w-[70%] h-auto" />
           </div>
