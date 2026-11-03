@@ -45,7 +45,7 @@ The backend is where the hard parts live:
 - **Preview first.** A watermarked preview is built before any payment; the full-resolution file is created only for a paid order, and an hourly job deletes unpaid uploads.
 - **One pricing module.** The price shown, the amount charged and the tax all come from the same server-side code.
 - **Abuse and access controls.** Rate limits on the payment, discount and support endpoints, and unguessable ids and download tokens for temporary images.
-- **Tested without real services.** The backend has a 167-test suite that mocks Stripe, USPS and email.
+- **Tested without real services.** The backend has more than 250 automated tests, with Stripe, USPS and email mocked.
 
 ## Stack
 
