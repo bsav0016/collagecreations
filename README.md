@@ -25,6 +25,8 @@ Other pages: sign-in (Google, Microsoft or an emailed code), my orders with reor
 
 ## How it fits together
 
+The sketch below is the short version; [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has diagrams of the system, how a collage is built and followed to completion, and the checkout.
+
 ```
 Browser: this React single-page app (static hosting)
    │  JSON over HTTPS
@@ -47,7 +49,7 @@ The backend is where the hard parts live:
 
 ## Stack
 
-- React 18, TypeScript, Vite 6, React Router 6
+- React 18, TypeScript, Vite 8, React Router 6
 - Tailwind CSS, Radix UI primitives, lucide icons, light/dark theme (`next-themes`)
 - `react-easy-crop` and `react-image-crop` for cropping, `react-image-file-resizer` for resizing
 - Stripe Elements (`@stripe/react-stripe-js`), Sentry for error reporting
