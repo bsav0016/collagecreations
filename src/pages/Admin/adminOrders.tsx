@@ -9,6 +9,7 @@ import TextInput from '../../components/textInput/textInput';
 import HeaderSection from '../../components/headerSection';
 import { toastRef } from '../../context/toastContext/toastContext';
 import { useAuth } from '../../context/authContext';
+import { bucketOf } from './orderBuckets';
 
 interface Order {
   id: number;
@@ -16,15 +17,16 @@ interface Order {
   shipped: boolean;
   delivered: boolean;
   orderType: string;
+  status?: string;
 }
 
 function AdminOrders(): React.ReactElement {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [orderIds, setOrderIds] = useState<number[]>([]);
   const [orderNumber, setOrderNumber] = useState<string>('');
   const [unactionedOrders, setUnactionedOrders] = useState<Order[]>([]);
   const [printedOrders, setPrintedOrders] = useState<Order[]>([]);
   const [shippedOrders, setShippedOrders] = useState<Order[]>([]);
+  const [problemOrders, setProblemOrders] = useState<Order[]>([]);
   const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([]);
   const [downloadOrders, setDownloadOrders] = useState<Order[]>([]);
   const [invalidOrders, setInvalidOrders] = useState<Order[]>([]);
@@ -41,15 +43,17 @@ function AdminOrders(): React.ReactElement {
       try {
         const retreivedOrders = await OrderService.getOrders(userToken);
 
-        setOrders(retreivedOrders);
         const retreivedIds = retreivedOrders.map((order: Order) => order.id);
         setOrderIds(retreivedIds);
 
-        setUnactionedOrders(retreivedOrders.filter((order: Order) => !order.printed && !order.shipped && !order.delivered && order.orderType === 'order'));
-        setPrintedOrders(retreivedOrders.filter((order: Order) => order.printed && !order.shipped && !order.delivered && order.orderType === 'order'));
-        setShippedOrders(retreivedOrders.filter((order: Order) => order.printed && order.shipped && !order.delivered && order.orderType === 'order'));
-        setDeliveredOrders(retreivedOrders.filter((order: Order) => order.printed && order.shipped && order.delivered && order.orderType === 'order'));
-        setDownloadOrders(retreivedOrders.filter((order: Order) => order.orderType === 'download'));
+        const inBucket = (bucket: ReturnType<typeof bucketOf>): Order[] => retreivedOrders.filter((order: Order) => bucketOf(order) === bucket);
+        setUnactionedOrders(inBucket('unactioned'));
+        setPrintedOrders(inBucket('printed'));
+        setShippedOrders(inBucket('shipped'));
+        setProblemOrders(inBucket('problem'));
+        setDeliveredOrders(inBucket('delivered'));
+        setDownloadOrders(inBucket('download'));
+        setInvalidOrders(inBucket('invalid'));
       } catch {
         toastRef.current?.('Network request error');
         navigate('/admin/login');
@@ -60,18 +64,6 @@ function AdminOrders(): React.ReactElement {
 
     fetchOrders();
   }, [userToken, navigate]);
-
-  useEffect(() => {
-    if (orders.length > 0) {
-      setInvalidOrders(orders.filter(order => (
-        !unactionedOrders.includes(order) &&
-        !printedOrders.includes(order) &&
-        !shippedOrders.includes(order) &&
-        !deliveredOrders.includes(order) &&
-        !downloadOrders.includes(order)
-      )));
-    }
-  }, [orders, unactionedOrders, printedOrders, shippedOrders, deliveredOrders, downloadOrders]);
 
   const handleOrderClick = (id: number): void => {
     navigate(`/admin/admin-order/${id}`);
@@ -138,6 +130,11 @@ function AdminOrders(): React.ReactElement {
             />
           </div>
 
+          <CategoryDisplay
+            title='Needs Attention'
+            type='order'
+            items={problemOrders}
+          />
           <CategoryDisplay
             title='Invalid Orders'
             type='order'
