@@ -4,6 +4,7 @@ export interface OrderSummaryData {
     printed: boolean;
     shipped: boolean;
     delivered: boolean;
+    status?: string;
 }
 
 export class OrderSummaryDTO {
@@ -12,13 +13,15 @@ export class OrderSummaryDTO {
     printed: boolean;
     shipped: boolean;
     delivered: boolean;
+    status?: string;
 
-    constructor({ id, order_type, printed, shipped, delivered }: OrderSummaryData) {
+    constructor({ id, order_type, printed, shipped, delivered, status }: OrderSummaryData) {
         this.id = id;
         this.orderType = order_type;
         this.printed = printed;
         this.shipped = shipped;
         this.delivered = delivered;
+        this.status = status;
     }
 
     static fromData(data: OrderSummaryData): OrderSummaryDTO {
