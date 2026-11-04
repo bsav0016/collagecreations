@@ -70,12 +70,8 @@ const OrderService = {
         return response.data.refund_amount;
     },
 
-    async sendShipmentEmail(
-        token: string | null, 
-        id: string, 
-        shippingNumber: string, 
-        email: string
-    ): Promise<void> {
+    /** Ask the server to email the shipping notice again (it sends it itself the first time). */
+    async resendShipmentEmail(token: string | null, id: string): Promise<void> {
         try {
             const headers = {
                 ...(token && AUTHORIZATION_HEADER(token)),
@@ -86,7 +82,7 @@ const OrderService = {
                 urlExtension: 'api/send-shipment-email/',
                 method: POST,
                 headers: headers,
-                body: JSON.stringify({ id, shippingNumber, email })
+                body: JSON.stringify({ id, resend: true })
             });
         } catch (error) {
             console.error('Error sending email:', error);

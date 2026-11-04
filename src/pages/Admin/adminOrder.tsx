@@ -13,6 +13,8 @@ import LoadingScreen from '../../components/loadingScreen/loadingScreen';
 import { useAuth } from '../../context/authContext';
 import OrderDetailDTO from '../../dtos/OrderDTO/OrderDetailDTO';
 import RefundPanel from './refundPanel';
+import ResendShipmentEmail from './resendShipmentEmail';
+import { cleanTrackingNumber } from '../../utils/tracking';
 
 interface FormFieldConfig {
   type: string;
@@ -28,7 +30,7 @@ function AdminOrder(): React.ReactElement {
   const [orderDetails, setOrderDetails] = useState<OrderDetailDTO | null>(null);
   const [id, setId] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [shippingNumberStartedBlank, setShippingNumberStartedBlank] = useState<boolean>(false);
+  const [canResendEmail, setCanResendEmail] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -63,9 +65,7 @@ function AdminOrder(): React.ReactElement {
       const orderDTO = await OrderService.fetchOrder(userToken, orderId);
       setOrderDetails(orderDTO);
 
-      if (orderDTO.shippingNumber === undefined || orderDTO.shippingNumber === '') {
-        setShippingNumberStartedBlank(true);
-      }
+      setCanResendEmail(orderDTO.orderType === 'order' && orderDTO.shipped && cleanTrackingNumber(orderDTO.shippingNumber) !== null);
       try {
         const img = await processImageString(orderDTO.image);
         setImageUrl(URL.createObjectURL(img));
@@ -108,9 +108,6 @@ function AdminOrder(): React.ReactElement {
       const response = await OrderService.updateOrder(userToken, id, orderDetails.jsonify());
 
       if (response) {
-        if (shippingNumberStartedBlank && orderDetails.shippingNumber !== '') {
-          await OrderService.sendShipmentEmail(userToken, id, orderDetails.shippingNumber, orderDetails.email);
-        }
         navigate('/admin/admin-orders');
       } else {
         toastRef.current?.('Error updating order');
@@ -244,6 +241,8 @@ function AdminOrder(): React.ReactElement {
             />
           </Form>
     
+          {canResendEmail && <ResendShipmentEmail token={userToken} orderId={id} />}
+
           {orderDetails && (
             <RefundPanel
               token={userToken}

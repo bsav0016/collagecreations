@@ -10,6 +10,7 @@ import AccountData from './accountData';
 import { useCustomerAuth } from '../../../context/customerAuthContext';
 import { useOrderContext } from '../../../context/orderContext';
 import { CustomerOrder, getMyOrders, reorderOrder } from '../../../services/customerAuthService';
+import { trackingUrl } from '../../../utils/tracking';
 
 function statusOf(order: CustomerOrder): string {
     if (order.order_type === 'download') return 'Ready to download';
@@ -120,7 +121,23 @@ function MyOrders(): React.ReactElement {
                                             {new Date(order.order_date).toLocaleDateString([], { dateStyle: 'medium' })}
                                             {' · '}
                                             {statusOf(order)}
-                                            {order.shipping_number && ` · Tracking ${order.shipping_number}`}
+                                            {order.shipping_number && (
+                                                <>
+                                                    {' · Tracking '}
+                                                    {trackingUrl(order.shipping_number) ? (
+                                                        <a
+                                                            href={trackingUrl(order.shipping_number) ?? undefined}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="underline hover:text-foreground"
+                                                        >
+                                                            {order.shipping_number}
+                                                        </a>
+                                                    ) : (
+                                                        order.shipping_number
+                                                    )}
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="-m-1.5 flex flex-wrap items-center">
