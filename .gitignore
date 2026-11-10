@@ -31,3 +31,6 @@ yarn-error.log*
 
 # editor settings
 .idea/
+
+# api type generator tool
+/tools/api-types/node_modules

@@ -1,9 +1,7 @@
-export interface PaymentResponse {
-    token?: string | null;
-    id?: number;
-    requires_action?: boolean;
-    client_secret?: string;
-}
+import type { Schema } from "../../api/types";
+
+// An order was placed, or the bank wants 3-D Secure first. Fields from the other case may be absent.
+export type PaymentResponse = Partial<Schema<"PaymentCreated">> & Partial<Schema<"PaymentRequiresAction">>;
 
 class PaymentResponseDTO {
     token: string | null;

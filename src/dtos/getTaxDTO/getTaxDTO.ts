@@ -1,3 +1,5 @@
+import type { Schema } from "../../api/types";
+
 class GetTaxDTO {
     tempImageId: string;
 
@@ -6,7 +8,8 @@ class GetTaxDTO {
     }
 
     jsonify(): string {
-        return JSON.stringify({ tempImageId: this.tempImageId });
+        const body: Schema<"GetTaxRequest"> = { tempImageId: this.tempImageId };
+        return JSON.stringify(body);
     }
 }
 

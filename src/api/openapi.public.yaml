@@ -1,0 +1,3990 @@
+openapi: 3.0.3
+info:
+  title: Collage Creations API
+  version: 1.0.0
+  description: Backend for the Collage Creations storefront and admin site.
+paths:
+  /api/add-white/:
+    post:
+      operationId: addWhite
+      summary: Pad an image onto a white canvas for printing
+      tags:
+      - admin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddWhiteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddWhiteResponse'
+          description: ''
+        '400':
+          description: The image could not be read.
+  /api/admin/me/:
+    get:
+      operationId: adminMe
+      summary: The signed-in staff user and role flags
+      tags:
+      - admin
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMe'
+          description: ''
+  /api/admin/orders/{id}/refund/:
+    post:
+      operationId: refundOrder
+      summary: Refund an order through Stripe and record it (superusers); omit the
+        amount to refund what is left
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderRefunded'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Nothing to refund, or more than is refundable.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Order not found.
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Stripe could not complete the refund; nothing was recorded.
+  /api/admin/pricing/:
+    get:
+      operationId: getPricing
+      description: Everything editable, including costs. Read-only for staff (`can_edit`
+        is false).
+      summary: Everything editable in pricing, including costs (read-only unless `can_edit`)
+      tags:
+      - admin
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PricingSnapshot'
+          description: ''
+  /api/admin/pricing/catalog/{id}/:
+    put:
+      operationId: updateCatalogItem
+      summary: Change a print size's price, cost or availability (superusers)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItemUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CatalogItemUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CatalogItemUpdate'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemUpdated'
+          description: ''
+        '400':
+          description: Validation failed. The body maps each field name to a list
+            of messages (or has `detail`).
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Not found.
+  /api/admin/pricing/history/:
+    get:
+      operationId: getPriceHistory
+      summary: The last 100 price and cost changes
+      tags:
+      - admin
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceHistory'
+          description: ''
+  /api/admin/pricing/packages/{id}/:
+    put:
+      operationId: updateShippingPackage
+      summary: Change a shipping package's size, weight or cost (superusers)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingPackageUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShippingPackageUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShippingPackageUpdate'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageUpdated'
+          description: ''
+        '400':
+          description: Validation failed. The body maps each field name to a list
+            of messages (or has `detail`).
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Not found.
+  /api/admin/pricing/settings/:
+    put:
+      operationId: updateShopSettings
+      summary: Change the download price and cost, tax rate and prints per shipment
+        (superusers)
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopSettingsUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShopSettingsUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShopSettingsUpdate'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopSettingsUpdated'
+          description: ''
+        '400':
+          description: Validation failed. The body maps each field name to a list
+            of messages (or has `detail`).
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Not found.
+  /api/apply-discount/:
+    post:
+      operationId: applyDiscount
+      summary: Attach a discount code to the cart; a use is consumed only when payment
+        succeeds
+      tags:
+      - pricing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyDiscountRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ApplyDiscountRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ApplyDiscountRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyDiscountResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/claim-collage/:
+    post:
+      operationId: claimCollage
+      description: |-
+        Attach a collage to the signed-in customer. Claimed collages are kept for
+        CUSTOMER_CART_TTL_DAYS instead of CART_TTL_HOURS, and the order placed from one is linked to
+        the customer. The collage's unguessable id is the proof the caller created it.
+      summary: Keep a collage in the signed-in customer's account
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimCollageRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClaimCollageRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClaimCollageRequest'
+        required: true
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartImage'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/collage/:
+    get:
+      operationId: api_collage_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTemporaryImageList'
+          description: ''
+    post:
+      operationId: createCollage
+      summary: Start building a collage; poll the task id for the result
+      tags:
+      - collage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateCollageRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCollageResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/collage/{id}/:
+    get:
+      operationId: api_collage_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this temporary image.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporaryImage'
+          description: ''
+    put:
+      operationId: api_collage_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this temporary image.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemporaryImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TemporaryImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TemporaryImage'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporaryImage'
+          description: ''
+    patch:
+      operationId: api_collage_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this temporary image.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTemporaryImage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTemporaryImage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTemporaryImage'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemporaryImage'
+          description: ''
+    delete:
+      operationId: api_collage_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this temporary image.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/customer/collages/:
+    get:
+      operationId: customerSavedCollages
+      description: |-
+        The customer's collages that are still saved (unordered and not expired). No images here:
+        a preview can be many megabytes, so the page opens one at a time via claim-collage.
+      summary: The customer's saved collages (no images; open one with claim-collage)
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedCollages'
+          description: ''
+  /api/customer/collages/{collage_id}/:
+    delete:
+      operationId: deleteSavedCollage
+      summary: Delete one of the customer's saved collages
+      parameters:
+      - in: path
+        name: collage_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deleted'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/delete-account/:
+    post:
+      operationId: customerDeleteAccount
+      description: |-
+        Delete the customer's account and saved collages. The customer must send their email address
+        as confirmation. Orders already placed are kept (fulfilment and accounting records) but are no
+        longer linked to any account.
+      summary: Delete the account and saved collages; orders are kept but unlinked
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+        required: true
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deleted'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/email/request/:
+    post:
+      operationId: customerEmailRequest
+      summary: Email a sign-in code
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailCodeRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailCodeRequested'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/customer/email/verify/:
+    post:
+      operationId: customerEmailVerify
+      summary: Sign in with an emailed code
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailCodeVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailCodeVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailCodeVerify'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSession'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/export/:
+    get:
+      operationId: customerExport
+      description: Everything we hold about the signed-in customer, as JSON they can
+        download.
+      summary: Everything held about the signed-in customer, to download
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerExport'
+          description: ''
+  /api/customer/google/:
+    post:
+      operationId: customerGoogleLogin
+      summary: Sign in with a Google credential
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GoogleLoginRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSession'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/me/:
+    get:
+      operationId: customerMe
+      summary: The signed-in customer
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerIdentity'
+          description: ''
+  /api/customer/microsoft/:
+    post:
+      operationId: customerMicrosoftLogin
+      summary: Sign in with a Microsoft credential
+      tags:
+      - customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MicrosoftLoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MicrosoftLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MicrosoftLoginRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerSession'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/orders/:
+    get:
+      operationId: customerOrders
+      summary: The signed-in customer's orders
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOrders'
+          description: ''
+  /api/customer/orders/{order_id}/reorder/:
+    post:
+      operationId: reorderOrder
+      description: |-
+        Start a new saved collage from one of the signed-in customer's past orders, so they can buy
+        it again without rebuilding it. Returns the same payload as claim_collage. Repeating the call
+        returns the collage already made from that order while it is still saved.
+      summary: Start a new cart image from a past order
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - customer
+      security:
+      - customerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartImage'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/customer/unsubscribe/{token}/:
+    get:
+      operationId: customerUnsubscribe
+      description: |-
+        Opt a customer out of reminder emails. Reachable straight from the email (GET) and by mail
+        clients' one-click unsubscribe (POST); the signed token identifies the customer.
+      summary: Opt out of reminder emails (link in the email, and one-click unsubscribe)
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - customer
+      security:
+      - {}
+      responses:
+        '200':
+          description: A page confirming the opt-out.
+        '400':
+          description: The link is not valid.
+    post:
+      operationId: customerUnsubscribeOneClick
+      description: |-
+        Opt a customer out of reminder emails. Reachable straight from the email (GET) and by mail
+        clients' one-click unsubscribe (POST); the signed token identifies the customer.
+      summary: Opt out of reminder emails (link in the email, and one-click unsubscribe)
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - customer
+      security:
+      - {}
+      responses:
+        '200':
+          description: A page confirming the opt-out.
+        '400':
+          description: The link is not valid.
+  /api/discount/:
+    get:
+      operationId: api_discount_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDiscountCodeList'
+          description: ''
+    post:
+      operationId: api_discount_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscountCode'
+          description: ''
+  /api/discount/{id}/:
+    get:
+      operationId: api_discount_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this discount code.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscountCode'
+          description: ''
+    put:
+      operationId: api_discount_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this discount code.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DiscountCode'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscountCode'
+          description: ''
+    patch:
+      operationId: api_discount_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this discount code.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDiscountCode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDiscountCode'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDiscountCode'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscountCode'
+          description: ''
+    delete:
+      operationId: api_discount_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this discount code.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/download/{token}/:
+    get:
+      operationId: downloadImage
+      summary: The purchased image for a download order
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - payment
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          description: The JPEG file.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/get-all-orders/:
+    get:
+      operationId: getAllOrderSummaries
+      summary: Every order's id, type, progress flags and status (for the Needs Attention
+        list)
+      tags:
+      - admin
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSummaries'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/get-all-tickets/:
+    get:
+      operationId: getAllTicketSummaries
+      summary: Every support ticket's id and progress flags
+      tags:
+      - admin
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSummaries'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/get-constants/:
+    get:
+      operationId: getConstants
+      summary: Prices in cents, grid ratios and tax rate used by the storefront
+      tags:
+      - pricing
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Constants'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/get-shipping-cost/:
+    post:
+      operationId: getShippingCost
+      summary: Shipping and tax for a print order; stores the quote on the cart image
+      tags:
+      - pricing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetShippingCostRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GetShippingCostRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GetShippingCostRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetShippingCostResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/get-tax/:
+    post:
+      operationId: getTax
+      summary: Tax for a download order
+      tags:
+      - pricing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetTaxRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GetTaxRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GetTaxRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaxResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+  /api/health/:
+    get:
+      operationId: getHealth
+      description: |-
+        Liveness and readiness for deploy checks and uptime monitors. Public, so it reports only
+        ok/failed per dependency and never the exception text.
+      summary: Liveness and readiness for deploy checks
+      tags:
+      - ops
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+        '503':
+          description: A dependency failed; same body shape as 200.
+  /api/orders/:
+    get:
+      operationId: api_orders_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderListList'
+          description: ''
+    post:
+      operationId: createOrder
+      description: With an uploaded `image` file the response is `message` and `order_id`.
+        Without one, the created order is returned in the Order shape instead.
+      summary: Add an order by hand (staff)
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreated'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid order.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/orders/{id}/:
+    get:
+      operationId: api_orders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    put:
+      operationId: api_orders_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Order'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    patch:
+      operationId: api_orders_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrder'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+    delete:
+      operationId: api_orders_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this order.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/partner/commissions/:
+    get:
+      operationId: partnerCommissions
+      description: The partner's own commissions, newest first, a page at a time.
+        Only the fields listed here are ever sent.
+      summary: The partner's commissions, newest first, a page at a time
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - paid
+          - payable
+          - pending
+          - void
+      tags:
+      - partner
+      security:
+      - partnerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerCommissionPage'
+          description: ''
+  /api/partner/email/request/:
+    post:
+      operationId: partnerEmailRequest
+      summary: Email a partner sign-in code
+      tags:
+      - partner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerCodeRequested'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Not a valid email address.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The code email could not be sent.
+  /api/partner/email/verify/:
+    post:
+      operationId: partnerEmailVerify
+      summary: Sign in a partner with an emailed code
+      tags:
+      - partner
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PartnerCodeVerify'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerSession'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Missing fields, or the code is invalid or expired.
+  /api/partner/me/:
+    get:
+      operationId: partnerMe
+      summary: The signed-in partner login and its program terms
+      tags:
+      - partner
+      security:
+      - partnerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerMe'
+          description: ''
+  /api/partner/payouts/:
+    get:
+      operationId: partnerPayouts
+      description: Whether Stripe payouts are available and where this partner is
+        in setting them up.
+      summary: Whether Stripe payouts are available and where the partner is in setting
+        them up
+      tags:
+      - partner
+      security:
+      - partnerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerPayoutState'
+          description: ''
+  /api/partner/payouts/onboard/:
+    post:
+      operationId: partnerPayoutsOnboard
+      description: A Stripe-hosted page where the partner enters their details and
+        bank account. Creates the account on first use.
+      summary: A Stripe-hosted page for the partner to enter bank details
+      tags:
+      - partner
+      security:
+      - partnerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnboardingLink'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Stripe payouts are not available yet.
+        '502':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Stripe could not create the link.
+  /api/partner/summary/:
+    get:
+      operationId: partnerSummary
+      description: 'Orders and commission totals by status. Totals only: nothing about
+        the customers behind them.'
+      summary: Order counts and commission totals by status
+      tags:
+      - partner
+      security:
+      - partnerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartnerSummary'
+          description: ''
+  /api/payment/:
+    post:
+      operationId: createPayment
+      description: Send `paymentMethod` first. If the response has `requires_action`,
+        run Stripe's `handleNextAction` with `client_secret` and call again with `paymentIntentId`.
+        The card is captured only once the order is saved.
+      summary: Authorize and place an order; may ask the client to run 3-D Secure
+        first
+      tags:
+      - payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCreated'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRequiresAction'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/preview/:
+    post:
+      operationId: createPreview
+      summary: Light/dark grid for a text or symbol collage
+      tags:
+      - collage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreatePreviewRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePreviewResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/resize-image/:
+    post:
+      operationId: resizeImage
+      summary: Upload a photo to be printed as is; returns the cart image
+      tags:
+      - collage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResizeImageRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResizeImageResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/send-shipment-email/:
+    post:
+      operationId: sendShipmentEmail
+      description: |-
+        Resend the shipped email. The customer, number and message all come from the stored order: the server now
+        sends the email itself when an order is saved as shipped, so this only sends again when asked with
+        `resend: true`. Without it, a request for an order that was already emailed does nothing (older admin screens
+        still call this after saving).
+      summary: Send the shipped email again (only sends if `resend` is true or none
+        was sent)
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendShipmentEmailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendShipmentEmailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendShipmentEmailRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageOnly'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid parameters; `error` says what was wrong.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Order not found.
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/task-result/{task_id}/:
+    get:
+      operationId: getTaskResult
+      summary: Progress or result of a collage build
+      parameters:
+      - in: path
+        name: task_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - collage
+      security:
+      - tokenAuth: []
+      - customerAuth: []
+      - {}
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskPending'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDone'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: The build failed.
+  /api/ticket/:
+    get:
+      operationId: api_ticket_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSupportTicketList'
+          description: ''
+    post:
+      operationId: createSupportTicket
+      summary: Send a support or custom-order message
+      tags:
+      - support
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportTicketRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SupportTicketRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportTicketRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicketCreated'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected server error.
+  /api/ticket/{id}/:
+    get:
+      operationId: api_ticket_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    put:
+      operationId: api_ticket_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SupportTicket'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    patch:
+      operationId: api_ticket_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSupportTicket'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportTicket'
+          description: ''
+    delete:
+      operationId: api_ticket_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this support ticket.
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /auth/:
+    post:
+      operationId: adminLogin
+      description: Same as DRF's token login, plus the role flags the admin app needs
+        to decide which screens to show.
+      summary: Staff sign-in; returns the token and role flags
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminLoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminLoginRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLoginRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminLoginResponse'
+          description: ''
+        '400':
+          description: Validation failed. The body maps each field name to a list
+            of messages (or has `detail`).
+components:
+  schemas:
+    AddWhiteRequest:
+      type: object
+      properties:
+        input_image:
+          type: string
+          format: uri
+      required:
+      - input_image
+    AddWhiteResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        image:
+          type: string
+          description: Base64 JPEG.
+      required:
+      - image
+      - message
+    AdminLoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    AdminLoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+      required:
+      - is_staff
+      - is_superuser
+      - token
+    AdminMe:
+      type: object
+      properties:
+        username:
+          type: string
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+      required:
+      - is_staff
+      - is_superuser
+      - username
+    ApplyDiscountRequest:
+      type: object
+      properties:
+        code:
+          type: string
+        temp_image_id:
+          type: string
+          format: uuid
+        order_type:
+          $ref: '#/components/schemas/OrderTypeEnum'
+      required:
+      - code
+      - order_type
+      - temp_image_id
+    ApplyDiscountResponse:
+      type: object
+      properties:
+        discount:
+          type: number
+          format: double
+          description: Rate between 0 and 1.
+      required:
+      - discount
+    CartImage:
+      type: object
+      properties:
+        temporary_image_id:
+          type: string
+          format: uuid
+        base_cost:
+          type: number
+          format: double
+          nullable: true
+          description: Unit price in dollars.
+        watermark_collage:
+          type: string
+          nullable: true
+          description: Base64 JPEG of the watermarked preview.
+        expires_at:
+          type: string
+          format: date-time
+      required:
+      - base_cost
+      - expires_at
+      - temporary_image_id
+      - watermark_collage
+    CatalogItemUpdate:
+      type: object
+      properties:
+        price_cents:
+          type: integer
+          maximum: 20000
+          minimum: 0
+        print_material_cost_cents:
+          type: integer
+          maximum: 6000
+          minimum: 0
+        active:
+          type: boolean
+    CatalogItemUpdated:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/PricingCatalogItem'
+        changed:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+      - changed
+      - item
+      - warnings
+    ClaimCollageRequest:
+      type: object
+      properties:
+        temporary_image_id:
+          type: string
+          format: uuid
+      required:
+      - temporary_image_id
+    Constants:
+      type: object
+      properties:
+        AMOUNT_12_12_COLLAGE:
+          type: integer
+        AMOUNT_12_18_COLLAGE:
+          type: integer
+        AMOUNT_12_12_REGULAR:
+          type: integer
+        AMOUNT_12_18_REGULAR:
+          type: integer
+        AMOUNT_24_24_COLLAGE:
+          type: integer
+        AMOUNT_24_36_COLLAGE:
+          type: integer
+        AMOUNT_24_24_REGULAR:
+          type: integer
+        AMOUNT_24_36_REGULAR:
+          type: integer
+        AMOUNT_DOWNLOAD:
+          type: integer
+        PPI:
+          type: integer
+        LARGE_GRID_RATIO:
+          type: number
+          format: double
+        SMALL_GRID_RATIO:
+          type: number
+          format: double
+        TAX_RATE:
+          type: number
+          format: double
+        NUM_PER_SHIP:
+          type: integer
+        PRINT_AVAILABLE_MESSAGE:
+          type: string
+      required:
+      - AMOUNT_12_12_COLLAGE
+      - AMOUNT_12_12_REGULAR
+      - AMOUNT_12_18_COLLAGE
+      - AMOUNT_12_18_REGULAR
+      - AMOUNT_24_24_COLLAGE
+      - AMOUNT_24_24_REGULAR
+      - AMOUNT_24_36_COLLAGE
+      - AMOUNT_24_36_REGULAR
+      - AMOUNT_DOWNLOAD
+      - LARGE_GRID_RATIO
+      - NUM_PER_SHIP
+      - PPI
+      - PRINT_AVAILABLE_MESSAGE
+      - SMALL_GRID_RATIO
+      - TAX_RATE
+    CreateCollageRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          description: '"image", "text" or "symbol".'
+        small_images:
+          type: array
+          items:
+            type: string
+            format: uri
+        large_image:
+          type: string
+          format: uri
+          nullable: true
+        output_width:
+          type: integer
+        output_height:
+          type: integer
+        small_image_size:
+          type: number
+          format: double
+        color:
+          type: boolean
+        light_dark_array:
+          type: string
+          description: JSON rows, for text and symbol types.
+        isMobile:
+          type: boolean
+      required:
+      - output_height
+      - output_width
+      - small_image_size
+      - small_images
+      - type
+    CreateCollageResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+      required:
+      - task_id
+    CreatePreviewRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          description: '"text" or "symbol".'
+        width:
+          type: integer
+        height:
+          type: integer
+        small_image_size:
+          type: number
+          format: double
+        text:
+          type: string
+        symbol:
+          type: string
+          description: Paw, Rings, Heart or Flower.
+        symbol_image:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - height
+      - small_image_size
+      - type
+      - width
+    CreatePreviewResponse:
+      type: object
+      properties:
+        light_dark_array:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+            description: 0 (dark) or 255 (light).
+      required:
+      - light_dark_array
+    CustomerExport:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/ExportAccount'
+        saved_collages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavedCollage'
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExportOrder'
+      required:
+      - account
+      - orders
+      - saved_collages
+    CustomerIdentity:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+      required:
+      - email
+      - name
+    CustomerOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_date:
+          type: string
+          format: date-time
+        order_type:
+          type: string
+        quantity:
+          type: integer
+        printed:
+          type: boolean
+        shipped:
+          type: boolean
+        delivered:
+          type: boolean
+        shipping_number:
+          type: string
+          nullable: true
+        download_token:
+          type: string
+          format: uuid
+          nullable: true
+        can_reorder:
+          type: boolean
+      required:
+      - can_reorder
+      - delivered
+      - download_token
+      - id
+      - order_date
+      - order_type
+      - printed
+      - quantity
+      - shipped
+      - shipping_number
+    CustomerOrders:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerOrder'
+      required:
+      - orders
+    CustomerSession:
+      type: object
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+      required:
+      - email
+      - name
+      - token
+    DeleteAccountRequest:
+      type: object
+      properties:
+        confirm_email:
+          type: string
+          format: email
+      required:
+      - confirm_email
+    Deleted:
+      type: object
+      properties:
+        deleted:
+          type: boolean
+      required:
+      - deleted
+    Detail:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    DiscountCode:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        uses_remaining:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        type:
+          type: string
+          maxLength: 50
+      required:
+      - code
+      - id
+    EmailCodeRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    EmailCodeRequested:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    EmailCodeVerify:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+      required:
+      - code
+      - email
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+      - error
+    ExportAccount:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        signed_in_with_google:
+          type: boolean
+        signed_in_with_microsoft:
+          type: boolean
+        reminder_emails_off:
+          type: boolean
+      required:
+      - created_at
+      - email
+      - name
+      - reminder_emails_off
+      - signed_in_with_google
+      - signed_in_with_microsoft
+    ExportOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_date:
+          type: string
+          format: date-time
+        order_type:
+          type: string
+        quantity:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+        base_cost:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        tax:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        shipping_cost:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        discount:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        printed:
+          type: boolean
+        shipped:
+          type: boolean
+        delivered:
+          type: boolean
+        shipping_number:
+          type: string
+          nullable: true
+      required:
+      - address
+      - base_cost
+      - delivered
+      - discount
+      - email
+      - id
+      - name
+      - order_date
+      - order_type
+      - printed
+      - quantity
+      - shipped
+      - shipping_cost
+      - shipping_number
+      - tax
+    GetShippingCostRequest:
+      type: object
+      properties:
+        destinationZIPCode:
+          type: string
+          description: 5 digits.
+        mailingDate:
+          type: string
+          description: YYYY-MM-DD.
+        tempImageId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          maximum: 30
+          minimum: 1
+      required:
+      - destinationZIPCode
+      - mailingDate
+      - quantity
+      - tempImageId
+    GetShippingCostResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        shipping_cost:
+          type: number
+          format: double
+        tax:
+          type: number
+          format: double
+        base_cost:
+          type: number
+          format: double
+      required:
+      - base_cost
+      - message
+      - shipping_cost
+      - tax
+    GetTaxRequest:
+      type: object
+      properties:
+        tempImageId:
+          type: string
+          format: uuid
+      required:
+      - tempImageId
+    GetTaxResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        tax:
+          type: number
+          format: double
+      required:
+      - message
+      - tax
+    GoogleLoginRequest:
+      type: object
+      properties:
+        credential:
+          type: string
+      required:
+      - credential
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+        release:
+          type: string
+        checks:
+          type: object
+          additionalProperties:
+            type: string
+          description: ok or failed per dependency.
+      required:
+      - checks
+      - release
+      - status
+    KindEnum:
+      enum:
+      - collage
+      - regular
+      type: string
+      description: |-
+        * `collage` - collage
+        * `regular` - regular
+    MessageOnly:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    MicrosoftLoginRequest:
+      type: object
+      properties:
+        credential:
+          type: string
+      required:
+      - credential
+    OnboardingLink:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+      required:
+      - url
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          nullable: true
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 50
+        lastname:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        address1:
+          type: string
+          maxLength: 200
+        address2:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 250
+        state:
+          type: string
+          maxLength: 2
+        zip:
+          type: string
+          maxLength: 10
+        order_date:
+          type: string
+          format: date-time
+        printed:
+          type: boolean
+        print_date:
+          type: string
+          format: date-time
+        shipped:
+          type: boolean
+        shipping_number:
+          type: string
+          maxLength: 100
+        ship_date:
+          type: string
+          format: date-time
+        delivered:
+          type: boolean
+        delivery_date:
+          type: string
+          format: date-time
+        order_type:
+          type: string
+          maxLength: 100
+        review_value:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        review_comment:
+          type: string
+          maxLength: 250
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        base_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tax:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        shipping_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount_code:
+          type: string
+          nullable: true
+          maxLength: 250
+        notes:
+          type: string
+          maxLength: 2000
+        refund_amount:
+          type: integer
+          readOnly: true
+        disputed:
+          type: boolean
+          readOnly: true
+        download_token:
+          type: string
+          format: uuid
+          nullable: true
+        stripe_payment_intent:
+          type: string
+          nullable: true
+          maxLength: 255
+        width:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        height:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        is_collage:
+          type: boolean
+        after_reminder:
+          type: boolean
+        printed_email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        shipped_email_sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        delivered_email_sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        customer:
+          type: integer
+          nullable: true
+      required:
+      - delivered_email_sent_at
+      - disputed
+      - email
+      - firstname
+      - id
+      - image
+      - lastname
+      - refund_amount
+      - shipped_email_sent_at
+      - status
+    OrderCreated:
+      type: object
+      properties:
+        message:
+          type: string
+        order_id:
+          type: integer
+      required:
+      - message
+      - order_id
+    OrderList:
+      type: object
+      description: |-
+        Same as OrderSerializer but without `image` - one full-resolution print/collage per row
+        is a lot to read from storage for a list response. Used for OrderViewSet's list action; retrieve/create/
+        update still use OrderSerializer, since the admin order-detail page needs the image.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 50
+        lastname:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        address1:
+          type: string
+          maxLength: 200
+        address2:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 250
+        state:
+          type: string
+          maxLength: 2
+        zip:
+          type: string
+          maxLength: 10
+        order_date:
+          type: string
+          format: date-time
+        printed:
+          type: boolean
+        print_date:
+          type: string
+          format: date-time
+        shipped:
+          type: boolean
+        shipping_number:
+          type: string
+          maxLength: 100
+        ship_date:
+          type: string
+          format: date-time
+        delivered:
+          type: boolean
+        delivery_date:
+          type: string
+          format: date-time
+        order_type:
+          type: string
+          maxLength: 100
+        review_value:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        review_comment:
+          type: string
+          maxLength: 250
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        base_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tax:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        shipping_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount_code:
+          type: string
+          nullable: true
+          maxLength: 250
+        notes:
+          type: string
+          maxLength: 2000
+        refund_amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        disputed:
+          type: boolean
+        download_token:
+          type: string
+          format: uuid
+          nullable: true
+        stripe_payment_intent:
+          type: string
+          nullable: true
+          maxLength: 255
+        width:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        height:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        is_collage:
+          type: boolean
+        after_reminder:
+          type: boolean
+        printed_email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        shipped_email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        delivered_email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          $ref: '#/components/schemas/OrderStatusEnum'
+        customer:
+          type: integer
+          nullable: true
+      required:
+      - email
+      - firstname
+      - id
+      - lastname
+    OrderRefunded:
+      type: object
+      properties:
+        order_id:
+          type: integer
+        refunded_cents:
+          type: integer
+        refund_amount:
+          type: integer
+          description: Total refunded so far, in cents.
+      required:
+      - order_id
+      - refund_amount
+      - refunded_cents
+    OrderStatusEnum:
+      enum:
+      - paid
+      - printed
+      - shipped
+      - delivered
+      - problem
+      type: string
+      description: |-
+        * `paid` - Paid
+        * `printed` - Printed
+        * `shipped` - Shipped
+        * `delivered` - Delivered
+        * `problem` - Problem
+    OrderSummaries:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSummary'
+      required:
+      - orders
+    OrderSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_type:
+          type: string
+        printed:
+          type: boolean
+        shipped:
+          type: boolean
+        delivered:
+          type: boolean
+        status:
+          type: string
+      required:
+      - delivered
+      - id
+      - order_type
+      - printed
+      - shipped
+      - status
+    OrderTypeEnum:
+      enum:
+      - order
+      - download
+      type: string
+      description: |-
+        * `order` - order
+        * `download` - download
+    PackageUpdated:
+      type: object
+      properties:
+        package:
+          $ref: '#/components/schemas/PricingPackage'
+        changed:
+          type: array
+          items:
+            type: string
+      required:
+      - changed
+      - package
+    PaginatedDiscountCodeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscountCode'
+    PaginatedOrderListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderList'
+    PaginatedSupportTicketList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupportTicket'
+    PaginatedTemporaryImageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TemporaryImage'
+    PartnerCodeRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PartnerCodeRequested:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    PartnerCodeVerify:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+      required:
+      - code
+      - email
+    PartnerCommission:
+      type: object
+      properties:
+        id:
+          type: integer
+        order_date:
+          type: string
+          format: date
+        net_sales:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        amount:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        status:
+          type: string
+        payable_on:
+          type: string
+          format: date
+          nullable: true
+        paid_at:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - amount
+      - id
+      - net_sales
+      - order_date
+      - paid_at
+      - payable_on
+      - status
+    PartnerCommissionPage:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartnerCommission'
+      required:
+      - count
+      - next
+      - previous
+      - results
+    PartnerMe:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        partner:
+          type: string
+        discount_code:
+          type: string
+        commission_rate:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        hold_days:
+          type: integer
+      required:
+      - commission_rate
+      - discount_code
+      - email
+      - hold_days
+      - partner
+    PartnerPayoutState:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/PartnerPayoutStateStatusEnum'
+        payouts_enabled:
+          type: boolean
+      required:
+      - enabled
+      - payouts_enabled
+      - status
+    PartnerPayoutStateStatusEnum:
+      enum:
+      - not_started
+      - incomplete
+      - ready
+      type: string
+      description: |-
+        * `not_started` - not_started
+        * `incomplete` - incomplete
+        * `ready` - ready
+    PartnerSession:
+      type: object
+      properties:
+        token:
+          type: string
+        email:
+          type: string
+          format: email
+        partner:
+          type: string
+      required:
+      - email
+      - partner
+      - token
+    PartnerStatusBreakdown:
+      type: object
+      properties:
+        pending:
+          $ref: '#/components/schemas/PartnerStatusTotal'
+        payable:
+          $ref: '#/components/schemas/PartnerStatusTotal'
+        paid:
+          $ref: '#/components/schemas/PartnerStatusTotal'
+        void:
+          $ref: '#/components/schemas/PartnerStatusTotal'
+      required:
+      - paid
+      - payable
+      - pending
+      - void
+    PartnerStatusTotal:
+      type: object
+      properties:
+        orders:
+          type: integer
+        amount:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+      required:
+      - amount
+      - orders
+    PartnerSummary:
+      type: object
+      properties:
+        hold_days:
+          type: integer
+        by_status:
+          $ref: '#/components/schemas/PartnerStatusBreakdown'
+      required:
+      - by_status
+      - hold_days
+    PatchedDiscountCode:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        uses_remaining:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        type:
+          type: string
+          maxLength: 50
+    PatchedOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          nullable: true
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 50
+        lastname:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        address1:
+          type: string
+          maxLength: 200
+        address2:
+          type: string
+          maxLength: 200
+        city:
+          type: string
+          maxLength: 250
+        state:
+          type: string
+          maxLength: 2
+        zip:
+          type: string
+          maxLength: 10
+        order_date:
+          type: string
+          format: date-time
+        printed:
+          type: boolean
+        print_date:
+          type: string
+          format: date-time
+        shipped:
+          type: boolean
+        shipping_number:
+          type: string
+          maxLength: 100
+        ship_date:
+          type: string
+          format: date-time
+        delivered:
+          type: boolean
+        delivery_date:
+          type: string
+          format: date-time
+        order_type:
+          type: string
+          maxLength: 100
+        review_value:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        review_comment:
+          type: string
+          maxLength: 250
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        base_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tax:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        shipping_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount_code:
+          type: string
+          nullable: true
+          maxLength: 250
+        notes:
+          type: string
+          maxLength: 2000
+        refund_amount:
+          type: integer
+          readOnly: true
+        disputed:
+          type: boolean
+          readOnly: true
+        download_token:
+          type: string
+          format: uuid
+          nullable: true
+        stripe_payment_intent:
+          type: string
+          nullable: true
+          maxLength: 255
+        width:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        height:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        is_collage:
+          type: boolean
+        after_reminder:
+          type: boolean
+        printed_email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        shipped_email_sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        delivered_email_sent_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        customer:
+          type: integer
+          nullable: true
+    PatchedSupportTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 50
+        lastname:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        message:
+          type: string
+          maxLength: 5000
+        order_number:
+          type: string
+          maxLength: 10
+        creation_date:
+          type: string
+          format: date-time
+        is_custom_order:
+          type: boolean
+        in_progress:
+          type: boolean
+        resolved:
+          type: boolean
+        notes:
+          type: string
+          maxLength: 2000
+    PatchedTemporaryImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        public_id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_collage:
+          type: boolean
+        width:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        height:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        unit_base_cost:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        order_type:
+          type: string
+          maxLength: 100
+        tax:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        discount_code:
+          type: string
+          nullable: true
+          maxLength: 250
+        shipping_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        shipping_zip:
+          type: string
+          maxLength: 10
+        reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        final_reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        customer:
+          type: integer
+          nullable: true
+        source_order:
+          type: integer
+          nullable: true
+    PaymentCreated:
+      type: object
+      properties:
+        id:
+          type: integer
+        token:
+          type: string
+          format: uuid
+          nullable: true
+          description: Download token for download orders.
+      required:
+      - id
+      - token
+    PaymentRequest:
+      type: object
+      properties:
+        paymentMethod:
+          type: string
+          nullable: true
+        paymentIntentId:
+          type: string
+          nullable: true
+        tempImageId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/OrderTypeEnum'
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+          format: email
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+      required:
+      - email
+      - firstname
+      - lastname
+      - tempImageId
+      - type
+      - zip
+    PaymentRequiresAction:
+      type: object
+      properties:
+        requires_action:
+          type: boolean
+        client_secret:
+          type: string
+      required:
+      - client_secret
+      - requires_action
+    PriceChangeRow:
+      type: object
+      properties:
+        id:
+          type: integer
+        when:
+          type: string
+          format: date-time
+        user:
+          type: string
+          nullable: true
+        model:
+          type: string
+        item:
+          type: string
+        field:
+          type: string
+        old:
+          type: string
+        new:
+          type: string
+      required:
+      - field
+      - id
+      - item
+      - model
+      - new
+      - old
+      - user
+      - when
+    PriceHistory:
+      type: object
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceChangeRow'
+      required:
+      - history
+    PricingCatalogItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        size:
+          type: string
+          description: Smaller side first.
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        price_cents:
+          type: integer
+        print_material_cost_cents:
+          type: integer
+        active:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - active
+      - id
+      - kind
+      - price_cents
+      - print_material_cost_cents
+      - size
+      - updated_at
+    PricingPackage:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        weight:
+          type: integer
+        length:
+          type: integer
+        width:
+          type: integer
+        height:
+          type: integer
+        customer_charge_cents:
+          type: integer
+        material_cost_cents:
+          type: integer
+      required:
+      - customer_charge_cents
+      - height
+      - id
+      - length
+      - material_cost_cents
+      - name
+      - weight
+      - width
+    PricingSettings:
+      type: object
+      properties:
+        download_price_cents:
+          type: integer
+        download_cost_cents:
+          type: integer
+        tax_rate:
+          type: string
+          description: Decimal amount as a string, e.g. "12.50".
+        num_per_ship:
+          type: integer
+      required:
+      - download_cost_cents
+      - download_price_cents
+      - num_per_ship
+      - tax_rate
+    PricingSnapshot:
+      type: object
+      properties:
+        can_edit:
+          type: boolean
+        max_price_cents:
+          type: integer
+        max_cost_cents:
+          type: integer
+        catalog:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricingCatalogItem'
+        settings:
+          $ref: '#/components/schemas/PricingSettings'
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PricingPackage'
+      required:
+      - can_edit
+      - catalog
+      - max_cost_cents
+      - max_price_cents
+      - packages
+      - settings
+    RefundRequest:
+      type: object
+      properties:
+        amount_cents:
+          type: integer
+          minimum: 1
+    ResizeImageRequest:
+      type: object
+      properties:
+        input_image:
+          type: string
+          format: uri
+        width:
+          type: integer
+        height:
+          type: integer
+        isMobile:
+          type: boolean
+        croppedArea:
+          type: string
+          description: '"x,y,width,height" in pixels.'
+      required:
+      - height
+      - input_image
+      - width
+    ResizeImageResponse:
+      type: object
+      properties:
+        temporary_image_id:
+          type: string
+          format: uuid
+        smaller_image:
+          type: string
+          description: Base64 JPEG thumbnail.
+        unit_base_cost:
+          type: number
+          format: double
+      required:
+      - smaller_image
+      - temporary_image_id
+      - unit_base_cost
+    SavedCollage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        width:
+          type: integer
+        height:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+      required:
+      - created_at
+      - expires_at
+      - height
+      - id
+      - width
+    SavedCollages:
+      type: object
+      properties:
+        collages:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavedCollage'
+      required:
+      - collages
+    SendShipmentEmailRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        resend:
+          type: boolean
+      required:
+      - id
+    ShippingPackageUpdate:
+      type: object
+      properties:
+        customer_charge_cents:
+          type: integer
+          maximum: 6000
+          minimum: 0
+        material_cost_cents:
+          type: integer
+          maximum: 6000
+          minimum: 0
+        weight:
+          type: integer
+          maximum: 70
+          minimum: 1
+        length:
+          type: integer
+          maximum: 108
+          minimum: 1
+        width:
+          type: integer
+          maximum: 108
+          minimum: 1
+        height:
+          type: integer
+          maximum: 108
+          minimum: 1
+    ShopSettingsUpdate:
+      type: object
+      properties:
+        download_price_cents:
+          type: integer
+          maximum: 20000
+          minimum: 0
+        download_cost_cents:
+          type: integer
+          maximum: 6000
+          minimum: 0
+        tax_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,1}(?:\.\d{0,5})?$
+        num_per_ship:
+          type: integer
+          maximum: 30
+          minimum: 1
+    ShopSettingsUpdated:
+      type: object
+      properties:
+        settings:
+          $ref: '#/components/schemas/PricingSettings'
+        changed:
+          type: array
+          items:
+            type: string
+      required:
+      - changed
+      - settings
+    SupportTicket:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 50
+        lastname:
+          type: string
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        message:
+          type: string
+          maxLength: 5000
+        order_number:
+          type: string
+          maxLength: 10
+        creation_date:
+          type: string
+          format: date-time
+        is_custom_order:
+          type: boolean
+        in_progress:
+          type: boolean
+        resolved:
+          type: boolean
+        notes:
+          type: string
+          maxLength: 2000
+      required:
+      - email
+      - firstname
+      - id
+      - lastname
+      - message
+    SupportTicketCreated:
+      type: object
+      properties:
+        message:
+          type: string
+        id:
+          type: integer
+      required:
+      - id
+      - message
+    SupportTicketRequest:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+          format: email
+        message:
+          type: string
+        order_number:
+          type: string
+        is_custom_order:
+          type: boolean
+      required:
+      - email
+      - firstname
+      - lastname
+      - message
+    TaskDone:
+      type: object
+      properties:
+        status:
+          type: string
+        temporary_image_id:
+          type: string
+          format: uuid
+        base_cost:
+          type: number
+          format: double
+        watermark_collage:
+          type: string
+          description: Base64 JPEG; a teaser when sign-in is required.
+        expires_at:
+          type: string
+          format: date-time
+        requires_signin:
+          type: boolean
+      required:
+      - base_cost
+      - expires_at
+      - requires_signin
+      - status
+      - temporary_image_id
+      - watermark_collage
+    TaskPending:
+      type: object
+      properties:
+        message:
+          type: string
+        percent:
+          type: integer
+      required:
+      - message
+      - percent
+    TemporaryImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        public_id:
+          type: string
+          format: uuid
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        is_collage:
+          type: boolean
+        width:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        height:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        unit_base_cost:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        order_type:
+          type: string
+          maxLength: 100
+        tax:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        discount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,6}(?:\.\d{0,4})?$
+        discount_code:
+          type: string
+          nullable: true
+          maxLength: 250
+        shipping_cost:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        shipping_zip:
+          type: string
+          maxLength: 10
+        reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        final_reminder_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        customer:
+          type: integer
+          nullable: true
+        source_order:
+          type: integer
+          nullable: true
+      required:
+      - created_at
+      - id
+      - public_id
+    TicketSummaries:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketSummary'
+      required:
+      - tickets
+    TicketSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        in_progress:
+          type: boolean
+        resolved:
+          type: boolean
+        is_custom_order:
+          type: boolean
+      required:
+      - id
+      - in_progress
+      - is_custom_order
+      - resolved
+  securitySchemes:
+    customerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Signed customer token, sent as `Authorization: Customer <token>`.'
+    partnerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Signed partner token, sent as `Authorization: Partner <token>`.'
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

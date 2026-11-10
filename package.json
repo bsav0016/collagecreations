@@ -39,7 +39,10 @@
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build --cname collagecreations.org"
+    "deploy": "gh-pages -d build --cname collagecreations.org",
+    "api:types": "node scripts/api-types.mjs",
+    "api:check": "node scripts/api-types.mjs check",
+    "api:sync": "node scripts/api-types.mjs sync"
   },
   "browserslist": {
     "production": [

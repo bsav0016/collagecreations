@@ -1,16 +1,13 @@
-import { OrderSummaryDTO, OrderSummaryData } from '../dtos/OrderDTO/OrderSummaryDTO';
+import { OrderSummaryDTO } from '../dtos/OrderDTO/OrderSummaryDTO';
 import OrderDetailDTO, { OrderDetailResponse } from '../dtos/OrderDTO/OrderDetailDTO';
 import OrderAddDTO from '../dtos/OrderDTO/OrderAddDTO';
+import type { Schema } from '../api/types';
 import NetworkRequest from '../lib/networkClient';
 import { GET, PUT, POST, AUTHORIZATION_HEADER, APPLICATION_JSON_HEADER } from '../lib/networkRequestConstants';
 
-interface NewOrderResponse {
-    order_id: string;
-}
-
-interface OrdersListResponse {
-    orders: OrderSummaryData[];
-}
+// Shapes come from the backend's schema (see src/api/types.ts).
+type NewOrderResponse = Schema<'OrderCreated'>;
+type OrdersListResponse = Schema<'OrderSummaries'>;
 
 const OrderService = {
     async fetchOrder(token: string | null, orderId: string): Promise<OrderDetailDTO> {
@@ -61,11 +58,12 @@ const OrderService = {
             ...(token && AUTHORIZATION_HEADER(token)),
             ...APPLICATION_JSON_HEADER
         };
-        const response = await NetworkRequest<{ refund_amount: number }>({
+        const refundBody: Schema<'RefundRequest'> = amountCents === undefined ? {} : { amount_cents: amountCents };
+        const response = await NetworkRequest<Schema<'OrderRefunded'>>({
             urlExtension: `api/admin/orders/${id}/refund/`,
             method: POST,
             headers: headers,
-            body: JSON.stringify(amountCents === undefined ? {} : { amount_cents: amountCents })
+            body: JSON.stringify(refundBody)
         });
         return response.data.refund_amount;
     },
@@ -78,11 +76,12 @@ const OrderService = {
                 ...APPLICATION_JSON_HEADER
             };
             
+            const resendBody: Schema<'SendShipmentEmailRequest'> = { id: Number(id), resend: true };
             await NetworkRequest({
                 urlExtension: 'api/send-shipment-email/',
                 method: POST,
                 headers: headers,
-                body: JSON.stringify({ id, resend: true })
+                body: JSON.stringify(resendBody)
             });
         } catch (error) {
             console.error('Error sending email:', error);
@@ -124,14 +123,14 @@ const OrderService = {
             const headers = {
                 ...AUTHORIZATION_HEADER(token)
             };
-            const response = await NetworkRequest({
+            const response = await NetworkRequest<NewOrderResponse>({
                 urlExtension: 'api/orders/',
                 method: POST,
                 headers: headers,
                 body: body
             });
 
-            return response.data as NewOrderResponse;
+            return response.data;
         } catch (error) {
             console.error('Error adding order:', error);
             throw error;
