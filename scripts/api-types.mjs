@@ -23,7 +23,7 @@ const normalise = (text) => text.replace(/\r\n/g, "\n");
 
 function generate(output) {
     if (!existsSync(cli)) {
-        execFileSync("npm", ["ci", "--silent", "--prefix", tool], { stdio: "inherit", shell: true });
+        execFileSync("npm", ["ci", "--silent"], { cwd: tool, stdio: "inherit", shell: true });
     }
     execFileSync(process.execPath, [cli, schemaFile, "-o", output], { stdio: "pipe" });
 }

@@ -1,0 +1,75 @@
+name: API contract
+
+# Does this site still type-check against the backend as it is deployed today?
+#
+# The pull-request tests only look at the copy of the backend's schema committed in src/api. This job fetches the
+# backend's current openapi.public.yaml and, if it differs from the copy, regenerates the types from it and runs the
+# type check and tests. A red run means the backend changed in a way this site has not caught up with.
+#
+# It needs one repository secret, BACKEND_SCHEMA_TOKEN: a fine-grained personal access token with read-only
+# "Contents" access to bsav0016/collageCreationsBackend and nothing else. It is only available to scheduled and
+# manual runs, never to pull requests, so forks cannot read it.
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-contract
+  cancel-in-progress: false
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch the backend's current public schema
+        env:
+          GH_TOKEN: ${{ secrets.BACKEND_SCHEMA_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::The BACKEND_SCHEMA_TOKEN secret is not set. See the comment at the top of .github/workflows/api-contract.yml."
+            exit 1
+          fi
+          gh api repos/bsav0016/collageCreationsBackend/contents/openapi.public.yaml \
+            -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/backend-openapi.public.yaml"
+          test -s "$RUNNER_TEMP/backend-openapi.public.yaml"
+
+      - name: Compare with the committed copy
+        id: compare
+        run: |
+          if cmp -s <(tr -d '\r' < src/api/openapi.public.yaml) <(tr -d '\r' < "$RUNNER_TEMP/backend-openapi.public.yaml"); then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The committed copy matches the backend's current schema." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Type-check and test against the backend's current schema
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          npm run api:sync -- "$RUNNER_TEMP/backend-openapi.public.yaml"
+          if ! (npm run typecheck && npm test); then
+            echo "::error::This site no longer type-checks or passes its tests against the backend's current schema. Run 'npm run api:sync -- <backend>/openapi.public.yaml' locally to see the errors."
+            exit 1
+          fi
+          {
+            echo "The backend's schema has changed, and the site still type-checks and passes its tests against it."
+            echo "The committed copy is out of date: run \`npm run api:sync -- <backend>/openapi.public.yaml\` and commit src/api."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::warning::The backend's schema has changed. The site still builds against it; update the committed copy with npm run api:sync."
