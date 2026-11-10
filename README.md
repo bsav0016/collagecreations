@@ -107,6 +107,8 @@ npm run api:types                                                     # regenera
 npm run api:check                                                     # CI: fail if the types do not match the copy
 ```
 
+A scheduled workflow, [api-contract.yml](.github/workflows/api-contract.yml), runs every morning: it fetches the backend's current `openapi.public.yaml`, and if it differs from the committed copy it regenerates the types and runs the type check and tests. A red run means the backend changed in a way this site has not caught up with; a yellow warning means the backend changed but the site still builds, so run `npm run api:sync` and commit. It needs a repository secret `BACKEND_SCHEMA_TOKEN`: a fine-grained personal access token with read-only *Contents* access to the backend repository and nothing else.
+
 The generator is installed separately in `tools/api-types` because it needs TypeScript 5 and the app uses a newer one. Every service that talks to the backend uses the generated types, and all backend calls go through `src/lib/networkClient.ts` (`NetworkRequest` for JSON, `NetworkFileRequest` for a purchased image); the only other `fetch` calls read images already in the browser.
 
 ## Deployment
