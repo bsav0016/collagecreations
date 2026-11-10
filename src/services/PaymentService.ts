@@ -7,6 +7,7 @@ import GetShippingResponseDTO, { GetShippingResponse } from '../dtos/getShipping
 import PaymentDTO from "../dtos/paymentDTO/paymentDTO";
 import PaymentResponseDTO, { PaymentResponse } from "../dtos/paymentDTO/paymentResponseDTO";
 import { PaymentMethod } from "@stripe/stripe-js";
+import type { OrderType } from "../api/types";
 
 interface FormData {
     firstname: string;
@@ -70,7 +71,7 @@ const PaymentService = {
     async createPayment(
         paymentMethod: PaymentMethod | null,
         tempImageId: string,
-        type: string,
+        type: OrderType,
         formData: FormData,
         paymentIntentId: string | null = null
     ): Promise<PaymentResponseDTO> {

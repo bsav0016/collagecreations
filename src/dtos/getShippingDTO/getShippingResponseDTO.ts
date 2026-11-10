@@ -1,8 +1,6 @@
-export interface GetShippingResponse {
-    base_cost: number;
-    shipping_cost: number;
-    tax: number;
-}
+import type { Schema } from "../../api/types";
+
+export type GetShippingResponse = Schema<"GetShippingCostResponse">;
 
 class GetShippingResponseDTO {
     baseCost: number;

@@ -6,6 +6,7 @@ import GeneralButton from "../generalButton/generalButton";
 import PaymentService from "../../services/PaymentService";
 import { toastRef } from "../../context/toastContext/toastContext";
 import LoadingDots from "../loadingDots";
+import type { OrderType } from "../../api/types";
 
 interface CheckoutFormData {
     firstname: string;
@@ -21,7 +22,7 @@ interface CheckoutFormData {
 interface CheckoutFormProps {
     formValid: boolean;
     formData: CheckoutFormData;
-    type: string;
+    type: OrderType;
     tempImageId: string;
     setLoading: (loading: boolean) => void;
 }

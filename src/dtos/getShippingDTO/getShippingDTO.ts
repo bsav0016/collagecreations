@@ -1,3 +1,5 @@
+import type { Schema } from "../../api/types";
+
 class GetShippingDTO {
     destinationZIPCode: string;
     quantity: number;
@@ -15,12 +17,13 @@ class GetShippingDTO {
     }
 
     jsonify(): string {
-        return JSON.stringify({
+        const body: Schema<"GetShippingCostRequest"> = {
             destinationZIPCode: this.destinationZIPCode,
             mailingDate: this.mailingDate,
             quantity: this.quantity,
             tempImageId: this.tempImageId,
-        });
+        };
+        return JSON.stringify(body);
     }
 }
 

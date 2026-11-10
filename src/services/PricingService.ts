@@ -1,50 +1,13 @@
+import type { Schema } from "../api/types";
 import NetworkRequest from "../lib/networkClient";
 import { APPLICATION_JSON_HEADER, AUTHORIZATION_HEADER, GET, PUT } from "../lib/networkRequestConstants";
 
-export interface CatalogItem {
-    id: number;
-    size: string;
-    kind: "collage" | "regular";
-    price_cents: number;
-    print_material_cost_cents: number;
-    active: boolean;
-}
-
-export interface ShopSettings {
-    download_price_cents: number;
-    download_cost_cents: number;
-    tax_rate: string;
-    num_per_ship: number;
-}
-
-export interface ShippingPackage {
-    id: number;
-    name: string;
-    weight: number;
-    length: number;
-    width: number;
-    height: number;
-    customer_charge_cents: number;
-    material_cost_cents: number;
-}
-
-export interface Pricing {
-    can_edit: boolean;
-    max_cents: number;
-    catalog: CatalogItem[];
-    settings: ShopSettings;
-    packages: ShippingPackage[];
-}
-
-export interface PriceChange {
-    id: number;
-    when: string;
-    user: string | null;
-    item: string;
-    field: string;
-    old: string;
-    new: string;
-}
+// Shapes come from the backend's schema (see src/api/types.ts), so a renamed field fails the build.
+export type CatalogItem = Schema<"PricingCatalogItem">;
+export type ShopSettings = Schema<"PricingSettings">;
+export type ShippingPackage = Schema<"PricingPackage">;
+export type Pricing = Schema<"PricingSnapshot">;
+export type PriceChange = Schema<"PriceChangeRow">;
 
 const headers = (token: string) => ({ ...APPLICATION_JSON_HEADER, ...AUTHORIZATION_HEADER(token) });
 
@@ -56,17 +19,18 @@ const PricingService = {
         (await NetworkRequest<Pricing>({ urlExtension: "api/admin/pricing/", method: GET, headers: headers(token) })).data,
 
     getHistory: async (token: string): Promise<PriceChange[]> =>
-        (await NetworkRequest<{ history: PriceChange[] }>({
+        (await NetworkRequest<Schema<"PriceHistory">>({
             urlExtension: "api/admin/pricing/history/", method: GET, headers: headers(token),
         })).data.history,
 
-    updateCatalogItem: (token: string, id: number, body: Partial<Omit<CatalogItem, "id" | "size" | "kind">>) =>
-        put<{ warnings: string[] }>(`catalog/${id}/`, token, body),
+    updateCatalogItem: (token: string, id: number, body: Schema<"CatalogItemUpdate">) =>
+        put<Schema<"CatalogItemUpdated">>(`catalog/${id}/`, token, body),
 
-    updateSettings: (token: string, body: Partial<ShopSettings>) => put<object>("settings/", token, body),
+    updateSettings: (token: string, body: Schema<"ShopSettingsUpdate">) =>
+        put<Schema<"ShopSettingsUpdated">>("settings/", token, body),
 
-    updatePackage: (token: string, id: number, body: Partial<Omit<ShippingPackage, "id" | "name">>) =>
-        put<object>(`packages/${id}/`, token, body),
+    updatePackage: (token: string, id: number, body: Schema<"ShippingPackageUpdate">) =>
+        put<Schema<"PackageUpdated">>(`packages/${id}/`, token, body),
 };
 
 export default PricingService;

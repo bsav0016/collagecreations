@@ -1,6 +1,6 @@
-interface ApplyDiscountResponse {
-    discount: number;
-}
+import type { Schema } from "../../api/types";
+
+type ApplyDiscountResponse = Schema<"ApplyDiscountResponse">;
 
 class ApplyDiscountResponseDTO {
     discount: number;

@@ -1,10 +1,11 @@
 import { PaymentMethod } from "@stripe/stripe-js";
+import type { OrderType, Schema } from "../../api/types";
 
 class PaymentDTO {
     paymentMethod: PaymentMethod | null;
     paymentIntentId: string | null;
     tempImageId: string;
-    type: string;
+    type: OrderType;
     firstname: string;
     lastname: string;
     email: string;
@@ -17,7 +18,7 @@ class PaymentDTO {
     constructor(
         paymentMethod: PaymentMethod | null,
         tempImageId: string,
-        type: string,
+        type: OrderType,
         firstname: string,
         lastname: string,
         email: string,
@@ -43,7 +44,7 @@ class PaymentDTO {
     }
 
     jsonify(): string {
-        return JSON.stringify({
+        const body: Schema<"PaymentRequest"> = {
             paymentMethod: this.paymentMethod?.id ?? null,
             paymentIntentId: this.paymentIntentId,
             tempImageId: this.tempImageId,
@@ -56,7 +57,8 @@ class PaymentDTO {
             city: this.city,
             state: this.state,
             zip: this.zip,
-        });
+        };
+        return JSON.stringify(body);
     }
 }
 

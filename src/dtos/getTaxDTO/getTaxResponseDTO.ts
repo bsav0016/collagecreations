@@ -1,6 +1,6 @@
-export interface GetTaxResponse {
-    tax: number;
-}
+import type { Schema } from "../../api/types";
+
+export type GetTaxResponse = Schema<"GetTaxResponse">;
 
 class GetTaxResponseDTO {
     tax: number;

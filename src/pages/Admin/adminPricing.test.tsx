@@ -12,8 +12,8 @@ vi.mock("../../services/PricingService", async (original) => {
 });
 
 const pricing = (canEdit: boolean): Pricing => ({
-    can_edit: canEdit, max_cents: 6000,
-    catalog: [{ id: 1, size: "24x36", kind: "collage", price_cents: 8000, print_material_cost_cents: 2000, active: true }],
+    can_edit: canEdit, max_price_cents: 20000, max_cost_cents: 6000,
+    catalog: [{ id: 1, size: "24x36", kind: "collage", price_cents: 8000, print_material_cost_cents: 2000, active: true, updated_at: "2026-10-21T00:00:00Z" }],
     settings: { download_price_cents: 500, download_cost_cents: 0, tax_rate: "0.04712", num_per_ship: 3 },
     packages: [{ id: 1, name: "general", weight: 2, length: 26, width: 4, height: 4, customer_charge_cents: 240, material_cost_cents: 80 }],
 });
@@ -23,7 +23,7 @@ const open = () => render(<MemoryRouter><AdminPricing /></MemoryRouter>);
 
 beforeEach(() => {
     vi.clearAllMocks();
-    mocked.getHistory.mockResolvedValue([{ id: 1, when: "2026-10-21T00:00:00Z", user: "boss", item: "24x36 collage", field: "price_cents", old: "9000", new: "8000" }]);
+    mocked.getHistory.mockResolvedValue([{ id: 1, when: "2026-10-21T00:00:00Z", user: "boss", model: "CatalogItem", item: "24x36 collage", field: "price_cents", old: "9000", new: "8000" }]);
 });
 
 describe("AdminPricing", () => {
@@ -38,7 +38,7 @@ describe("AdminPricing", () => {
 
     it("lets a superuser save a price in cents", async () => {
         mocked.getPricing.mockResolvedValue(pricing(true));
-        mocked.updateCatalogItem.mockResolvedValue({ warnings: [] });
+        mocked.updateCatalogItem.mockResolvedValue({ item: pricing(true).catalog[0], changed: ["price_cents"], warnings: [] });
         open();
         const price = await screen.findByLabelText("24x36 collage price");
         fireEvent.change(price, { target: { value: "75.50" } });
@@ -86,7 +86,7 @@ describe("AdminPricing", () => {
 
     it("saves the package's dimensions and weight along with its amounts", async () => {
         mocked.getPricing.mockResolvedValue(pricing(true));
-        mocked.updatePackage.mockResolvedValue({});
+        mocked.updatePackage.mockResolvedValue({ package: pricing(true).packages[0], changed: ["length"] });
         open();
         fireEvent.change(await screen.findByLabelText("Package length (in)"), { target: { value: "30" } });
         const saves = screen.getAllByText("Save");

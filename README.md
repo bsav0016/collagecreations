@@ -97,6 +97,18 @@ npm run capture              # APP_URL=... to capture another server
 
 It walks the home page and the symbol and text order flows at 1440x900 with no sign-in and no customer data, and overwrites the four files. `home.png` is also reduced to a 256-colour palette to keep it small. The script lives in its own `package.json` so the app does not depend on Playwright.
 
+## API types
+
+The backend publishes `openapi.public.yaml`, a description of every endpoint this site calls (it leaves out the staff outreach API, which the site never uses). A copy lives in [src/api/openapi.public.yaml](src/api/openapi.public.yaml) and the TypeScript types are generated from it into `src/api/schema.d.ts`; services use them through [src/api/types.ts](src/api/types.ts), for example `Schema<"PaymentRequest">`. If the backend changes a field the app uses, the type check fails here instead of the checkout failing for a customer.
+
+```
+npm run api:sync -- ../collageCreationsBackend/openapi.public.yaml   # take the backend's latest, regenerate types
+npm run api:types                                                     # regenerate types from the copy
+npm run api:check                                                     # CI: fail if the types do not match the copy
+```
+
+The generator is installed separately in `tools/api-types` because it needs TypeScript 5 and the app uses a newer one. Not every service uses the generated types yet.
+
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, build (with the three secrets `VITE_BACKEND_URL`, `VITE_STRIPE_KEY` and `VITE_SENTRY_DSN`), then publish `build/` to GitHub Pages under the custom domain `collagecreations.org`. `npm run deploy` does the same from a laptop with `gh-pages`.
