@@ -1,3 +1,5 @@
+import type { Schema } from "../../api/types";
+
 export class NewCollageResponseDTO {
     temporaryImageId: string;
     watermarkCollage: string;
@@ -19,13 +21,13 @@ export class NewCollageResponseDTO {
         this.expiresAt = expiresAt;
     }
 
-    static fromResponse(response: any) {
+    static fromResponse(response: Schema<"TaskDone">) {
         return new NewCollageResponseDTO(
             response.temporary_image_id,
             response.watermark_collage,
             response.base_cost,
             response.requires_signin === true,
-            response.expires_at ?? ""
+            response.expires_at
         );
     }
 }

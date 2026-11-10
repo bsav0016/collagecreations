@@ -1,15 +1,6 @@
-export interface TicketResponse {
-    firstname: string;
-    lastname: string;
-    email: string;
-    message: string;
-    order_number: string | null;
-    creation_date: string;
-    in_progress: boolean;
-    resolved: boolean;
-    notes: string;
-    is_custom_order: boolean;
-}
+import type { Schema } from "../../api/types";
+
+export type TicketResponse = Schema<"SupportTicket">;
 
 class TicketDTO {
     firstname: string;
@@ -52,11 +43,12 @@ class TicketDTO {
     }
 
     jsonified(): string {
-        return JSON.stringify({
+        const body: Schema<"PatchedSupportTicket"> = {
             in_progress: this.inProgress,
             resolved: this.resolved,
             notes: this.notes,
-        });
+        };
+        return JSON.stringify(body);
     }
 
     static fromResponse(response: TicketResponse): TicketDTO {
@@ -66,11 +58,11 @@ class TicketDTO {
             response.email,
             response.message,
             response.order_number ? response.order_number : "N/A",
-            new Date(response.creation_date).toLocaleDateString(),
-            response.in_progress,
-            response.resolved,
-            response.notes,
-            response.is_custom_order
+            new Date(response.creation_date ?? "").toLocaleDateString(),
+            response.in_progress ?? false,
+            response.resolved ?? false,
+            response.notes ?? "",
+            response.is_custom_order ?? false
         );
     }
 }

@@ -1,4 +1,5 @@
 import NetworkRequest from "../lib/networkClient";
+import type { Schema } from "../api/types";
 import {
     APPLICATION_JSON_HEADER,
     CUSTOMER_AUTHORIZATION_HEADER,
@@ -7,18 +8,10 @@ import {
     POST,
 } from "../lib/networkRequestConstants";
 
-export interface CustomerSession {
-    token: string;
-    email: string;
-    name: string;
-}
+// Shapes come from the backend's schema (see src/api/types.ts).
+export type CustomerSession = Schema<"CustomerSession">;
 
-export interface ClaimedCollage {
-    temporary_image_id: string;
-    base_cost: number;
-    watermark_collage: string | null;
-    expires_at: string;
-}
+export type ClaimedCollage = Schema<"CartImage">;
 
 const postJson = <T,>(urlExtension: string, body: object, token?: string) =>
     NetworkRequest<T>({
@@ -32,19 +25,19 @@ const postJson = <T,>(urlExtension: string, body: object, token?: string) =>
     });
 
 export async function signInWithGoogle(credential: string): Promise<CustomerSession> {
-    return (await postJson<CustomerSession>("api/customer/google/", { credential })).data;
+    return (await postJson<CustomerSession>("api/customer/google/", { credential } satisfies Schema<"GoogleLoginRequest">)).data;
 }
 
 export async function signInWithMicrosoft(credential: string): Promise<CustomerSession> {
-    return (await postJson<CustomerSession>("api/customer/microsoft/", { credential })).data;
+    return (await postJson<CustomerSession>("api/customer/microsoft/", { credential } satisfies Schema<"MicrosoftLoginRequest">)).data;
 }
 
 export async function requestEmailCode(email: string): Promise<void> {
-    await postJson("api/customer/email/request/", { email });
+    await postJson("api/customer/email/request/", { email } satisfies Schema<"EmailCodeRequest">);
 }
 
 export async function verifyEmailCode(email: string, code: string): Promise<CustomerSession> {
-    return (await postJson<CustomerSession>("api/customer/email/verify/", { email, code })).data;
+    return (await postJson<CustomerSession>("api/customer/email/verify/", { email, code } satisfies Schema<"EmailCodeVerify">)).data;
 }
 
 // Attaches the collage to the signed-in customer (so it is kept longer) and returns the real
@@ -52,26 +45,15 @@ export async function verifyEmailCode(email: string, code: string): Promise<Cust
 export async function claimCollage(token: string, temporaryImageId: string): Promise<ClaimedCollage> {
     return (await postJson<ClaimedCollage>(
         "api/claim-collage/",
-        { temporary_image_id: temporaryImageId },
+        { temporary_image_id: temporaryImageId } satisfies Schema<"ClaimCollageRequest">,
         token,
     )).data;
 }
 
-export interface CustomerOrder {
-    id: number;
-    order_date: string;
-    order_type: string;
-    quantity: number;
-    printed: boolean;
-    shipped: boolean;
-    delivered: boolean;
-    shipping_number: string;
-    download_token: string | null;
-    can_reorder: boolean;
-}
+export type CustomerOrder = Schema<"CustomerOrder">;
 
 export async function getMyOrders(token: string): Promise<CustomerOrder[]> {
-    const response = await NetworkRequest<{ orders: CustomerOrder[] }>({
+    const response = await NetworkRequest<Schema<"CustomerOrders">>({
         urlExtension: "api/customer/orders/",
         method: GET,
         headers: CUSTOMER_AUTHORIZATION_HEADER(token),
@@ -84,16 +66,10 @@ export async function reorderOrder(token: string, orderId: number): Promise<Clai
     return (await postJson<ClaimedCollage>(`api/customer/orders/${orderId}/reorder/`, {}, token)).data;
 }
 
-export interface SavedCollage {
-    id: string;
-    width: number;
-    height: number;
-    created_at: string;
-    expires_at: string;
-}
+export type SavedCollage = Schema<"SavedCollage">;
 
 export async function getSavedCollages(token: string): Promise<SavedCollage[]> {
-    const response = await NetworkRequest<{ collages: SavedCollage[] }>({
+    const response = await NetworkRequest<Schema<"SavedCollages">>({
         urlExtension: "api/customer/collages/",
         method: GET,
         headers: CUSTOMER_AUTHORIZATION_HEADER(token),
@@ -109,8 +85,8 @@ export async function deleteSavedCollage(token: string, collageId: string): Prom
     });
 }
 
-export async function exportMyData(token: string): Promise<object> {
-    return (await NetworkRequest<object>({
+export async function exportMyData(token: string): Promise<Schema<"CustomerExport">> {
+    return (await NetworkRequest<Schema<"CustomerExport">>({
         urlExtension: "api/customer/export/",
         method: GET,
         headers: CUSTOMER_AUTHORIZATION_HEADER(token),
@@ -118,5 +94,5 @@ export async function exportMyData(token: string): Promise<object> {
 }
 
 export async function deleteMyAccount(token: string, confirmEmail: string): Promise<void> {
-    await postJson("api/customer/delete-account/", { confirm_email: confirmEmail }, token);
+    await postJson("api/customer/delete-account/", { confirm_email: confirmEmail } satisfies Schema<"DeleteAccountRequest">, token);
 }

@@ -45,4 +45,13 @@ async function NetworkRequest<T>({
     }
 }
 
+/** For endpoints that answer with a file instead of JSON (a purchased image). Throws if the answer is not a success. */
+export async function NetworkFileRequest(urlExtension: string): Promise<Blob> {
+    const response = await fetch(`${BACKEND_URL}${urlExtension}`);
+    if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+    }
+    return response.blob();
+}
+
 export default NetworkRequest;

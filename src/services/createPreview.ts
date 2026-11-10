@@ -1,6 +1,7 @@
 import { CreatePreviewDTO } from "../dtos/createPreviewDTO/createPreviewDTO";
 import { CreatePreviewResponseDTO } from "../dtos/createPreviewDTO/createPreviewResponseDTO";
 import NetworkRequest from "../lib/networkClient";
+import type { Schema } from "../api/types";
 import { POST } from "../lib/networkRequestConstants";
 import { CollageCreationType } from "../pages/Customer/collageCreationPage/enums/collageCreationType";
 import { OutputSize } from "../pages/Customer/collageCreationPage/enums/OutputSize";
@@ -19,7 +20,7 @@ export async function createPreview(
     const createPreviewDTO = CreatePreviewDTO.fromVariables(type, size, smallImageSize, text, symbol, mainImage);
     const body = await createPreviewDTO.createBody();
 
-    const response = await NetworkRequest({
+    const response = await NetworkRequest<Schema<"CreatePreviewResponse">>({
         urlExtension: 'api/preview/',
         method: POST,
         body: body

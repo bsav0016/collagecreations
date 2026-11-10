@@ -957,11 +957,8 @@ export interface components {
         CartImage: {
             /** Format: uuid */
             temporary_image_id: string;
-            /**
-             * Format: double
-             * @description Unit price in dollars.
-             */
-            base_cost: number | null;
+            /** @description Unit price in cents. */
+            base_cost: number;
             /** @description Base64 JPEG of the watermarked preview. */
             watermark_collage: string | null;
             /** Format: date-time */
@@ -1146,11 +1143,17 @@ export interface components {
         };
         GetShippingCostResponse: {
             message: string;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description In cents.
+             */
             shipping_cost: number;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description In cents.
+             */
             tax: number;
-            /** Format: double */
+            /** @description Unit price in cents. */
             base_cost: number;
         };
         GetTaxRequest: {
@@ -1159,7 +1162,10 @@ export interface components {
         };
         GetTaxResponse: {
             message: string;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description In cents.
+             */
             tax: number;
         };
         GoogleLoginRequest: {
@@ -1700,7 +1706,7 @@ export interface components {
             temporary_image_id: string;
             /** @description Base64 JPEG thumbnail. */
             smaller_image: string;
-            /** Format: double */
+            /** @description Unit price in cents. */
             unit_base_cost: number;
         };
         SavedCollage: {
@@ -1771,7 +1777,7 @@ export interface components {
             status: string;
             /** Format: uuid */
             temporary_image_id: string;
-            /** Format: double */
+            /** @description Unit price in cents. */
             base_cost: number;
             /** @description Base64 JPEG; a teaser when sign-in is required. */
             watermark_collage: string;

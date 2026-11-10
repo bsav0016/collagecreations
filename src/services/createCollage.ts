@@ -5,27 +5,25 @@ import { CollageCreationType } from "../pages/Customer/collageCreationPage/enums
 import { OutputSize } from "../pages/Customer/collageCreationPage/enums/OutputSize";
 import { SmallImageSize } from "../pages/Customer/collageCreationPage/enums/SmallImageSize";
 import { NewCollageResponseDTO } from "../dtos/collageDTO/newCollageResponseDTO";
+import type { Schema } from "../api/types";
 
 const POLL_INTERVAL_MS = 3000; // Poll every 3 seconds
 const MAX_POLL_ATTEMPTS = 120; // Max 6 minutes of polling
 
-interface TaskResultPendingResponse {
-    message: string;
-    percent?: number;
-}
-
+type TaskResultPendingResponse = Schema<"TaskPending">;
+type TaskResultDoneResponse = Schema<"TaskDone">;
 async function pollTaskResult(
     taskId: string,
     userToken: string | null,
     onProgress?: (percent: number) => void,
     customerToken?: string | null,
-): Promise<any> {
+): Promise<TaskResultDoneResponse> {
     const headers = userToken
         ? { ...AUTHORIZATION_HEADER(userToken) }
         : customerToken ? { ...CUSTOMER_AUTHORIZATION_HEADER(customerToken) } : {};
 
     for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt++) {
-        const response = await NetworkRequest<TaskResultPendingResponse | any>({
+        const response = await NetworkRequest<TaskResultPendingResponse | TaskResultDoneResponse>({
             urlExtension: `api/task-result/${taskId}/`,
             method: GET,
             headers: headers,
@@ -33,12 +31,13 @@ async function pollTaskResult(
 
         if (response.status === 201) {
             // Task completed successfully
-            return response.data;
+            return response.data as TaskResultDoneResponse;
         } else if (response.status === 202) {
             // Task still pending; report real build progress if the backend has started
             // reporting it, then wait and retry
-            if (onProgress && typeof response.data?.percent === "number") {
-                onProgress(response.data.percent);
+            const percent = (response.data as TaskResultPendingResponse).percent;
+            if (onProgress && typeof percent === "number") {
+                onProgress(percent);
             }
             await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS));
         } else {
@@ -78,7 +77,7 @@ export async function createCollage (
 
     const headers = userToken ? { ...AUTHORIZATION_HEADER(userToken) } : {};
     
-    const response = await NetworkRequest<{ task_id: string }>({
+    const response = await NetworkRequest<Schema<"CreateCollageResponse">>({
         urlExtension: 'api/collage/',
         headers: headers,
         method: POST,

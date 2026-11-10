@@ -1,8 +1,8 @@
 import { processImageString } from "../../utils/modifyImage";
 
-interface AddWhiteResponse {
-    image: string;
-}
+import type { Schema } from "../../api/types";
+
+type AddWhiteResponse = Schema<"AddWhiteResponse">;
 
 class AddWhiteResponseDTO {
     image: string;

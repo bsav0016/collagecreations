@@ -1,9 +1,6 @@
-export interface TicketData {
-    id: number;
-    is_custom_order: boolean;
-    in_progress: boolean;
-    resolved: boolean;
-}
+import type { Schema } from "../../api/types";
+
+export type TicketData = Schema<"TicketSummary">;
 
 class GetTicketsResponseDTO {
     id: number;
