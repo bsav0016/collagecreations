@@ -1,6 +1,7 @@
 import NetworkRequest from '../lib/networkClient';
 import { GET, PATCH, POST, AUTHORIZATION_HEADER, APPLICATION_JSON_HEADER } from '../lib/networkRequestConstants';
-import GetTicketsResponseDTO, { TicketData } from '../dtos/getTicketsResponseDTO/getTicketsResponseDTO';
+import type { Schema } from '../api/types';
+import GetTicketsResponseDTO from '../dtos/getTicketsResponseDTO/getTicketsResponseDTO';
 import SupportDTO from '../dtos/supportDTO/supportDTO';
 import TicketDTO, { TicketResponse } from '../dtos/TicketDTO/TicketDTO';
 
@@ -12,9 +13,7 @@ interface TicketFormData {
     message: string;
 }
 
-interface TicketsListResponse {
-    tickets: TicketData[];
-}
+type TicketsListResponse = Schema<'TicketSummaries'>;
 
 const TicketService = {
     async getTicket(
@@ -26,13 +25,13 @@ const TicketService = {
             ...APPLICATION_JSON_HEADER
         };
 
-        const response = await NetworkRequest({
+        const response = await NetworkRequest<TicketResponse>({
             urlExtension: `api/ticket/${ticketId}/`,
             method: GET,
             headers: headers
         });
 
-        return response.data as TicketResponse;
+        return response.data;
     },
 
     async updateTicket(

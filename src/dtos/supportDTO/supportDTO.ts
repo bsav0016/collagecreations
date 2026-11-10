@@ -1,3 +1,5 @@
+import type { Schema } from "../../api/types";
+
 interface SupportFormData {
     firstname: string;
     lastname: string;
@@ -24,14 +26,15 @@ class SupportDTO {
     }
 
     jsonified(): string {
-        return JSON.stringify({
+        const body: Schema<"SupportTicketRequest"> = {
             firstname: this.firstname,
             lastname: this.lastname,
             email: this.email,
             order_number: this.order_number,
             message: this.message,
             is_custom_order: this.isCustomOrder,
-        });
+        };
+        return JSON.stringify(body);
     }
 }
 

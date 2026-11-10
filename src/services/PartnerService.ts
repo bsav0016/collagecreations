@@ -1,54 +1,24 @@
 import NetworkRequest from "../lib/networkClient";
+import type { Schema } from "../api/types";
 import { APPLICATION_JSON_HEADER, GET, POST } from "../lib/networkRequestConstants";
 
-export interface PartnerSession {
-    token: string;
-    email: string;
-    partner: string;
-}
+// Shapes come from the backend's schema (see src/api/types.ts).
+export type PartnerSession = Schema<"PartnerSession">;
 
-export interface PartnerProfile {
-    email: string;
-    partner: string;
-    discount_code: string;
-    commission_rate: string;
-    hold_days: number;
-}
+export type PartnerProfile = Schema<"PartnerMe">;
 
 export type CommissionStatus = "pending" | "payable" | "paid" | "void";
 
-export interface StatusTotal {
-    orders: number;
-    amount: string;
-}
+export type StatusTotal = Schema<"PartnerStatusTotal">;
 
-export interface PartnerSummary {
-    hold_days: number;
-    by_status: Record<CommissionStatus, StatusTotal>;
-}
+export type PartnerSummary = Schema<"PartnerSummary">;
 
-export interface PartnerCommission {
-    id: number;
-    order_date: string;
-    net_sales: string;
-    amount: string;
-    status: CommissionStatus;
-    payable_on: string | null;
-    paid_at: string | null;
-}
+// The schema types status as a plain string; the screens rely on the four known values.
+export type PartnerCommission = Omit<Schema<"PartnerCommission">, "status"> & { status: CommissionStatus };
 
-export interface PayoutState {
-    enabled: boolean;
-    status: "not_started" | "incomplete" | "ready";
-    payouts_enabled: boolean;
-}
+export type PayoutState = Schema<"PartnerPayoutState">;
 
-export interface CommissionPage {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: PartnerCommission[];
-}
+export type CommissionPage = Omit<Schema<"PartnerCommissionPage">, "results"> & { results: PartnerCommission[] };
 
 // The backend answers errors as {"detail": "..."}; hand the screens a plain message.
 const message = (error: unknown, fallback: string): string => {
@@ -72,10 +42,10 @@ const call = async <T>(path: string, method: string, fallback: string, token?: s
 
 const PartnerService = {
     requestCode: (email: string) =>
-        call<{ message: string }>("email/request/", POST, "We couldn't send the code. Please try again.", undefined, { email }),
+        call<Schema<"PartnerCodeRequested">>("email/request/", POST, "We couldn't send the code. Please try again.", undefined, { email } satisfies Schema<"PartnerCodeRequest">),
 
     verifyCode: (email: string, code: string) =>
-        call<PartnerSession>("email/verify/", POST, "That code is invalid or has expired.", undefined, { email, code }),
+        call<PartnerSession>("email/verify/", POST, "That code is invalid or has expired.", undefined, { email, code } satisfies Schema<"PartnerCodeVerify">),
 
     getProfile: (token: string) => call<PartnerProfile>("me/", GET, "Could not load your account.", token),
 
@@ -84,7 +54,7 @@ const PartnerService = {
     getPayouts: (token: string) => call<PayoutState>("payouts/", GET, "Could not load your payout status.", token),
 
     startPayoutSetup: (token: string) =>
-        call<{ url: string }>("payouts/onboard/", POST, "We couldn't open payout setup. Please try again later.", token),
+        call<Schema<"OnboardingLink">>("payouts/onboard/", POST, "We couldn't open payout setup. Please try again later.", token),
 
     getCommissions: (token: string, page = 1) =>
         call<CommissionPage>(`commissions/?page=${page}`, GET, "Could not load your commissions.", token),

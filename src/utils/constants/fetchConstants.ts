@@ -1,5 +1,6 @@
-import { BACKEND_URL } from './constants';
-
+import NetworkRequest from '../../lib/networkClient';
+import { GET } from '../../lib/networkRequestConstants';
+import type { Schema } from '../../api/types';
 interface Constants {
     [key: string]: unknown;
 }
@@ -11,15 +12,8 @@ export const fetchConstants = async (): Promise<Constants> => {
     if (constantsLoaded) return constants;
 
     try {
-        const response = await fetch(`${BACKEND_URL}api/get-constants/`, {
-            method: 'GET',
-        });
-
-        if (!response.ok) {
-            throw new Error(`Network request failed with status ${response.status}: ${response.statusText}`);
-        }
-
-        constants = await response.json();
+        const response = await NetworkRequest<Schema<'Constants'>>({ urlExtension: 'api/get-constants/', method: GET });
+        constants = response.data;
         constantsLoaded = true;
     } catch (error) {
         console.error('Failed to load constants:', error);

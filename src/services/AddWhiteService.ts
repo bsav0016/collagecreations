@@ -2,6 +2,7 @@ import { AUTHORIZATION_HEADER, POST } from "../lib/networkRequestConstants";
 import NetworkRequest from "../lib/networkClient";
 import AddWhiteResponseDTO from '../dtos/addWhiteDTO/addWhiteResponseDTO';
 import AddWhiteDTO from "../dtos/addWhiteDTO/addWhiteDTO";
+import type { Schema } from "../api/types";
 
 const addWhiteService = async (selectedFile: File, token: string): Promise<string> => {
     const headers = {
@@ -10,7 +11,7 @@ const addWhiteService = async (selectedFile: File, token: string): Promise<strin
     
     const addWhiteDTO = new AddWhiteDTO(selectedFile);
 
-    const response = await NetworkRequest<AddWhiteResponseDTO>({
+    const response = await NetworkRequest<Schema<"AddWhiteResponse">>({
         urlExtension: 'api/add-white/',
         method: POST,
         headers: headers,

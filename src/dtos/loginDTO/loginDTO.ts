@@ -1,3 +1,5 @@
+import type { Schema } from "../../api/types";
+
 class LoginDTO {
     username: string;
     password: string;
@@ -12,10 +14,11 @@ class LoginDTO {
     }
 
     jsonify(): string {
-        return JSON.stringify({
+        const body: Schema<"AdminLoginRequest"> = {
             username: this.username,
             password: this.password,
-        });
+        };
+        return JSON.stringify(body);
     }
 }
 

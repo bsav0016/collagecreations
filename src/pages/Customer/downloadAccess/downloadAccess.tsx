@@ -5,7 +5,7 @@ import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import LoadingScreen from '../../../components/loadingScreen/loadingScreen';
-import { BACKEND_URL } from '../../../utils/constants/constants';
+import { NetworkFileRequest } from '../../../lib/networkClient';
 
 function DownloadAccess(): React.ReactElement {
     const { token } = useParams<{ token: string }>();
@@ -18,12 +18,7 @@ function DownloadAccess(): React.ReactElement {
 
         const fetchImage = async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}api/download/${token}/`);
-                if (!response.ok) {
-                    navigate('/');
-                    return;
-                }
-                const blob = await response.blob();
+                const blob = await NetworkFileRequest(`api/download/${token}/`);
                 url = URL.createObjectURL(blob);
                 setImageUrl(url);
             } catch {

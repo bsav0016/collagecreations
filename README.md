@@ -107,7 +107,7 @@ npm run api:types                                                     # regenera
 npm run api:check                                                     # CI: fail if the types do not match the copy
 ```
 
-The generator is installed separately in `tools/api-types` because it needs TypeScript 5 and the app uses a newer one. Not every service uses the generated types yet.
+The generator is installed separately in `tools/api-types` because it needs TypeScript 5 and the app uses a newer one. Every service that talks to the backend uses the generated types, and all backend calls go through `src/lib/networkClient.ts` (`NetworkRequest` for JSON, `NetworkFileRequest` for a purchased image); the only other `fetch` calls read images already in the browser.
 
 ## Deployment
 

@@ -1952,10 +1952,8 @@ components:
           type: string
           format: uuid
         base_cost:
-          type: number
-          format: double
-          nullable: true
-          description: Unit price in dollars.
+          type: integer
+          description: Unit price in cents.
         watermark_collage:
           type: string
           nullable: true
@@ -2416,12 +2414,14 @@ components:
         shipping_cost:
           type: number
           format: double
+          description: In cents.
         tax:
           type: number
           format: double
+          description: In cents.
         base_cost:
-          type: number
-          format: double
+          type: integer
+          description: Unit price in cents.
       required:
       - base_cost
       - message
@@ -2443,6 +2443,7 @@ components:
         tax:
           type: number
           format: double
+          description: In cents.
       required:
       - message
       - tax
@@ -3660,8 +3661,8 @@ components:
           type: string
           description: Base64 JPEG thumbnail.
         unit_base_cost:
-          type: number
-          format: double
+          type: integer
+          description: Unit price in cents.
       required:
       - smaller_image
       - temporary_image_id
@@ -3844,8 +3845,8 @@ components:
           type: string
           format: uuid
         base_cost:
-          type: number
-          format: double
+          type: integer
+          description: Unit price in cents.
         watermark_collage:
           type: string
           description: Base64 JPEG; a teaser when sign-in is required.

@@ -1,30 +1,7 @@
-export interface OrderDetailResponse {
-    firstname: string;
-    lastname: string;
-    email: string;
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zip: string;
-    order_date: string;
-    printed: boolean;
-    print_date: string;
-    shipped: boolean;
-    ship_date: string;
-    shipping_number: string;
-    delivered: boolean;
-    delivery_date: string;
-    image: string;
-    order_type: string;
-    quantity: number;
-    base_cost: number;
-    shipping_cost: number;
-    tax: number;
-    refund_amount?: number;
-    disputed?: boolean;
-    stripe_payment_intent?: string | null;
-}
+import type { Schema } from "../../api/types";
+
+// The server sends money as decimal strings ("8000.00") in cents; the DTO holds numbers.
+export type OrderDetailResponse = Schema<"Order">;
 
 class OrderDetailDTO {
     firstname: string;
@@ -134,32 +111,35 @@ class OrderDetailDTO {
         });
     }
 
+    // The Order shape marks most fields optional because the server does not require them when an order is
+    // written; a stored order always has them, so the fallbacks below are never used in practice.
     static fromResponse(response: OrderDetailResponse): OrderDetailDTO {
+        const day = (value?: string) => new Date(value ?? "").toLocaleDateString();
         return new OrderDetailDTO(
             response.firstname,
             response.lastname,
             response.email,
-            response.address1,
-            response.address2,
-            response.city,
-            response.state,
-            response.zip,
-            new Date(response.order_date).toLocaleDateString(),
-            response.printed,
-            new Date(response.print_date).toLocaleDateString(),
-            response.shipped,
-            new Date(response.ship_date).toLocaleDateString(),
-            response.shipping_number,
-            response.delivered,
-            new Date(response.delivery_date).toLocaleDateString(),
-            response.image,
-            response.order_type,
-            response.quantity,
-            response.base_cost,
-            response.shipping_cost,
-            response.tax,
-            response.refund_amount ?? 0,
-            response.disputed ?? false,
+            response.address1 ?? "",
+            response.address2 ?? "",
+            response.city ?? "",
+            response.state ?? "",
+            response.zip ?? "",
+            day(response.order_date),
+            response.printed ?? false,
+            day(response.print_date),
+            response.shipped ?? false,
+            day(response.ship_date),
+            response.shipping_number ?? "",
+            response.delivered ?? false,
+            day(response.delivery_date),
+            response.image ?? "",
+            response.order_type ?? "",
+            response.quantity ?? 0,
+            Number(response.base_cost ?? 0),
+            Number(response.shipping_cost ?? 0),
+            Number(response.tax ?? 0),
+            response.refund_amount,
+            response.disputed,
             Boolean(response.stripe_payment_intent)
         );
     }

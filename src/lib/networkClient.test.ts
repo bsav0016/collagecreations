@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import NetworkRequest from "./networkClient";
+import NetworkRequest, { NetworkFileRequest } from "./networkClient";
 import { BACKEND_URL } from "../utils/constants/constants";
 
 const reply = (status: number, body: unknown) =>
@@ -62,5 +62,22 @@ describe("NetworkRequest", () => {
         vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("Failed to fetch"));
 
         await expect(NetworkRequest({ urlExtension: "x/", method: "GET" })).rejects.toThrow("Failed to fetch");
+    });
+});
+
+describe("NetworkFileRequest", () => {
+    it("returns the file for a successful answer", async () => {
+        const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("jpeg-bytes", { status: 200 }));
+
+        const blob = await NetworkFileRequest("api/download/abc/");
+
+        expect(fetchMock).toHaveBeenCalledWith(`${BACKEND_URL}api/download/abc/`);
+        expect(blob.size).toBe("jpeg-bytes".length);
+    });
+
+    it("throws when the link is not valid", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}", { status: 400 }));
+
+        await expect(NetworkFileRequest("api/download/bad/")).rejects.toThrow("400");
     });
 });
