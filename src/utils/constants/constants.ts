@@ -3,6 +3,10 @@ export const BACKEND_URL: string = import.meta.env.VITE_BACKEND_URL
     || (import.meta.env.DEV ? 'http://localhost:8000/' : '');
 export const STRIPE_KEY: string = import.meta.env.VITE_STRIPE_KEY;
 export const SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN;
+// Visitor counting (see utils/analytics.ts). Public identifiers, not secrets; empty means off.
+export const ANALYTICS_PROVIDER: string = import.meta.env.VITE_ANALYTICS_PROVIDER;
+export const ANALYTICS_SITE_ID: string = import.meta.env.VITE_ANALYTICS_SITE_ID;
+export const ANALYTICS_SRC: string = import.meta.env.VITE_ANALYTICS_SRC;
 // Public OAuth application IDs (not secrets) for customer sign-in.
 export const GOOGLE_CLIENT_ID: string = import.meta.env.VITE_GOOGLE_CLIENT_ID
     || '72702044941-ksln6otl4bd7skli3nsrier273v8tm40.apps.googleusercontent.com';

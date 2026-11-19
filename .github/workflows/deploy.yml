@@ -38,6 +38,10 @@ jobs:
           VITE_BACKEND_URL: ${{ secrets.VITE_BACKEND_URL }}
           VITE_STRIPE_KEY: ${{ secrets.VITE_STRIPE_KEY }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          # Public identifiers for visitor counting; set them as repository variables (not secrets). Unset means off.
+          VITE_ANALYTICS_PROVIDER: ${{ vars.VITE_ANALYTICS_PROVIDER }}
+          VITE_ANALYTICS_SITE_ID: ${{ vars.VITE_ANALYTICS_SITE_ID }}
+          VITE_ANALYTICS_SRC: ${{ vars.VITE_ANALYTICS_SRC }}
         run: npm run build
 
       - name: Deploy to GitHub Pages

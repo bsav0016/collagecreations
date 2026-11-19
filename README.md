@@ -119,6 +119,10 @@ Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, buil
 
 The site is a single-page app on GitHub Pages, which answers any path it has no file for with HTTP 404 (`public/404.html` then redirects in the browser). Search engines read a 404 as "no page", so only the home page was indexable. The build (`searchPages` in `vite.config.ts`, logic in `src/utils/seo.ts`) now writes a real `index.html` for each public page (`/tips/`, `/support/`, `/custom-order/`, `/terms/`, `/privacy/`, `/refund-policy/`) with its own title, description and canonical address, plus `sitemap.xml`. The app boots from the same bundle and the router shows the page as before. `public/robots.txt` keeps the ordering, checkout and account pages out of search. To make another page indexable, add it to `PUBLIC_ROUTES`; tests check that each is a real route, is not blocked by `robots.txt`, and is in the sitemap.
 
+## Visitor counting
+
+The site has no analytics until you turn it on. `src/utils/analytics.ts` adds one cookieless counter script (Umami or Plausible) in production builds only, when these repository **variables** (Settings > Secrets and variables > Actions > Variables; they are public identifiers, not secrets) are set: `VITE_ANALYTICS_PROVIDER` (`umami` or `plausible`) and `VITE_ANALYTICS_SITE_ID` (Umami's website id, or the domain for Plausible), and optionally `VITE_ANALYTICS_SRC` (an https script address, for a self-hosted instance). The next push to `main` builds with them. Links carrying `?utm_source=...&utm_medium=...&utm_campaign=...` show up by source. The privacy policy page describes this.
+
 ## Design decisions
 
 - **Server builds the collage; the browser only collects inputs.** Heavy image work and price, shipping and tax calculation all happen on the backend, so the page only displays what the API returns.

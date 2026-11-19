@@ -4,13 +4,18 @@ import * as Sentry from '@sentry/react';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { SENTRY_DSN } from './utils/constants/constants';
+import { ANALYTICS_PROVIDER, ANALYTICS_SITE_ID, ANALYTICS_SRC, SENTRY_DSN } from './utils/constants/constants';
+import { installAnalytics } from './utils/analytics';
 
 if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: import.meta.env.PROD ? 'production' : 'development',
   });
+}
+
+if (import.meta.env.PROD) {
+  installAnalytics({ provider: ANALYTICS_PROVIDER, siteId: ANALYTICS_SITE_ID, src: ANALYTICS_SRC });
 }
 
 const rootElement = document.getElementById('root');

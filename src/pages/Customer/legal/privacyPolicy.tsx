@@ -3,7 +3,7 @@ import LegalPageLayout from './legalPageLayout';
 
 function PrivacyPolicy(): React.ReactElement {
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="October 6, 2026">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="November 19, 2026">
       <p>
         This Privacy Policy explains what information Collage Creations ("we," "us," or "our")
         collects through collagecreations.org (the "Site"), why we collect it, and how it's
@@ -97,8 +97,11 @@ function PrivacyPolicy(): React.ReactElement {
       <p>
         The Site uses your browser's local storage to remember things like your in-progress
         order and cart contents between steps of checkout, and to keep you signed in for up to
-        30 days if you've signed in. We don't currently use third-party
-        advertising or analytics cookies.
+        30 days if you've signed in. We don't use advertising cookies. To see how many people visit
+        the Site and which pages and links bring them here, we use a privacy-focused visitor
+        counter that sets no cookies, keeps no profile of you and counts page views in aggregate
+        (it also reads the campaign name in a link's address, if there is one). It is not used to
+        identify you.
       </p>
 
       <h2>6. Data Security</h2>
