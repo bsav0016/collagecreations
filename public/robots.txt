@@ -1,3 +1,20 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+# Ordering, checkout and account pages are for customers, not search results.
+Disallow: /preview
+Disallow: /order
+Disallow: /billing-page
+Disallow: /confirmation
+Disallow: /message-confirmation
+Disallow: /download
+Disallow: /download-access/
+Disallow: /saved-collage/
+Disallow: /regular-image-order
+Disallow: /collage/
+Disallow: /my-orders
+Disallow: /settings
+Disallow: /sign-in
+Disallow: /admin
+Disallow: /login
+
+Sitemap: https://collagecreations.org/sitemap.xml

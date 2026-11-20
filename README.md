@@ -115,6 +115,10 @@ The generator is installed separately in `tools/api-types` because it needs Type
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, build (with the three secrets `VITE_BACKEND_URL`, `VITE_STRIPE_KEY` and `VITE_SENTRY_DSN`), then publish `build/` to GitHub Pages under the custom domain `collagecreations.org`. `npm run deploy` does the same from a laptop with `gh-pages`.
 
+## Search
+
+The site is a single-page app on GitHub Pages, which answers any path it has no file for with HTTP 404 (`public/404.html` then redirects in the browser). Search engines read a 404 as "no page", so only the home page was indexable. The build (`searchPages` in `vite.config.ts`, logic in `src/utils/seo.ts`) now writes a real `index.html` for each public page (`/tips/`, `/support/`, `/custom-order/`, `/terms/`, `/privacy/`, `/refund-policy/`) with its own title, description and canonical address, plus `sitemap.xml`. The app boots from the same bundle and the router shows the page as before. `public/robots.txt` keeps the ordering, checkout and account pages out of search. To make another page indexable, add it to `PUBLIC_ROUTES`; tests check that each is a real route, is not blocked by `robots.txt`, and is in the sitemap.
+
 ## Design decisions
 
 - **Server builds the collage; the browser only collects inputs.** Heavy image work and price, shipping and tax calculation all happen on the backend, so the page only displays what the API returns.
