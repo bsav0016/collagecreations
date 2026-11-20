@@ -57,7 +57,7 @@ The backend is where the hard parts live:
 
 ## Running it
 
-Requires Node 20.
+Requires Node 22.
 
 ```bash
 npm ci
