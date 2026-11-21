@@ -2,11 +2,11 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import CheckoutForm from '../../../components/checkoutForm/checkoutForm';
 import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { getStripe } from '../../../utils/stripe';
 import NavBar from '../../../layout/navBars/navBar';
 import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
-import { MARGINS, STRIPE_KEY } from '../../../utils/constants/constants';
+import { MARGINS } from '../../../utils/constants/constants';
 import HeaderSection from '../../../components/headerSection';
 import BillingSection from '../../../components/billingSection/billingSection';
 import BillingRow from '../../../components/billingSection/billingRow';
@@ -45,8 +45,6 @@ function BillingPage(): React.ReactElement {
 
     setFormData(formData);
   }, [location.state, navigate]);
-
-  const stripePromise = loadStripe(STRIPE_KEY);
 
   const addDiscount = async (): Promise<void> => {
     setGettingDiscount(true);
@@ -154,7 +152,7 @@ function BillingPage(): React.ReactElement {
             fontWeight='bold'
             marginTop={MARGINS.LARGE}
           >
-            <Elements stripe={stripePromise}>
+            <Elements stripe={getStripe()}>
               <CheckoutForm
                 formValid={true}
                 formData={formData}

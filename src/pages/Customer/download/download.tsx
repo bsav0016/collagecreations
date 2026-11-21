@@ -1,13 +1,13 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import CheckoutForm from '../../../components/checkoutForm/checkoutForm';
 import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+import { getStripe } from '../../../utils/stripe';
 import NavBar from '../../../layout/navBars/navBar';
 import Footer from '../../../layout/footer/footer';
 import MediumLogoHeader from '../../../layout/mediumLogoHeader/mediumLogoHeader';
 import FormField from '../../../components/form/formField';
 import { useConstants } from '../../../context/constantsContext';
-import { MARGINS, STRIPE_KEY } from '../../../utils/constants/constants';
+import { MARGINS } from '../../../utils/constants/constants';
 import GeneralButton from '../../../components/generalButton/generalButton';
 import Form from '../../../components/form/form';
 import HeaderSection from '../../../components/headerSection';
@@ -53,7 +53,6 @@ function Download(): React.ReactElement {
   });
   const [formValid, setFormValid] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>('Input first name');
-  const stripePromise = loadStripe(STRIPE_KEY);
 
   useEffect(() => {
     const sessionData = sessionStorage.getItem('orderSessionData');
@@ -166,7 +165,7 @@ function Download(): React.ReactElement {
             <GeneralButton
               type={'submit'}
               fullWidth
-              disabled={!stripePromise || !formValid || processing}
+              disabled={!formValid || processing}
               text={processing ? <>Processing<LoadingDots /></> : tax ? "Edit Info" : "Go To Billing"}
             />
             {!formValid && !tax && <p className="text-sm text-muted-foreground text-center">{errorText}</p>}
@@ -227,7 +226,7 @@ function Download(): React.ReactElement {
             fontWeight='bold'
             marginTop={MARGINS.LARGE}
           >
-            <Elements stripe={stripePromise}>
+            <Elements stripe={getStripe()}>
               <CheckoutForm 
                 formValid={formValid} 
                 formData={formData}
