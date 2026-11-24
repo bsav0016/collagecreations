@@ -90,7 +90,8 @@ export const cropAndResizeLarge = async (
     imageSrc: string, 
     crop: CropArea, 
     targetWidth: number, 
-    targetHeight: number
+    targetHeight: number,
+    customerToken?: string | null,
 ): Promise<CropAndResizeResponse> => {
     try {
         const imageResponse = await fetch(imageSrc);
@@ -101,7 +102,7 @@ export const cropAndResizeLarge = async (
         const file = new File([blob], 'image.png', { type: 'image/png' });
         const cropImageDTO = new CropImageDTO(file, targetWidth, targetHeight, IS_DESKTOP, crop);
 
-        return await CropImageService.cropImage(cropImageDTO);
+        return await CropImageService.cropImage(cropImageDTO, customerToken);
     } catch (error) {
         console.error('Error loading file:', error);
         throw error;
@@ -141,10 +142,11 @@ export const resizeImage = async (
 export const createTempImage = async (
     file: File, 
     targetWidth: number, 
-    targetHeight: number
+    targetHeight: number,
+    customerToken?: string | null,
 ): Promise<CropAndResizeResponse> => {
     const cropImageDTO = new CropImageDTO(file, targetWidth, targetHeight, IS_DESKTOP);
-    return await CropImageService.cropImage(cropImageDTO);
+    return await CropImageService.cropImage(cropImageDTO, customerToken);
 };
 
 export const createImgString = async (blob: Blob): Promise<string> => {

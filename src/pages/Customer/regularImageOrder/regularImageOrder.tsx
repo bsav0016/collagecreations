@@ -23,6 +23,8 @@ import { CropCoordinate } from '../collageCreationPage/interfaces/CropCoordinate
 import { CropArea } from '../collageCreationPage/interfaces/CropArea';
 import { OutputSize } from '../collageCreationPage/enums/OutputSize';
 import { useOrderContext } from '../../../context/orderContext';
+import { useCustomerAuth } from '../../../context/customerAuthContext';
+import { friendlyErrorMessage } from '../../../lib/requestRefused';
 
 
 const RegularImageOrder: React.FC = () => {
@@ -42,6 +44,7 @@ const RegularImageOrder: React.FC = () => {
 
   const { constants } = useConstants();
   const { setTemporaryImageId, setQuantity } = useOrderContext();
+  const { customerToken } = useCustomerAuth();
   const navigate = useNavigate();
   usePreventScroll(cropperVisible);
 
@@ -74,12 +77,12 @@ const RegularImageOrder: React.FC = () => {
       const [widthInches, heightInches] = size.split('x').map(Number);
       
       try {
-        const response = await createTempImage(file, widthInches, heightInches);
+        const response = await createTempImage(file, widthInches, heightInches, customerToken);
         setTempImageId(response.temporary_image_id);
         let smallerImage = await processImageString(response.smaller_image);
         setMainImage(URL.createObjectURL(smallerImage));
-      } catch {
-        toastRef.current?.("Could not resize your image");
+      } catch (error) {
+        toastRef.current?.(friendlyErrorMessage(error, "Could not resize your image"));
       } finally {
         setLoading(false);
       }
@@ -92,14 +95,14 @@ const RegularImageOrder: React.FC = () => {
       if (!selectedImage || !croppedAreaPixels || !size) return;
 
       const [widthInches, heightInches] = size.split('x').map(Number);
-      const response = await cropAndResizeLarge(selectedImage, croppedAreaPixels, widthInches, heightInches);
+      const response = await cropAndResizeLarge(selectedImage, croppedAreaPixels, widthInches, heightInches, customerToken);
 
       setTempImageId(response.temporary_image_id);
       const smallerImage = await processImageString(response.smaller_image);
       setMainImage(URL.createObjectURL(smallerImage));
     } catch (error) {
       console.error('Error cropping image:', error);
-      toastRef.current?.("Error resizing.");
+      toastRef.current?.(friendlyErrorMessage(error, "Error resizing."));
     } finally {
       setCropperVisible(false);
       setLoading(false);

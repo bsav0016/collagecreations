@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import NetworkRequest, { NetworkFileRequest } from "./networkClient";
 import { BACKEND_URL } from "../utils/constants/constants";
+import { RequestRefusedError } from "./requestRefused";
 
 const reply = (status: number, body: unknown) =>
     vi.spyOn(globalThis, "fetch").mockResolvedValue(
@@ -43,12 +44,38 @@ describe("NetworkRequest", () => {
     });
 
     it("throws the whole body when a rejection has no error field", async () => {
-        reply(429, { detail: "Request was throttled." });
+        reply(401, { detail: "Invalid token." });
         vi.spyOn(console, "error").mockImplementation(() => {});
 
         await expect(NetworkRequest({ urlExtension: "x/", method: "POST" })).rejects.toEqual({
-            detail: "Request was throttled.",
+            detail: "Invalid token.",
         });
+    });
+
+    it("throws a RequestRefusedError, with the wait from Retry-After, when the server says slow down (429)", async () => {
+        vi.spyOn(globalThis, "fetch").mockResolvedValue(
+            new Response(JSON.stringify({ detail: "Request was throttled." }), {
+                status: 429, headers: { "Content-Type": "application/json", "Retry-After": "3590" },
+            }),
+        );
+        vi.spyOn(console, "error").mockImplementation(() => {});
+
+        const error = await NetworkRequest({ urlExtension: "x/", method: "POST" }).catch((e) => e);
+        expect(error).toBeInstanceOf(RequestRefusedError);
+        expect(error).toMatchObject({ status: 429, retryAfterSeconds: 3590 });
+        expect(error.message).toContain("about an hour");
+        // The sign-in checks elsewhere look for a `detail` field to mean a stale login; a throttled request is not one.
+        expect(error.detail).toBeUndefined();
+    });
+
+    it("throws a RequestRefusedError, with the wait from the body, when the server is busy (503)", async () => {
+        reply(503, { error: "We are very busy right now.", retry_after: 75 });
+        vi.spyOn(console, "error").mockImplementation(() => {});
+
+        const error = await NetworkRequest({ urlExtension: "x/", method: "POST" }).catch((e) => e);
+        expect(error).toBeInstanceOf(RequestRefusedError);
+        expect(error).toMatchObject({ status: 503, retryAfterSeconds: 75 });
+        expect(error.message).toContain("very busy");
     });
 
     it.each([301, 404, 500])("does not treat a %i response as success", async (status) => {

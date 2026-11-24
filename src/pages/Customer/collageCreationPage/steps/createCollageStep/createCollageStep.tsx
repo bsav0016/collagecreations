@@ -8,6 +8,8 @@ import { useOrderContext } from "../../../../../context/orderContext";
 import { useAuth } from "../../../../../context/authContext";
 import { useCustomerAuth } from "../../../../../context/customerAuthContext";
 import { claimCollage } from "../../../../../services/customerAuthService";
+import { toastRef } from "../../../../../context/toastContext/toastContext";
+import { friendlyErrorMessage, waitPhrase } from "../../../../../lib/requestRefused";
 
 interface CreateCollageStepProps {
     type: CollageCreationType;
@@ -58,7 +60,11 @@ export function CreateCollageStep({
                 lightDarkArray,
                 color,
                 setLoadingProgress,
-                customerToken
+                customerToken,
+                (seconds) => {
+                    setLoadingProgress(null);
+                    setLoadingMessage(`We're very busy right now, so your collage is waiting its turn. Trying again in ${waitPhrase(seconds)}...`);
+                },
             );
 
             setTemporaryImageId(collageData.temporaryImageId);
@@ -80,7 +86,7 @@ export function CreateCollageStep({
             const navigationUrlExt = isAdmin ? '/admin/admin-preview/' : '/preview/'
             navigate(navigationUrlExt, {state: { isAdmin: isAdmin }});
         } catch (error) {
-            alert("Error");
+            toastRef.current?.(friendlyErrorMessage(error, "We could not create your collage. Please try again."));
             console.error(error);
         } finally {
             setLoadingMessage(null);
