@@ -1,4 +1,4 @@
-import Resizer from 'react-image-file-resizer';
+import { resizer } from './resizer';
 import { IS_DESKTOP } from "./constants/constants";
 import CropImageService from '../services/CropImageService';
 import CropImageDTO from '../dtos/CropImageDTO';
@@ -10,7 +10,7 @@ export const rotateImage = async (imageSrc: string | null): Promise<string> => {
     const file = await fetchUrlAsFile(imageSrc);
     return new Promise((resolve, reject) => {
         try {
-            Resizer.imageFileResizer(
+            resizer().imageFileResizer(
                 file,
                 999999999999,
                 999999999999,
@@ -116,7 +116,7 @@ export const resizeImage = async (
 ): Promise<Blob> => {
     return new Promise((resolve, reject) => {
         try {
-            Resizer.imageFileResizer(
+            resizer().imageFileResizer(
                 file,
                 targetWidth,
                 targetHeight,
