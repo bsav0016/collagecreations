@@ -28,9 +28,10 @@ const fail = (message) => {
   process.exit(1);
 };
 
+// `localhost`, as the browser uses it: on some machines (GitHub's runners) it means IPv6, on others IPv4.
 const portOpen = (port) =>
   new Promise((resolve) => {
-    const socket = net.connect({ port, host: '127.0.0.1' });
+    const socket = net.connect({ port, host: 'localhost' });
     socket.once('connect', () => { socket.destroy(); resolve(true); });
     socket.once('error', () => resolve(false));
   });
