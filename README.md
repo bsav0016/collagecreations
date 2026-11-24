@@ -111,6 +111,17 @@ A scheduled workflow, [api-contract.yml](.github/workflows/api-contract.yml), ru
 
 The generator is installed separately in `tools/api-types` because it needs TypeScript 5 and the app uses a newer one. Every service that talks to the backend uses the generated types, and all backend calls go through `src/lib/networkClient.ts` (`NetworkRequest` for JSON, `NetworkFileRequest` for a purchased image); the only other `fetch` calls read images already in the browser.
 
+## When the server says no or not now
+
+The backend limits what a visitor can ask it to build (see its operations guide), so the preview, resize and build steps can be refused. The site handles each answer the same way, in [src/lib/requestRefused.ts](src/lib/requestRefused.ts):
+
+- **400, a rejected request.** The backend words these for customers ("That image is too large; try one with fewer pixels", "Unsupported size", "Too many photos: at most 600 can be used in one collage"), so the site shows the message as it is.
+- **429, too many requests.** `networkClient` throws a `RequestRefusedError` with the wait from `Retry-After` ("You're going a little fast. Please wait about an hour and try again."). It is never retried, because the wait can be an hour.
+- **503, the build queue is full.** Starting a collage waits as long as the server asks and tries again, up to three tries, and the loading screen says so ("We're very busy right now, so your collage is waiting its turn..."). If it is still busy it shows the same message as a toast.
+- Anything else (a network failure, a 500) keeps the step's own fallback text.
+
+Signed-in customers send `Authorization: Customer <token>` on the preview, resize and build requests. That is how the backend counts them per account at a higher rate than guests, who are counted per address; without it a customer would be limited like a guest. Staff keep their own token. A throttled 429 is deliberately not the raw `{detail}` body: several screens read `error.detail` to mean "your sign-in is stale" and sign the customer out.
+
 ## Deployment
 
 Pushing to `main` runs `.github/workflows/deploy.yml`: install, type-check, build (with the three secrets `VITE_BACKEND_URL`, `VITE_STRIPE_KEY` and `VITE_SENTRY_DSN`), then publish `build/` to GitHub Pages under the custom domain `collagecreations.org`. `npm run deploy` does the same from a laptop with `gh-pages`.

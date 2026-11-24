@@ -1,5 +1,6 @@
 import { NewCollageDTO } from "../dtos/collageDTO/newCollageDTO";
 import NetworkRequest from "../lib/networkClient";
+import { retryWhenBusy } from "../lib/requestRefused";
 import { AUTHORIZATION_HEADER, CUSTOMER_AUTHORIZATION_HEADER, POST, GET } from "../lib/networkRequestConstants";
 import { CollageCreationType } from "../pages/Customer/collageCreationPage/enums/collageCreationType";
 import { OutputSize } from "../pages/Customer/collageCreationPage/enums/OutputSize";
@@ -61,6 +62,7 @@ export async function createCollage (
     color?: boolean | null,
     onProgress?: (percent: number) => void,
     customerToken?: string | null,
+    onBusy?: (seconds: number) => void,
 ) {
     const collageDTO = NewCollageDTO.fromVariables(
         isMobile,
@@ -75,14 +77,21 @@ export async function createCollage (
 
     const formData = await collageDTO.toFormData();
 
-    const headers = userToken ? { ...AUTHORIZATION_HEADER(userToken) } : {};
-    
-    const response = await NetworkRequest<Schema<"CreateCollageResponse">>({
-        urlExtension: 'api/collage/',
-        headers: headers,
-        method: POST,
-        body: formData
-    });
+    // A signed-in customer is sent as one (staff keep their own token) so they get the higher request limit.
+    const headers = userToken
+        ? { ...AUTHORIZATION_HEADER(userToken) }
+        : customerToken ? { ...CUSTOMER_AUTHORIZATION_HEADER(customerToken) } : {};
+
+    // When the server says it is busy (too many builds waiting for the worker), wait as long as it asks and try again.
+    const response = await retryWhenBusy(
+        () => NetworkRequest<Schema<"CreateCollageResponse">>({
+            urlExtension: 'api/collage/',
+            headers: headers,
+            method: POST,
+            body: formData
+        }),
+        { onWait: (seconds) => onBusy?.(seconds) },
+    );
 
     if (response.status !== 202) {
         throw new Error('Unexpected response when starting collage creation');

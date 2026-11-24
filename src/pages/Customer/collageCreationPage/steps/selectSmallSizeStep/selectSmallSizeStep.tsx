@@ -6,6 +6,9 @@ import { CollageCreationType } from "../../enums/collageCreationType";
 import { OutputSize } from "../../enums/OutputSize";
 import { SizeOption } from "../../interfaces/SizeOption";
 import { createPreview } from "../../../../../services/createPreview";
+import { useCustomerAuth } from "../../../../../context/customerAuthContext";
+import { toastRef } from "../../../../../context/toastContext/toastContext";
+import { friendlyErrorMessage } from "../../../../../lib/requestRefused";
 import { SymbolOption } from "../../interfaces/SymbolOption";
 import largeImages from '../../../../../assets/quarterLargeImages.png';
 import mediumImages from '../../../../../assets/quarterMediumImages.png';
@@ -59,6 +62,7 @@ export function SelectSmallSizeStep({
     ]
 
     const [selecting, setSelecting] = useState<SmallImageSize | null>(null);
+    const { customerToken } = useCustomerAuth();
 
     const selectSmallSize = async (newSize: SmallImageSize) => {
         if (selecting) return;
@@ -76,12 +80,14 @@ export function SelectSmallSizeStep({
                 newSize,
                 outputText,
                 outputSymbol ?? undefined,
-                mainImage ?? undefined
+                mainImage ?? undefined,
+                customerToken,
             )
             setLightDarkArray(newArray);
             setCurrentStep(CollageCreationStep.PreviewStep);
         } catch (error) {
             console.error("Error creating preview: ", error);
+            toastRef.current?.(friendlyErrorMessage(error, "We could not create your preview. Please try again."));
         } finally {
             setShowLoading(false);
             setLoadingMessage(null);

@@ -978,6 +978,11 @@ export interface components {
             /** Format: uuid */
             temporary_image_id: string;
         };
+        CollageBusy: {
+            error: string;
+            /** @description Seconds to wait before trying again; also sent as the Retry-After header. */
+            retry_after: number;
+        };
         Constants: {
             AMOUNT_12_12_COLLAGE: number;
             AMOUNT_12_18_COLLAGE: number;
@@ -1178,6 +1183,8 @@ export interface components {
             checks: {
                 [key: string]: string;
             };
+            /** @description Collage builds waiting for the worker; null if the queue could not be read. */
+            waiting_builds: number | null;
         };
         /**
          * @description * `collage` - collage
@@ -2224,6 +2231,24 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Too many requests from this address or account; the `Retry-After` header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description Too many builds are already waiting for the worker; nothing was stored or queued. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CollageBusy"];
                 };
             };
         };
@@ -3496,6 +3521,15 @@ export interface operations {
                     "application/json": components["schemas"]["Error"];
                 };
             };
+            /** @description Too many requests from this address or account; the `Retry-After` header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
             /** @description Unexpected server error. */
             500: {
                 headers: {
@@ -3535,6 +3569,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Too many requests from this address or account; the `Retry-After` header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
                 };
             };
             /** @description Unexpected server error. */

@@ -1,4 +1,5 @@
 import { BACKEND_URL } from "../utils/constants/constants";
+import { parseRetryAfter, RequestRefusedError, SERVICE_BUSY, TOO_MANY_REQUESTS } from "./requestRefused";
 
 const acceptableResponseCodes = [200, 201, 202];
 
@@ -29,6 +30,13 @@ async function NetworkRequest<T>({
 
         if (!acceptableResponseCodes.includes(response.status)) {
             const errorResponse = await response.json();
+            // A request refused for now (too many, or busy) is not a mistake in the request: say how long to wait.
+            if (response.status === TOO_MANY_REQUESTS || response.status === SERVICE_BUSY) {
+                throw new RequestRefusedError(
+                    response.status,
+                    parseRetryAfter(response.headers.get("Retry-After"), errorResponse),
+                );
+            }
             const error = errorResponse.error;
             console.error(error);
             if (error) {
