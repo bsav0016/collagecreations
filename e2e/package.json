@@ -1,0 +1,14 @@
+{
+  "name": "collagecreations-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Browser tests of the customer journey against a running backend. Kept separate so the app does not depend on it.",
+  "scripts": {
+    "test": "playwright test",
+    "install-browser": "playwright install chromium",
+    "local": "node scripts/run-local.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}
