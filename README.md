@@ -99,7 +99,7 @@ It walks the home page and the symbol and text order flows at 1440x900 with no s
 
 ## End-to-end tests
 
-`e2e/` holds browser tests (Playwright) of the customer journey against a real stack: the production build of this app, the API, a Celery worker and Redis. They cover a collage reaching its preview, being refused (too many photos, throttled, busy), paying with Stripe test cards, and staff sign-in. They are separate from `npm test`, never run in this repository's pipeline and never block a deploy; the backend repository's nightly and pull-request workflow runs them. What is covered, how to run them locally and what they need (including Stripe test keys) is in [e2e/README.md](e2e/README.md).
+`e2e/` holds browser tests (Playwright) of the customer journey against a real stack: the production build of this app, the API, a Celery worker and Redis. They cover a collage reaching its preview, being refused (too many photos, throttled, busy), paying with Stripe test cards, and staff sign-in. They are separate from `npm test`, never run in this repository's deploy pipeline and never block a deploy; the backend repository's nightly and pull-request workflow runs them. A separate, read-only smoke check of the live site (`e2e/smoke/`) runs after each storefront publish and daily. What is covered, how to run them locally and what they need (including Stripe test keys) is in [e2e/README.md](e2e/README.md).
 
 ## API types
 

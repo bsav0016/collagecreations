@@ -33,6 +33,12 @@ The backend repository runs these tests, not this one: [collageCreationsBackend/
 
 To run one by hand with options: Actions, End-to-end, Run workflow. `storefront_ref` tests the backend against a storefront branch (this is how a storefront change can be checked before it merges), `playwright_args` picks tests (`tests/checkout.e2e.ts`), and `verbose` prints the API and worker logs and, after a failure, every API thread's stack. A failed run uploads its traces, videos and screenshots as the `e2e-failure` artifact; `npx playwright show-trace <trace.zip>` replays what the browser did, including every request and response.
 
+## The smoke check (live site)
+
+`smoke/production.smoke.ts` is a different thing: a narrow, read-only look at the **live** site, run after a deploy (`npm run smoke`; `SMOKE_URL` and `SMOKE_API_URL` point it elsewhere). It checks that the API is healthy (and, when `EXPECT_RELEASE_SHA` is set, that it runs the commit that was just deployed), that the storefront loads without script errors, and that the order wizard works through choosing a symbol (one cheap preview request that stores nothing) and through adding photos and cropping them (all in the browser). It stops before **Create Collage**: it never builds a collage (that queues work for the single worker and stores images), places an order, pays or signs in. The headless browser is recognised as a bot, so the visitor counter ignores it. If the API answers the preview with a 429 (a runner shares its address with others), the test is skipped as inconclusive instead of failing.
+
+It runs from `.github/workflows/smoke.yml` here (after GitHub Pages publishes a new storefront, once a day at 08:41 UTC, and on demand) and from the backend repository after each backend deploy. Neither is a required check and neither is part of a deploy.
+
 ## Running them
 
 You need Node 22, Python 3.12 with the backend's requirements installed, a checkout of
