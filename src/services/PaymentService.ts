@@ -105,7 +105,8 @@ const PaymentService = {
             const responseData = PaymentResponseDTO.fromResponse(response.data);
             return responseData;
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+            // NetworkRequest throws the API's own message as a plain string (the "error" field of the response), not an Error.
+            const errorMessage = typeof error === 'string' && error ? error : error instanceof Error ? error.message : 'An error occurred';
             throw new Error(errorMessage);
         }
     }

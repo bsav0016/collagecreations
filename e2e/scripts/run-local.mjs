@@ -57,7 +57,21 @@ for (const port of [API_PORT, APP_PORT]) {
 // hundreds of photos. A collage needs at least 5 photos, so 5 is the most that can be used. (A real environment variable
 // wins over the backend's env file.)
 export const MAX_COLLAGE_TILES = '5';
-const backendEnv = { ...process.env, MAX_COLLAGE_TILES };
+
+// Checkout tests pay with Stripe's test cards, so they need a Stripe TEST account: E2E_STRIPE_SECRET_KEY (sk_test_...)
+// for the API and E2E_STRIPE_PUBLISHABLE_KEY (pk_test_...) for the storefront build. Without both, those tests skip.
+// Anything else is refused: a live key here would make the browser tests charge real cards.
+const stripeSecret = process.env.E2E_STRIPE_SECRET_KEY || '';
+const stripePublishable = process.env.E2E_STRIPE_PUBLISHABLE_KEY || '';
+if (stripeSecret || stripePublishable) {
+  if (!stripeSecret.startsWith('sk_test_') || !stripePublishable.startsWith('pk_test_')) {
+    fail('Set both E2E_STRIPE_SECRET_KEY (sk_test_...) and E2E_STRIPE_PUBLISHABLE_KEY (pk_test_...). Only Stripe TEST keys are accepted.');
+  }
+}
+const stripeEnabled = !!(stripeSecret && stripePublishable);
+
+// A real environment variable wins over the backend's env file.
+const backendEnv = { ...process.env, MAX_COLLAGE_TILES, ...(stripeEnabled ? { STRIPE_SECRET_KEY: stripeSecret } : {}) };
 
 const children = [];
 function start(name, command, args, options = {}) {
@@ -90,14 +104,14 @@ ${seed.stdout ?? ''}
 ${seed.stderr ?? ''}`);
 
   console.log('Starting the API and a Celery worker...');
-  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: backendEnv });
+  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: { ...backendEnv, PYTHONFAULTHANDLER: '1' } });
   start('celery', python, ['-m', 'celery', '-A', 'CollageCreation', 'worker', '--pool=solo', '--loglevel=warning'], { cwd: backendDir, env: backendEnv });
 
   console.log('Building the storefront...');
   const env = {
     ...process.env,
     VITE_BACKEND_URL: `http://localhost:${API_PORT}/`,
-    VITE_STRIPE_KEY: process.env.VITE_STRIPE_KEY || 'pk_test_replace_me',
+    VITE_STRIPE_KEY: stripePublishable || 'pk_test_replace_me',
   };
   const vite = path.join(appDir, 'node_modules', 'vite', 'bin', 'vite.js');
   const build = spawnSync(process.execPath, [vite, 'build'], { cwd: appDir, env, encoding: 'utf8' });
@@ -114,12 +128,22 @@ ${seed.stderr ?? ''}`);
 
   console.log('Running the tests...\n');
   const playwright = path.join(e2eDir, 'node_modules', '@playwright', 'test', 'cli.js');
-  const result = spawnSync(process.execPath, [playwright, 'test', ...process.argv.slice(2)], {
-    cwd: e2eDir,
-    stdio: 'inherit',
-    env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}` },
+  // Not spawnSync: while Node waits synchronously it cannot read the API's and worker's output pipes, and a server that
+  // prints a lot (the console email backend prints the whole message, logo included) fills the pipe and hangs mid-request.
+  const status = await new Promise((resolve) => {
+    const playwrightRun = spawn(process.execPath, [playwright, 'test', ...process.argv.slice(2)], {
+      cwd: e2eDir,
+      stdio: 'inherit',
+      env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}`, E2E_STRIPE: stripeEnabled ? '1' : '' },
+    });
+    playwrightRun.on('exit', (code) => resolve(code ?? 1));
   });
-  process.exitCode = result.status ?? 1;
+  process.exitCode = status;
+  // Debugging a hung request: with E2E_DUMP_STACKS the API is told to print every thread's stack (SIGABRT, Linux only).
+  if (status !== 0 && process.env.E2E_DUMP_STACKS && process.platform !== 'win32') {
+    children[0].kill('SIGABRT');
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
 } finally {
   stopAll();
 }

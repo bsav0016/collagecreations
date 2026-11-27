@@ -27,3 +27,14 @@ export async function startHeartCollage(page: Page) {
   // The server builds the grid for the symbol: a real request to the API.
   await expect(page.getByRole('heading', { name: /Light \/ Dark Image Preview/ })).toBeVisible({ timeout: 90_000 });
 }
+
+/** The whole collage journey up to the preview page, where a customer chooses to order or download. */
+export async function createHeartCollagePreview(page: Page, files: { name: string; mimeType: string; buffer: Buffer }[]) {
+  await startHeartCollage(page);
+  await page.getByRole('button', { name: 'Confirm Preview' }).click();
+  await addAndCropPhotos(page, files);
+  await page.getByRole('button', { name: 'Next Step' }).click();
+  await page.getByRole('button', { name: 'Create Collage' }).click();
+  await expect(page).toHaveURL(/\/preview\//, { timeout: 120_000 });
+  await expect(page.getByRole('heading', { name: 'Collage Preview' })).toBeVisible();
+}

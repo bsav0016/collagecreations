@@ -11,9 +11,20 @@ production build of this storefront, the Django API, a Celery worker and Redis. 
 | `tests/symbol-preview.e2e.ts` | A symbol collage reaches its light/dark preview, so the page and the API agree on the grid. |
 | `tests/admin.e2e.ts` | Staff sign-in: a wrong password is refused, the orders page is closed to someone who is not signed in, and signing in lists the paid order under Unactioned Orders and opens it with the customer's details. |
 | `tests/refused-request.e2e.ts` | When the server refuses a collage (too many photos), the customer sees the API's own plain-words message, the loading screen goes away, they stay on the final step, and nothing is built. |
+| `tests/checkout.e2e.ts` | Paying for a download with Stripe's test cards: the 4242 card ends on the confirmation page with an order number and the access link to the file; the declined card shows the reason and places no order. Skipped without Stripe test keys. |
 | `tests/photo-collage.e2e.ts` | A customer adds six photos, crops each one, and the server builds the collage (a real Celery task) until the watermarked preview and the Place Order and Download buttons appear. This is the test for the broken photo step that went unnoticed on the live site in November 2026. |
 
-Not covered yet (planned in bsav0016/collageCreationsBackend#129): checkout with Stripe test mode. The busy (503) and too-many-requests (429) messages are covered by unit tests but not yet in a browser. Nothing here pays, creates an order or sends an email.
+Not covered yet (planned in bsav0016/collageCreationsBackend#129): the busy (503) and too-many-requests (429) messages are covered by unit tests but not yet in a browser. Nothing here sends a real email (the API prints them), and nothing charges a real card.
+
+### Checkout needs Stripe test keys
+
+`tests/checkout.e2e.ts` pays with Stripe's test cards, so it needs a Stripe **test-mode** account: a secret key (`sk_test_...`) for the API and a publishable key (`pk_test_...`) for the storefront build. Set them as environment variables before running:
+
+```
+E2E_STRIPE_SECRET_KEY=sk_test_...  E2E_STRIPE_PUBLISHABLE_KEY=pk_test_...  node scripts/run-local.mjs
+```
+
+Without them the two checkout tests are skipped and everything else runs. The runner refuses any key that does not start with `sk_test_` / `pk_test_`, so these tests can never charge a real card. In GitHub Actions the backend's End-to-end workflow reads them from the repository secrets of the same names; pull requests from forks get no secrets, so the checkout tests skip there. Each run leaves a few test-mode payments in the Stripe test dashboard (authorized, then captured or declined); they cost nothing.
 
 ## Running them
 
