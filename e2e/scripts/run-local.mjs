@@ -53,6 +53,12 @@ for (const port of [API_PORT, APP_PORT]) {
   if (await portOpen(port)) fail(`Port ${port} is already in use. Stop whatever is using it first.`);
 }
 
+// A low photo limit for the API, so the tests can show what a customer sees when a request is refused without uploading
+// hundreds of photos. A collage needs at least 5 photos, so 5 is the most that can be used. (A real environment variable
+// wins over the backend's env file.)
+export const MAX_COLLAGE_TILES = '5';
+const backendEnv = { ...process.env, MAX_COLLAGE_TILES };
+
 const children = [];
 function start(name, command, args, options = {}) {
   const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'], ...options });
@@ -78,8 +84,8 @@ try {
   if (migrate.status !== 0) fail(`migrate failed:\n${migrate.stdout}\n${migrate.stderr}`);
 
   console.log('Starting the API and a Celery worker...');
-  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir });
-  start('celery', python, ['-m', 'celery', '-A', 'CollageCreation', 'worker', '--pool=solo', '--loglevel=warning'], { cwd: backendDir });
+  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: backendEnv });
+  start('celery', python, ['-m', 'celery', '-A', 'CollageCreation', 'worker', '--pool=solo', '--loglevel=warning'], { cwd: backendDir, env: backendEnv });
 
   console.log('Building the storefront...');
   const env = {

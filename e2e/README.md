@@ -9,10 +9,11 @@ production build of this storefront, the Django API, a Celery worker and Redis. 
 | Test | What it proves |
 | --- | --- |
 | `tests/symbol-preview.e2e.ts` | A symbol collage reaches its light/dark preview, so the page and the API agree on the grid. |
+| `tests/refused-request.e2e.ts` | When the server refuses a collage (too many photos), the customer sees the API's own plain-words message, the loading screen goes away, they stay on the final step, and nothing is built. |
 | `tests/photo-collage.e2e.ts` | A customer adds six photos, crops each one, and the server builds the collage (a real Celery task) until the watermarked preview and the Place Order and Download buttons appear. This is the test for the broken photo step that went unnoticed on the live site in November 2026. |
 
-Not covered yet (planned in bsav0016/collageCreationsBackend#129): checkout with Stripe test mode, the error messages for
-refused requests, and the admin order list. Nothing here pays, creates an order or sends an email.
+Not covered yet (planned in bsav0016/collageCreationsBackend#129): checkout with Stripe test mode and the admin order
+list. The busy (503) and too-many-requests (429) messages are covered by unit tests but not yet in a browser. Nothing here pays, creates an order or sends an email.
 
 ## Running them
 
@@ -30,7 +31,9 @@ BACKEND_DIR=../../collageCreationsBackend PYTHON=../../collageCreationsBackend/v
 ```
 
 `npm run local` (`scripts/run-local.mjs`) migrates the database, starts the API on :8000 and one Celery worker,
-builds the storefront and serves the build on :4000, runs the tests, and stops everything. Arguments after it go to
+builds the storefront and serves the build on :4000, runs the tests, and stops everything. It starts the API with
+`MAX_COLLAGE_TILES=5` (the most photos a collage may use there), so the refusal test needs only six photos and the photo test
+uses five. Arguments after it go to
 Playwright, for example `npm run local -- --headed` or `npm run local -- tests/photo-collage.e2e.ts`. Set
 `E2E_VERBOSE=1` to see the servers' output. A failed run keeps a trace, a video and a screenshot in `results/` and an
 HTML report in `report/` (`npx playwright show-report report`).
