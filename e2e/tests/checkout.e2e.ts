@@ -22,7 +22,7 @@ test.describe('checkout', () => {
     await page.getByRole('button', { name: 'Complete Order' }).click();
 
     // The server authorizes the card, saves the order, then captures the payment.
-    await expect(page, `API payment responses: ${JSON.stringify(payments)}`).toHaveURL(/\/confirmation\//, { timeout: 90_000 });
+    await explainingPayments(payments, () => expect(page).toHaveURL(/\/confirmation\//, { timeout: 90_000 }));
     await expect(page.getByText('Your order has been placed!')).toBeVisible();
     await expect(page.getByText(/Your order number is: \d+/)).toBeVisible();
     await expect(page.getByText(`A confirmation email has been sent to ${customer.email}.`)).toBeVisible();
@@ -42,7 +42,7 @@ test.describe('checkout', () => {
     await enterCard(page, CARD_DECLINED);
     await page.getByRole('button', { name: 'Complete Order' }).click();
 
-    await expect(page.getByText(/declined/i), `API payment responses: ${JSON.stringify(payments)}`).toBeVisible({ timeout: 30_000 });
+    await explainingPayments(payments, () => expect(page.getByText(/declined/i)).toBeVisible({ timeout: 30_000 }));
     await expect(page).not.toHaveURL(/\/confirmation\//);
     // Still on the billing form, ready to try another card.
     await expect(page.getByRole('button', { name: 'Complete Order' })).toBeVisible();
