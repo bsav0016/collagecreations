@@ -104,7 +104,7 @@ ${seed.stdout ?? ''}
 ${seed.stderr ?? ''}`);
 
   console.log('Starting the API and a Celery worker...');
-  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: backendEnv });
+  start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: { ...backendEnv, PYTHONFAULTHANDLER: '1' } });
   start('celery', python, ['-m', 'celery', '-A', 'CollageCreation', 'worker', '--pool=solo', '--loglevel=warning'], { cwd: backendDir, env: backendEnv });
 
   console.log('Building the storefront...');
@@ -134,6 +134,11 @@ ${seed.stderr ?? ''}`);
     env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}`, E2E_STRIPE: stripeEnabled ? '1' : '' },
   });
   process.exitCode = result.status ?? 1;
+  // Debugging a hung request: with E2E_DUMP_STACKS the API is told to print every thread's stack (SIGABRT, Linux only).
+  if (result.status !== 0 && process.env.E2E_DUMP_STACKS && process.platform !== 'win32') {
+    children[0].kill('SIGABRT');
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
 } finally {
   stopAll();
 }
