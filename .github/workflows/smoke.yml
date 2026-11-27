@@ -1,0 +1,52 @@
+name: Smoke check (live site)
+
+# A narrow, read-only look at the LIVE site (e2e/smoke/production.smoke.ts): the API is healthy, the storefront loads, and
+# the order wizard works up to the end of the crop step. It never builds a collage, places an order, pays or signs in.
+# Not a required check and never part of a deploy: a red run here is a reason to look at the site, not a blocked merge.
+# It runs after GitHub Pages has published a new storefront, once a day, and on demand. (The backend repository runs the
+# same check after each of its own deploys.)
+on:
+  workflow_run:
+    workflows: ['pages build and deployment']
+    types: [completed]
+  schedule:
+    - cron: '41 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    # After a Pages publish, only when it worked.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - name: Install the test tools
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Smoke check
+        working-directory: e2e
+        run: npm run smoke
+      - name: Keep the failure details
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: smoke-failure
+          path: |
+            e2e/results
+            e2e/report
+          retention-days: 7

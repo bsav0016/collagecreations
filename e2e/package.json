@@ -6,7 +6,8 @@
   "scripts": {
     "test": "playwright test",
     "install-browser": "playwright install chromium",
-    "local": "node scripts/run-local.mjs"
+    "local": "node scripts/run-local.mjs",
+    "smoke": "playwright test -c playwright.smoke.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1"
