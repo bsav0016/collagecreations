@@ -181,4 +181,8 @@ Merging to the main branch runs the full suite first and only then deploys.
 
 ## Build, test and deploy
 
-Pushing to `main` runs GitHub Actions: install, type-check, test, build, then publish the static build to GitHub Pages under the custom domain. Unit tests (Vitest and Testing Library) cover the network layer, payment requests, pricing, sign-in state and the wizard step logic. Most page components and the crop screens are not covered by automated tests. See the [README](../README.md) for commands and the list of settings.
+Pushing to `main` runs GitHub Actions: install, type-check, test, build, then publish the static build to GitHub Pages under the custom domain. Unit tests (Vitest and Testing Library) cover the network layer, payment requests, pricing, sign-in state and the wizard step logic. Most page components and the crop screens are not covered by unit tests; what a customer actually does is covered end to end instead (below). See the [README](../README.md) for commands and the list of settings.
+
+### End-to-end tests
+
+Unit tests cannot see the page, the API, the Celery worker and Stripe agree with each other, so `e2e/` drives a real browser through the production build against a real backend: a collage is built from photos and reaches its preview, the refusals a customer can meet (too many photos, throttled, busy) show a plain message and leave them on the same step, a download is paid for with Stripe's test cards, and staff can sign in and see an order. The tests run in the backend repository's GitHub Actions (pull requests, nightly, on demand) because that repository is private and starts the whole stack. They are advisory: a failure does not block a merge or a deploy. Details are in [e2e/README.md](../e2e/README.md). They have found real problems that unit tests missed: a broken photo-crop step on the live site, a declined card shown as "An error occurred", and a `Retry-After` header the browser could not read.

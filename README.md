@@ -97,6 +97,10 @@ npm run capture              # APP_URL=... to capture another server
 
 It walks the home page and the symbol and text order flows at 1440x900 with no sign-in and no customer data, and overwrites the four files. `home.png` is also reduced to a 256-colour palette to keep it small. The script lives in its own `package.json` so the app does not depend on Playwright.
 
+## End-to-end tests
+
+`e2e/` holds browser tests (Playwright) of the customer journey against a real stack: the production build of this app, the API, a Celery worker and Redis. They cover a collage reaching its preview, being refused (too many photos, throttled, busy), paying with Stripe test cards, and staff sign-in. They are separate from `npm test`, never run in this repository's pipeline and never block a deploy; the backend repository's nightly and pull-request workflow runs them. What is covered, how to run them locally and what they need (including Stripe test keys) is in [e2e/README.md](e2e/README.md).
+
 ## API types
 
 The backend publishes `openapi.public.yaml`, a description of every endpoint this site calls (it leaves out the staff outreach API, which the site never uses). A copy lives in [src/api/openapi.public.yaml](src/api/openapi.public.yaml) and the TypeScript types are generated from it into `src/api/schema.d.ts`; services use them through [src/api/types.ts](src/api/types.ts), for example `Schema<"PaymentRequest">`. If the backend changes a field the app uses, the type check fails here instead of the checkout failing for a customer.

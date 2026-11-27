@@ -13,7 +13,7 @@ production build of this storefront, the Django API, a Celery worker and Redis. 
 | `tests/refused-request.e2e.ts` | When the server refuses a collage (too many photos), the customer sees the API's own plain-words message, the loading screen goes away, they stay on the final step, and nothing is built. |
 | `tests/busy-and-throttled.e2e.ts` | When the server says not now: a 429 (too many requests) tells the customer how long to wait and leaves them on the final step; a 503 (busy worker) with a long wait gives up at once with the wait; a 503 with a short wait tells them, waits, retries and builds the collage. The refusals are sent at the HTTP boundary in the API's exact shapes (the server side is unit-tested in the backend). |
 | `tests/checkout.e2e.ts` | Paying for a download with Stripe's test cards: the 4242 card ends on the confirmation page with an order number and the access link to the file; the declined card shows the reason and places no order. Skipped without Stripe test keys. |
-| `tests/photo-collage.e2e.ts` | A customer adds six photos, crops each one, and the server builds the collage (a real Celery task) until the watermarked preview and the Place Order and Download buttons appear. This is the test for the broken photo step that went unnoticed on the live site in November 2026. |
+| `tests/photo-collage.e2e.ts` | A customer adds five photos, crops each one, and the server builds the collage (a real Celery task) until the watermarked preview and the Place Order and Download buttons appear. This is the test for the broken photo step that went unnoticed on the live site in November 2026. |
 
 Nothing here sends a real email (the API prints them), and nothing charges a real card.
 
@@ -26,6 +26,12 @@ E2E_STRIPE_SECRET_KEY=sk_test_...  E2E_STRIPE_PUBLISHABLE_KEY=pk_test_...  node 
 ```
 
 Without them the two checkout tests are skipped and everything else runs. The runner refuses any key that does not start with `sk_test_` / `pk_test_`, so these tests can never charge a real card. In GitHub Actions the backend's End-to-end workflow reads them from the repository secrets of the same names; pull requests from forks get no secrets, so the checkout tests skip there. Each run leaves a few test-mode payments in the Stripe test dashboard (authorized, then captured or declined); they cost nothing.
+
+## In CI
+
+The backend repository runs these tests, not this one: [collageCreationsBackend/.github/workflows/e2e.yml](https://github.com/bsav0016/collageCreationsBackend/blob/master/.github/workflows/e2e.yml) checks out the backend and this storefront's `main`, starts the stack above and runs `npm run local`. It runs on every backend pull request, every night at 07:17 UTC (so a change on either side that breaks the other is found within a day), and on demand. It is **not a required check and never gates a deploy**; a red run is a reason to look, not a blocked merge. This repository has no e2e job of its own: the backend is private, and a job here would need a token to read it (see [OPERATIONS.md](https://github.com/bsav0016/collageCreationsBackend/blob/master/docs/OPERATIONS.md), "End-to-end browser tests", for what that would take).
+
+To run one by hand with options: Actions, End-to-end, Run workflow. `storefront_ref` tests the backend against a storefront branch (this is how a storefront change can be checked before it merges), `playwright_args` picks tests (`tests/checkout.e2e.ts`), and `verbose` prints the API and worker logs and, after a failure, every API thread's stack. A failed run uploads its traces, videos and screenshots as the `e2e-failure` artifact; `npx playwright show-trace <trace.zip>` replays what the browser did, including every request and response.
 
 ## Running them
 
@@ -52,6 +58,9 @@ Playwright, for example `npm run local -- --headed` or `npm run local -- tests/p
 HTML report in `report/` (`npx playwright show-report report`).
 
 Notes:
+
+- **Never wait for Playwright synchronously in the runner.** It once did (`spawnSync`), which stops Node reading the API's and worker's output pipes. The console email backend prints each message whole, logo included; the pipe filled and a payment request hung forever. The runner now waits asynchronously.
+- **Stripe test payments pile up** in the Stripe test-mode dashboard (authorized, then captured or declined). They cost nothing and can be ignored or cleared there.
 
 - **Leave `REDIS_URL` unset in the backend's env file.** The backend's cache settings pass an SSL option meant for
   production's TLS Redis URL, which a plain `redis://` URL rejects. Without it Celery uses `localhost:6379` and Django
