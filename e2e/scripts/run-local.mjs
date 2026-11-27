@@ -128,14 +128,19 @@ ${seed.stderr ?? ''}`);
 
   console.log('Running the tests...\n');
   const playwright = path.join(e2eDir, 'node_modules', '@playwright', 'test', 'cli.js');
-  const result = spawnSync(process.execPath, [playwright, 'test', ...process.argv.slice(2)], {
-    cwd: e2eDir,
-    stdio: 'inherit',
-    env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}`, E2E_STRIPE: stripeEnabled ? '1' : '' },
+  // Not spawnSync: while Node waits synchronously it cannot read the API's and worker's output pipes, and a server that
+  // prints a lot (the console email backend prints the whole message, logo included) fills the pipe and hangs mid-request.
+  const status = await new Promise((resolve) => {
+    const playwrightRun = spawn(process.execPath, [playwright, 'test', ...process.argv.slice(2)], {
+      cwd: e2eDir,
+      stdio: 'inherit',
+      env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}`, E2E_STRIPE: stripeEnabled ? '1' : '' },
+    });
+    playwrightRun.on('exit', (code) => resolve(code ?? 1));
   });
-  process.exitCode = result.status ?? 1;
+  process.exitCode = status;
   // Debugging a hung request: with E2E_DUMP_STACKS the API is told to print every thread's stack (SIGABRT, Linux only).
-  if (result.status !== 0 && process.env.E2E_DUMP_STACKS && process.platform !== 'win32') {
+  if (status !== 0 && process.env.E2E_DUMP_STACKS && process.platform !== 'win32') {
     children[0].kill('SIGABRT');
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }

@@ -96,4 +96,17 @@ describe("PaymentService.createPayment", () => {
 
         await expect(PaymentService.createPayment(null, "cart-1", "order", form)).rejects.toThrow("Your card was declined.");
     });
+
+    it("surfaces the API's message when the network client throws it as a plain string", async () => {
+        // This is what NetworkRequest really does with an error response; it was shown as "An error occurred".
+        network.mockRejectedValue("Payment error: Your card was declined.");
+
+        await expect(PaymentService.createPayment(null, "cart-1", "order", form)).rejects.toThrow("Payment error: Your card was declined.");
+    });
+
+    it("falls back to a generic message for anything else", async () => {
+        network.mockRejectedValue({ unexpected: true });
+
+        await expect(PaymentService.createPayment(null, "cart-1", "order", form)).rejects.toThrow("An error occurred");
+    });
 });
