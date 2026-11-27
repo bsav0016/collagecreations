@@ -11,10 +11,11 @@ production build of this storefront, the Django API, a Celery worker and Redis. 
 | `tests/symbol-preview.e2e.ts` | A symbol collage reaches its light/dark preview, so the page and the API agree on the grid. |
 | `tests/admin.e2e.ts` | Staff sign-in: a wrong password is refused, the orders page is closed to someone who is not signed in, and signing in lists the paid order under Unactioned Orders and opens it with the customer's details. |
 | `tests/refused-request.e2e.ts` | When the server refuses a collage (too many photos), the customer sees the API's own plain-words message, the loading screen goes away, they stay on the final step, and nothing is built. |
+| `tests/busy-and-throttled.e2e.ts` | When the server says not now: a 429 (too many requests) tells the customer how long to wait and leaves them on the final step; a 503 (busy worker) with a long wait gives up at once with the wait; a 503 with a short wait tells them, waits, retries and builds the collage. The refusals are sent at the HTTP boundary in the API's exact shapes (the server side is unit-tested in the backend). |
 | `tests/checkout.e2e.ts` | Paying for a download with Stripe's test cards: the 4242 card ends on the confirmation page with an order number and the access link to the file; the declined card shows the reason and places no order. Skipped without Stripe test keys. |
 | `tests/photo-collage.e2e.ts` | A customer adds six photos, crops each one, and the server builds the collage (a real Celery task) until the watermarked preview and the Place Order and Download buttons appear. This is the test for the broken photo step that went unnoticed on the live site in November 2026. |
 
-Not covered yet (planned in bsav0016/collageCreationsBackend#129): the busy (503) and too-many-requests (429) messages are covered by unit tests but not yet in a browser. Nothing here sends a real email (the API prints them), and nothing charges a real card.
+Nothing here sends a real email (the API prints them), and nothing charges a real card.
 
 ### Checkout needs Stripe test keys
 
