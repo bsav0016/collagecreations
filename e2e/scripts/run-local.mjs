@@ -83,6 +83,12 @@ try {
   const migrate = spawnSync(python, ['manage.py', 'migrate', '--noinput'], { cwd: backendDir, encoding: 'utf8' });
   if (migrate.status !== 0) fail(`migrate failed:\n${migrate.stdout}\n${migrate.stderr}`);
 
+  // A staff user (e2e-admin) and one paid order for the admin journey. The command refuses to run unless DEBUG is on.
+  const seed = spawnSync(python, ['manage.py', 'seed_e2e_data'], { cwd: backendDir, encoding: 'utf8', env: backendEnv });
+  if (seed.status !== 0) fail(`seed_e2e_data failed (${seed.error ? seed.error.message : `exit ${seed.status}`}):
+${seed.stdout ?? ''}
+${seed.stderr ?? ''}`);
+
   console.log('Starting the API and a Celery worker...');
   start('api', python, ['manage.py', 'runserver', String(API_PORT), '--noreload'], { cwd: backendDir, env: backendEnv });
   start('celery', python, ['-m', 'celery', '-A', 'CollageCreation', 'worker', '--pool=solo', '--loglevel=warning'], { cwd: backendDir, env: backendEnv });
