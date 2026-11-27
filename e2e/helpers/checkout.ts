@@ -36,6 +36,12 @@ export function watchPayments(page: Page) {
     try { body = (await response.text()).slice(0, 500); } catch { /* the page moved on */ }
     seen.push(`${response.status()} ${body}`);
   });
+  page.on('requestfailed', (request) => {
+    if (//api/payment//.test(request.url())) seen.push(`request failed: ${request.failure()?.errorText}`);
+  });
+  page.on('console', (message) => {
+    if (message.type() === 'error') seen.push(`console error: ${message.text().slice(0, 300)}`);
+  });
   return seen;
 }
 
