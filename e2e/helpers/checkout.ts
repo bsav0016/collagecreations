@@ -26,3 +26,24 @@ export async function enterCard(page: Page, number: string) {
   const postal = card.locator('[name="postal"]');
   if (await postal.count()) await postal.fill('96818');
 }
+
+/** Records what the API said to each payment request, so a failed checkout shows why (status and body) in the report. */
+export function watchPayments(page: Page) {
+  const seen: string[] = [];
+  page.on('response', async (response) => {
+    if (!/\/api\/payment\//.test(response.url())) return;
+    let body = '';
+    try { body = (await response.text()).slice(0, 500); } catch { /* the page moved on */ }
+    seen.push(`${response.status()} ${body}`);
+  });
+  return seen;
+}
+
+/** Runs an assertion; if it fails, the error also says what the API answered to the payment requests. */
+export async function explainingPayments(payments: string[], assertion: () => Promise<unknown>) {
+  try {
+    await assertion();
+  } catch (error) {
+    throw new Error(`${(error as Error).message}\n\nAPI payment responses: ${JSON.stringify(payments)}`);
+  }
+}
