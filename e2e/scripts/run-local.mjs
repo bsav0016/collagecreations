@@ -57,7 +57,21 @@ for (const port of [API_PORT, APP_PORT]) {
 // hundreds of photos. A collage needs at least 5 photos, so 5 is the most that can be used. (A real environment variable
 // wins over the backend's env file.)
 export const MAX_COLLAGE_TILES = '5';
-const backendEnv = { ...process.env, MAX_COLLAGE_TILES };
+
+// Checkout tests pay with Stripe's test cards, so they need a Stripe TEST account: E2E_STRIPE_SECRET_KEY (sk_test_...)
+// for the API and E2E_STRIPE_PUBLISHABLE_KEY (pk_test_...) for the storefront build. Without both, those tests skip.
+// Anything else is refused: a live key here would make the browser tests charge real cards.
+const stripeSecret = process.env.E2E_STRIPE_SECRET_KEY || '';
+const stripePublishable = process.env.E2E_STRIPE_PUBLISHABLE_KEY || '';
+if (stripeSecret || stripePublishable) {
+  if (!stripeSecret.startsWith('sk_test_') || !stripePublishable.startsWith('pk_test_')) {
+    fail('Set both E2E_STRIPE_SECRET_KEY (sk_test_...) and E2E_STRIPE_PUBLISHABLE_KEY (pk_test_...). Only Stripe TEST keys are accepted.');
+  }
+}
+const stripeEnabled = !!(stripeSecret && stripePublishable);
+
+// A real environment variable wins over the backend's env file.
+const backendEnv = { ...process.env, MAX_COLLAGE_TILES, ...(stripeEnabled ? { STRIPE_SECRET_KEY: stripeSecret } : {}) };
 
 const children = [];
 function start(name, command, args, options = {}) {
@@ -97,7 +111,7 @@ ${seed.stderr ?? ''}`);
   const env = {
     ...process.env,
     VITE_BACKEND_URL: `http://localhost:${API_PORT}/`,
-    VITE_STRIPE_KEY: process.env.VITE_STRIPE_KEY || 'pk_test_replace_me',
+    VITE_STRIPE_KEY: stripePublishable || 'pk_test_replace_me',
   };
   const vite = path.join(appDir, 'node_modules', 'vite', 'bin', 'vite.js');
   const build = spawnSync(process.execPath, [vite, 'build'], { cwd: appDir, env, encoding: 'utf8' });
@@ -117,7 +131,7 @@ ${seed.stderr ?? ''}`);
   const result = spawnSync(process.execPath, [playwright, 'test', ...process.argv.slice(2)], {
     cwd: e2eDir,
     stdio: 'inherit',
-    env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}` },
+    env: { ...process.env, APP_URL: `http://localhost:${APP_PORT}`, E2E_STRIPE: stripeEnabled ? '1' : '' },
   });
   process.exitCode = result.status ?? 1;
 } finally {
